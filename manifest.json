@@ -20,7 +20,7 @@
         "https://calendar.google.com/calendar/*"
       ],
       "js": [
-        "gmate.js"
+        "allow-guest-modify-event.js"
       ]
     }
   ],
