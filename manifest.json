@@ -1,0 +1,25 @@
+{
+	"name": "gmate",
+	"version": "0.1",
+	"manifest_version": 2,
+	"description": "google calendar automations",
+	"browser_action": {
+		"default_title": "gmate"
+	},
+	"icons": {
+		"128": "icon.png"
+	},
+	"background": {
+    "scripts":["background.js"]
+  },
+	"content_scripts": [
+    	{
+      		"matches": ["https://calendar.google.com/calendar/*"],
+					"js": ["gmate.js"]
+    	}
+	],
+	"permissions": [
+		"tabs",
+		"webNavigation"
+  ]
+}
