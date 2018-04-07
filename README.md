@@ -7,5 +7,5 @@ Feature 1: Allow guests to modify event by default
 Feature 2: Zero invitee warning
 ![zero-guest](https://user-images.githubusercontent.com/32557706/37877943-afab71b2-3016-11e8-9ea4-6bd861502e88.jpg)
 
-Feature 3: Automatically generate zoom id
+Feature 3: Automatically generate zoom id (prerequsite: [zoom chrome extension](https://chrome.google.com/webstore/detail/zoom-scheduler/kgjfgplpablkjnlkjmjdecgdpfankdle?hl=en-US))
 <img width="872" alt="screen shot 2018-04-07 at 12 37 05 am" src="https://user-images.githubusercontent.com/32557706/38452644-eafa5a36-39fc-11e8-9cfa-8eac6be3d4f2.png">
