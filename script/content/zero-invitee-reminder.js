@@ -7,7 +7,7 @@
     }
 
     saveBtn.addEventListener("click", function (e) {
-      chrome.storage.sync.get(['zero-invitee-reminder'], function (settings) {
+      chrome.storage.sync.get({'zero-invitee-reminder': true}, function (settings) {
         if (settings['zero-invitee-reminder']) {
           triggerAction(e);
         }
