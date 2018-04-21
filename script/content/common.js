@@ -22,3 +22,15 @@ function dispatchMouseEvent(target, var_args) {
   e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));
   target.dispatchEvent(e);
 }
+
+/**
+ * find the key for the most extreme item in an object according to a predicate function
+ * ref: https://codereview.stackexchange.com/questions/51053/get-the-key-of-the-highest-value-in-javascript-object
+ * @param obj
+ * @param predicate function (mostItemSoFar, currItem) - if true, throw away the current item
+ */
+function findTheMostKey(obj, predicate) {
+  return Object.keys(obj).reduce(function (mostKey, currKey) {
+    return (mostKey === undefined || !predicate(obj[mostKey], obj[currKey])) ? currKey : mostKey;
+  });
+}
