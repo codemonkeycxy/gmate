@@ -4,8 +4,8 @@
 // self-invoking function to avoid name collision
 (function allowGuestModifyEvent() {
   function allowModifyEvent() {
-    chrome.storage.sync.get({'allow-guest-modify-event': true}, function (settings) {
-      if (settings['allow-guest-modify-event']) {
+    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+      if (settings[ALLOW_GUEST_MODIFY_EVENT]) {
         triggerAction();
       }
     });

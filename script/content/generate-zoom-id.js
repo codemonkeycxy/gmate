@@ -1,8 +1,8 @@
 // self-invoking function to avoid name collision
 (function generateZoomId() {
   function makeZoomMeeting() {
-    chrome.storage.sync.get({'generate-zoom-id': false}, function (settings) {
-      if (settings['generate-zoom-id']) {
+    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+      if (settings[GENERATE_ZOOM_ID]) {
         triggerAction();
       }
     });

@@ -1,6 +1,15 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
+var ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
+var ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
+var GENERATE_ZOOM_ID = 'generate-zoom-id';
+
+var DEFAULT_SETTINGS = {};
+DEFAULT_SETTINGS[ALLOW_GUEST_MODIFY_EVENT] = true;
+DEFAULT_SETTINGS[ZERO_INVITEE_REMINDER] = true;
+DEFAULT_SETTINGS[GENERATE_ZOOM_ID] = false;
+
 function hasInvitee() {
   var divTags = document.getElementsByTagName('div');
 

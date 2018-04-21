@@ -12,6 +12,7 @@
   },
   "background": {
     "scripts": [
+      "script/common.js",
       "script/background/index.js"
     ]
   },
@@ -21,7 +22,7 @@
         "https://calendar.google.com/calendar/*"
       ],
       "js": [
-        "script/content/common.js",
+        "script/common.js",
         "script/content/allow-guest-modify-event.js",
         "script/content/zero-invitee-reminder.js",
         "script/content/generate-zoom-id.js",
