@@ -2,6 +2,88 @@
 (function autoRoomBooking() {
   var MAX_FAV = 20;
 
+  function main() {
+    registerFavoriteRooms();
+    triggerAction();
+  }
+
+  function triggerAction() {
+    var existingRooms = getSelectedRooms();
+    if (hasInvitee() || !isEmpty(existingRooms)) {
+      // the user is trying to edit an existing meeting; don't auto book room in this case
+      return;
+    }
+
+    clickRoomsTab();
+    // wait for room tab to activate
+    setTimeout(selectFromSuggestion, 500);
+  }
+
+  function clickRoomsTab() {
+    var roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
+    dispatchMouseEvent(roomsTab, 'click', true, true);
+  }
+
+  function clickGuestsTab() {
+    var roomsTab = document.querySelectorAll('[aria-label="Guests"]')[0];
+    dispatchMouseEvent(roomsTab, 'click', true, true);
+  }
+
+  function selectFromSuggestion() {
+    if (isLoadingRooms()) {
+      // room suggestion is still loading, check again later
+      return setTimeout(selectFromSuggestion, 500);
+    }
+
+    if (noRoomFound()) {
+      return false;
+    }
+
+    var suggestedRooms = getElementByText(
+      'div', 'Updating room suggestions'
+    ).parentElement.nextSibling.children[0].children;
+    pickFavoriteRoom(suggestedRooms);
+  }
+
+  function pickFavoriteRoom(roomElements) {
+    var favoriteRoom;
+    var favorability = -1;
+
+    chrome.storage.sync.get({'favorite-rooms': {}}, function (result) {
+      var rooms = result['favorite-rooms'];
+      for (var i = 0; i < roomElements.length; i++) {
+        var candidate = roomElements[i];
+        var candidateId = candidate.getAttribute('data-email');
+        if (!rooms[candidateId]) {
+          continue;
+        }
+
+        var currFav = rooms[candidateId].count;
+        if (candidateId in rooms && currFav > favorability) {
+          favoriteRoom = candidate;
+          favorability = currFav;
+        }
+      }
+
+      if (favoriteRoom) {
+        dispatchMouseEvent(favoriteRoom, 'click', true, true);
+        clickGuestsTab();  // switch back to guests tab after room booking
+      }
+    });
+  }
+
+  function isLoadingRooms() {
+    var loading = getElementByText('div', 'Finding rooms').parentElement;
+    var updating = getElementByText('div', 'Updating room suggestions').parentElement;
+
+    return isElementVisible(loading) || isElementVisible(updating);
+  }
+
+  function noRoomFound() {
+    var noRoom = getElementByText('div', 'No rooms found.');
+    return isElementVisible(noRoom);
+  }
+
   function registerFavoriteRooms() {
     var initialRooms = getSelectedRooms();
     addSaveListener(initialRooms);
@@ -89,11 +171,11 @@
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.text === 'event_edit') {
       // give page some time to load
-      setTimeout(registerFavoriteRooms, 500);
+      setTimeout(main, 500);
     }
   });
 
   if (document.URL.startsWith('https://calendar.google.com/calendar/r/eventedit')) {
-    setTimeout(registerFavoriteRooms, 500);
+    setTimeout(main, 500);
   }
 }());

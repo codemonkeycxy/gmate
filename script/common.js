@@ -10,6 +10,61 @@ DEFAULT_SETTINGS[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_SETTINGS[ZERO_INVITEE_REMINDER] = true;
 DEFAULT_SETTINGS[GENERATE_ZOOM_ID] = false;
 
+// ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
+// test results
+//---------------
+// []        true, empty array
+// {}        true, empty object
+// null      true
+// undefined true
+// ""        true, empty string
+// ''        true, empty string
+// 0         false, number
+// true      false, boolean
+// false     false, boolean
+// Date      false
+// function  false
+function isEmpty(val) {
+  if (val === undefined)
+    return true;
+
+  if (typeof (val) == 'function' || typeof (val) == 'number' || typeof (val) == 'boolean' || Object.prototype.toString.call(val) === '[object Date]')
+    return false;
+
+  if (val == null || val.length === 0)        // null or 0 length array
+    return true;
+
+  if (typeof (val) == "object") {
+    // empty object
+
+    var r = true;
+
+    for (var f in val)
+      r = false;
+
+    return r;
+  }
+
+  return false;
+}
+
+function isElementVisible(element) {
+  var styleStr = element.getAttribute('style');
+
+  return !styleStr.includes('display: none') && !styleStr.includes('display:none');
+}
+
+// ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
+function getElementByText(tagName, innerText) {
+  var aTags = document.getElementsByTagName(tagName);
+
+  for (var i = 0; i < aTags.length; i++) {
+    if (aTags[i].textContent == innerText) {
+      return aTags[i];
+    }
+  }
+}
+
 function hasInvitee() {
   var divTags = document.getElementsByTagName('div');
 
