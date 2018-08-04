@@ -9,19 +9,15 @@ function setOption(settingName, value) {
 // stored in chrome.storage.
 function restoreOptions() {
   chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
-    document.getElementById(ALLOW_GUEST_MODIFY_EVENT).checked = settings[ALLOW_GUEST_MODIFY_EVENT];
-    document.getElementById(ZERO_INVITEE_REMINDER).checked = settings[ZERO_INVITEE_REMINDER];
-    document.getElementById(GENERATE_ZOOM_ID).checked = settings[GENERATE_ZOOM_ID];
+    Object.keys(DEFAULT_SETTINGS).forEach(function (key) {
+      document.getElementById(key).checked = settings[key];
+    });
   });
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById(ALLOW_GUEST_MODIFY_EVENT).addEventListener('click', function (e) {
-  setOption(ALLOW_GUEST_MODIFY_EVENT, e.target.checked);
-});
-document.getElementById(ZERO_INVITEE_REMINDER).addEventListener('click', function (e) {
-  setOption(ZERO_INVITEE_REMINDER, e.target.checked);
-});
-document.getElementById(GENERATE_ZOOM_ID).addEventListener('click', function (e) {
-  setOption(GENERATE_ZOOM_ID, e.target.checked);
+Object.keys(DEFAULT_SETTINGS).forEach(function (key) {
+  document.getElementById(key).addEventListener('click', function (e) {
+    setOption(key, e.target.checked);
+  });
 });

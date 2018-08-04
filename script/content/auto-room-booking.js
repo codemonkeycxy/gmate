@@ -1,10 +1,15 @@
 // self-invoking function to avoid name collision
 (function autoRoomBooking() {
-  var MAX_FAV = 20;
+  var MAX_FAV_ROOMS = 20;
+  var MIN_FAV_SCORE = 1;
 
   function main() {
     registerFavoriteRooms();
-    triggerAction();
+    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+      if (settings[AUTO_ROOM_BOOKING]) {
+        triggerAction();
+      }
+    });
   }
 
   function triggerAction() {
@@ -59,7 +64,7 @@
         }
 
         var currFav = rooms[candidateId].count;
-        if (candidateId in rooms && currFav > favorability) {
+        if (candidateId in rooms && currFav > MIN_FAV_SCORE && currFav > favorability) {
           favoriteRoom = candidate;
           favorability = currFav;
         }
@@ -157,7 +162,7 @@
         updatedAt: Date.now()
       };
 
-      if (Object.keys(favoriteRooms).length >= MAX_FAV) {
+      if (Object.keys(favoriteRooms).length >= MAX_FAV_ROOMS) {
         // too many records, evict the least recently updated entry
         var LRUKey = findTheMostKey(favoriteRooms, function (oldestItemSoFar, currItem) {
           return oldestItemSoFar.updatedAt < currItem.updatedAt;

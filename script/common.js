@@ -4,11 +4,13 @@
 var ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
 var ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
 var GENERATE_ZOOM_ID = 'generate-zoom-id';
+var AUTO_ROOM_BOOKING = 'auto-room-booking';
 
 var DEFAULT_SETTINGS = {};
 DEFAULT_SETTINGS[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_SETTINGS[ZERO_INVITEE_REMINDER] = true;
 DEFAULT_SETTINGS[GENERATE_ZOOM_ID] = false;
+DEFAULT_SETTINGS[AUTO_ROOM_BOOKING] = true;
 
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
 // test results
