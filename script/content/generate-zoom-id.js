@@ -1,7 +1,7 @@
 // self-invoking function to avoid name collision
 (function generateZoomId() {
   function makeZoomMeeting() {
-    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+    chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
       if (settings[GENERATE_ZOOM_ID]) {
         triggerAction();
       }

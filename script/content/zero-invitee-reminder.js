@@ -7,7 +7,7 @@
     }
 
     saveBtn.addEventListener("click", function (e) {
-      chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+      chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
         if (settings[ZERO_INVITEE_REMINDER]) {
           triggerAction(e);
         }

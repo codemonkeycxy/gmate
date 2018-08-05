@@ -4,7 +4,7 @@
 // self-invoking function to avoid name collision
 (function allowGuestModifyEvent() {
   function allowModifyEvent() {
-    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+    chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
       if (settings[ALLOW_GUEST_MODIFY_EVENT]) {
         triggerAction();
       }

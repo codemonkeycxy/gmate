@@ -5,19 +5,35 @@ function setOption(settingName, value) {
   chrome.storage.sync.set(newSetting);
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
+// Restores feature toggle values using the preferences stored in chrome.storage
 function restoreOptions() {
-  chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
-    Object.keys(DEFAULT_SETTINGS).forEach(function (key) {
+  // fill out saved feature toggles. use default if nothing is found
+  chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
+    Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(function (key) {
       document.getElementById(key).checked = settings[key];
+    });
+  });
+
+  // fill out saved room booking filters. use default if nothing is found
+  chrome.storage.sync.get(DEFAULT_ROOM_BOOKING_FILTERS, function (settings) {
+    Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(function (key) {
+      document.getElementById(key).value = settings[key];
     });
   });
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-Object.keys(DEFAULT_SETTINGS).forEach(function (key) {
+
+// add feature toggle click listener
+Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(function (key) {
   document.getElementById(key).addEventListener('click', function (e) {
     setOption(key, e.target.checked);
+  });
+});
+
+// add filter input listener
+Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(function (key) {
+  document.getElementById(key).addEventListener('input', function (e) {
+    setOption(key, e.target.value);
   });
 });

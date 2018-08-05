@@ -1,11 +1,10 @@
 // self-invoking function to avoid name collision
 (function autoRoomBooking() {
   var MAX_FAV_ROOMS = 20;
-  var MIN_FAV_SCORE = 1;
 
   function main() {
     registerFavoriteRooms();
-    chrome.storage.sync.get(DEFAULT_SETTINGS, function (settings) {
+    chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
       if (settings[AUTO_ROOM_BOOKING]) {
         triggerAction();
       }
@@ -44,36 +43,86 @@
       return false;
     }
 
-    var suggestedRooms = getElementByText(
-      'div', 'Updating room suggestions'
-    ).parentElement.nextSibling.children[0].children;
-    pickFavoriteRoom(suggestedRooms);
+    var suggestedRooms = getSuggestedRooms();
+    selectRoom(suggestedRooms, function (favRoom) {
+      if (favRoom) {
+        dispatchMouseEvent(favRoom, 'click', true, true);
+        clickGuestsTab();  // switch back to guests tab after room booking
+      }
+    });
   }
 
-  function pickFavoriteRoom(roomElements) {
+  function getSuggestedRooms() {
+    var roomElements = getElementByText(
+      'div', 'Updating room suggestions'
+    ).parentElement.nextSibling.children[0].children;
+
+    // convert html element collection to standard array
+    var roomList = [];
+    for (var i = 0; i < roomElements.length; i++) {
+      roomList.push(roomElements[i]);
+    }
+
+    return roomList;
+  }
+
+  function selectRoom(rooms, cb) {
+    filterRooms(rooms, function (filteredRooms) {
+      pickFavoriteRoom(filteredRooms, cb);
+    });
+  }
+
+  function filterRooms(rooms, cb) {
+    chrome.storage.sync.get(DEFAULT_ROOM_BOOKING_FILTERS, function (result) {
+      var positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+      var negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
+
+      if (positiveFilter) {
+        var posRe = new RegExp(positiveFilter);
+        rooms = rooms.filter(function (room) {
+          var roomName = room.getAttribute('data-name');
+          // return if name matches with positive filter
+          return roomName && roomName.match(posRe);
+        });
+      }
+
+      if (negativeFilter) {
+        var negRe = new RegExp(negativeFilter);
+        rooms = rooms.filter(function (room) {
+          var roomName = room.getAttribute('data-name');
+          // DON'T return if name matches with negative filter
+          return roomName && !roomName.match(negRe);
+        });
+      }
+
+      cb(rooms);
+    });
+  }
+
+  function pickFavoriteRoom(rooms, cb) {
     var favoriteRoom;
     var favorability = -1;
 
     chrome.storage.sync.get({'favorite-rooms': {}}, function (result) {
-      var rooms = result['favorite-rooms'];
-      for (var i = 0; i < roomElements.length; i++) {
-        var candidate = roomElements[i];
+      var favRooms = result['favorite-rooms'];
+      rooms.forEach(function (candidate) {
         var candidateId = candidate.getAttribute('data-email');
-        if (!rooms[candidateId]) {
-          continue;
+        if (!favRooms[candidateId]) {
+          return;
         }
 
-        var currFav = rooms[candidateId].count;
-        if (candidateId in rooms && currFav > MIN_FAV_SCORE && currFav > favorability) {
+        var currFav = favRooms[candidateId].count;
+        if (candidateId in favRooms && currFav > favorability) {
           favoriteRoom = candidate;
           favorability = currFav;
         }
-      }
+      });
 
-      if (favoriteRoom) {
-        dispatchMouseEvent(favoriteRoom, 'click', true, true);
-        clickGuestsTab();  // switch back to guests tab after room booking
+      if (!favoriteRoom && rooms.length > 0) {
+        // if can't find a favorite room based on historical data, randomly pick one from the list
+        favoriteRoom = rooms[0];
       }
+      cb(favoriteRoom);
     });
   }
 

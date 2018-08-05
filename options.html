@@ -16,25 +16,37 @@
     <input type="checkbox" id="allow-guest-modify-event">
     Allow invitees to edit event
 </label>
-</br>
+<br>
 
 <label>
     <input type="checkbox" id="zero-invitee-reminder">
     Remind me if no invitee is selected
 </label>
-</br>
+<br>
 
 <label>
     <input type="checkbox" id="generate-zoom-id">
     Automatically make all meetings over zoom
 </label>
-</br>
+<br>
 
+<hr>
 <label>
     <input type="checkbox" id="auto-room-booking">
     (Beta) Automatically book meeting room
 </label>
-</br>
+<br>
+Name include (<a href="https://regex101.com/" target="_blank">regex</a>): <input
+        type="text"
+        placeholder="1455.*0(4|5)th"
+        id="room-booking-filter-positive-1"
+>
+<br>
+Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
+        type="text"
+        placeholder="(Cart|Quiet Room)"
+        id="room-booking-filter-negative"
+>
 
 <script src="script/common.js"></script>
 <script src="script/popup/options.js"></script>
