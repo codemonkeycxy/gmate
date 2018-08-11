@@ -9,8 +9,8 @@
   }
 
   function triggerAction() {
-    if (hasInvitee()) {
-      // hasInvitee means the user is trying to edit an existing meeting; in this case, no zoom id should be generated
+    if (isEdit()) {
+      // the user is trying to edit an existing meeting; in this case, no zoom id should be generated
       return;
     }
 

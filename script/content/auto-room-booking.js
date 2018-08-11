@@ -13,7 +13,7 @@
 
   function triggerAction() {
     var existingRooms = getSelectedRooms();
-    if (hasInvitee() || !isEmpty(existingRooms)) {
+    if (isEdit() || !isEmpty(existingRooms)) {
       // the user is trying to edit an existing meeting; don't auto book room in this case
       return;
     }

@@ -63,23 +63,58 @@ function isElementVisible(element) {
 }
 
 // ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
+// return the first match
 function getElementByText(tagName, innerText) {
-  var aTags = document.getElementsByTagName(tagName);
+  var tags = document.getElementsByTagName(tagName);
 
-  for (var i = 0; i < aTags.length; i++) {
-    if (aTags[i].textContent == innerText) {
-      return aTags[i];
+  for (var i = 0; i < tags.length; i++) {
+    if (tags[i].textContent == innerText) {
+      return tags[i];
     }
   }
 }
 
-function hasInvitee() {
+// return the first match
+function getElementByAttr(tagName, attrName, expectedVal) {
+  var tags = document.getElementsByTagName(tagName);
+
+  for (var i = 0; i < tags.length; i++) {
+    var attrVal = tags[i].getAttribute(attrName);
+
+    if (attrVal && attrVal === expectedVal) {
+      return tags[i];
+    }
+  }
+
+  return null;
+}
+
+function isEdit() {
   var divTags = document.getElementsByTagName('div');
+
+  for (var i = 0; i < divTags.length; i++) {
+    var eventId = divTags[i].getAttribute('data-eventid');
+
+    if (eventId && window.location.href.includes(eventId)) {
+      return true;
+    }
+  }
+
+  return false
+}
+
+function hasInvitee() {
+  var guestList = getElementByAttr('div', 'aria-label', 'Guests invited to this event.');
+  var divTags = guestList.getElementsByTagName('div');
 
   for (var i = 0; i < divTags.length; i++) {
     var key = divTags[i].getAttribute('key');
     var dataEmail = divTags[i].getAttribute('data-email');
-    if (key && dataEmail && key === dataEmail) {
+    var ariaLabel = divTags[i].getAttribute('aria-label');
+    var isInvitee = key && dataEmail && key === dataEmail;
+    var isSelf = ariaLabel && ariaLabel.toLocaleLowerCase().includes('organizer');
+
+    if (isInvitee && !isSelf) {
       return true;
     }
   }
