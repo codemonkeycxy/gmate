@@ -143,3 +143,20 @@ function findTheMostKey(obj, predicate) {
     return (mostKey === undefined || !predicate(obj[mostKey], obj[currKey])) ? currKey : mostKey;
   });
 }
+
+// wrappers around verbose chrome functions
+function emit(tabId, msg) {
+  chrome.tabs.sendMessage(tabId, msg);
+}
+
+function onMessage(callback) {
+  chrome.runtime.onMessage.addListener(callback);
+}
+
+function getFromStorage(keys, callback) {
+  chrome.storage.sync.get(keys, callback);
+}
+
+function persist(items) {
+  chrome.storage.sync.set(items);
+}

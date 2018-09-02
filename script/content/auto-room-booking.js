@@ -69,7 +69,7 @@
   }
 
   function filterRooms(rooms, cb) {
-    chrome.storage.sync.get(DEFAULT_ROOM_BOOKING_FILTERS, function (result) {
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, function (result) {
       var positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
       var negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
 
@@ -99,7 +99,7 @@
     var favoriteRoom;
     var favorability = -1;
 
-    chrome.storage.sync.get({'favorite-rooms': {}}, function (result) {
+    getFromStorage({'favorite-rooms': {}}, function (result) {
       var favRooms = result['favorite-rooms'];
       rooms.forEach(function (candidate) {
         var candidateId = candidate.getAttribute('data-email');
@@ -176,7 +176,7 @@
   }
 
   function updateFavorability(selectedRooms) {
-    chrome.storage.sync.get({'favorite-rooms': {}}, function (result) {
+    getFromStorage({'favorite-rooms': {}}, function (result) {
       var favoriteRooms = result['favorite-rooms'];
 
       selectedRooms.forEach(function (room) {
@@ -184,7 +184,7 @@
       });
 
       console.log(favoriteRooms);
-      chrome.storage.sync.set({'favorite-rooms': favoriteRooms});
+      persist({'favorite-rooms': favoriteRooms});
     });
   }
 
@@ -213,7 +213,7 @@
     }
   }
 
-  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+  onMessage(function (msg, sender, sendResponse) {
     if (msg.type === AUTO_ROOM_BOOKING) {
       // give page some time to load
       setTimeout(bookFavoriteRoom, 500);

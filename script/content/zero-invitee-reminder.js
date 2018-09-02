@@ -19,7 +19,7 @@
     }
   }
 
-  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+  onMessage(function (msg, sender, sendResponse) {
     if (msg.type === ZERO_INVITEE_REMINDER) {
       // give page some time to load
       setTimeout(addSaveListener, 500);
