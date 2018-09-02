@@ -135,7 +135,7 @@
   }
 
   function getSelectedRooms() {
-    let selectedRoomListUI = document.querySelectorAll(
+    const selectedRoomListUI = document.querySelectorAll(
       '[aria-label="Rooms added to this event."]'
     )[0];
     if (!selectedRoomListUI || !selectedRoomListUI.children) {
@@ -155,7 +155,7 @@
   }
 
   function addSaveListener(initialRooms) {
-    let saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
+    const saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
     if (!saveBtn) {
       return;
     }

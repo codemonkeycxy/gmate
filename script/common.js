@@ -122,7 +122,7 @@ function hasInvitee() {
     const dataEmail = divTags[i].getAttribute("data-email");
     const ariaLabel = divTags[i].getAttribute("aria-label");
     const isInvitee = key && dataEmail && key === dataEmail;
-    let isSelf =
+    const isSelf =
       ariaLabel && ariaLabel.toLocaleLowerCase().includes("organizer");
 
     if (isInvitee && !isSelf) {

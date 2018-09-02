@@ -1,7 +1,7 @@
 // self-invoking function to avoid name collision
 (() => {
   function addSaveListener() {
-    let saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
+    const saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
     if (!saveBtn) {
       return;
     }
