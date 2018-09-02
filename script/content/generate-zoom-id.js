@@ -27,7 +27,7 @@
   }
 
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.type === 'event_edit') {
+    if (msg.type === GENERATE_ZOOM_ID) {
       // give page some time to load
       setTimeout(makeZoomMeeting, 1000);
     }

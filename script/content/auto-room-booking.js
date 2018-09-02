@@ -222,7 +222,7 @@
   }
 
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.type === 'event_edit') {
+    if (msg.type === AUTO_ROOM_BOOKING) {
       // give page some time to load
       setTimeout(main, 500);
     }

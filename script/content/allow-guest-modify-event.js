@@ -19,7 +19,7 @@
   }
 
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.type === 'event_edit') {
+    if (msg.type === ALLOW_GUEST_MODIFY_EVENT) {
       // give page some time to load
       setTimeout(allowModifyEvent, 500);
     }
