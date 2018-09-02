@@ -1,6 +1,6 @@
 // Saves options to chrome.storage
 function setOption(settingName, value) {
-  var newSetting = {};
+  const newSetting = {};
   newSetting[settingName] = value;
   persist(newSetting);
 }

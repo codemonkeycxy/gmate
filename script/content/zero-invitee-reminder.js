@@ -1,7 +1,7 @@
 // self-invoking function to avoid name collision
 (function zeroInviteeReminder() {
   function addSaveListener() {
-    var saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
+    let saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
     if (!saveBtn) {
       return;
     }

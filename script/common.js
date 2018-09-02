@@ -1,22 +1,22 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
-var ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
-var ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
-var GENERATE_ZOOM_ID = 'generate-zoom-id';
+const ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
+const ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
+const GENERATE_ZOOM_ID = 'generate-zoom-id';
 
-var AUTO_ROOM_BOOKING = 'auto-room-booking';
-var REGISTER_FAVORITE_ROOMS = 'register-favorite-rooms';
-var ROOM_BOOKING_FILTER_POSITIVE = 'room-booking-filter-positive-1';
-var ROOM_BOOKING_FILTER_NEGATIVE = 'room-booking-filter-negative';
+const AUTO_ROOM_BOOKING = 'auto-room-booking';
+const REGISTER_FAVORITE_ROOMS = 'register-favorite-rooms';
+const ROOM_BOOKING_FILTER_POSITIVE = 'room-booking-filter-positive-1';
+const ROOM_BOOKING_FILTER_NEGATIVE = 'room-booking-filter-negative';
 
-var DEFAULT_FEATURE_TOGGLES = {};
+const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;
 DEFAULT_FEATURE_TOGGLES[GENERATE_ZOOM_ID] = false;
 DEFAULT_FEATURE_TOGGLES[AUTO_ROOM_BOOKING] = false;
 
-var DEFAULT_ROOM_BOOKING_FILTERS = {};
+const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = '';
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = '';
 
@@ -47,9 +47,9 @@ function isEmpty(val) {
   if (typeof (val) == "object") {
     // empty object
 
-    var r = true;
+    let r = true;
 
-    for (var f in val)
+    for (let f in val)
       r = false;
 
     return r;
@@ -59,7 +59,7 @@ function isEmpty(val) {
 }
 
 function isElementVisible(element) {
-  var styleStr = element.getAttribute('style');
+  const styleStr = element.getAttribute('style');
 
   return !styleStr.includes('display: none') && !styleStr.includes('display:none');
 }
@@ -67,9 +67,9 @@ function isElementVisible(element) {
 // ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
 // return the first match
 function getElementByText(tagName, innerText) {
-  var tags = document.getElementsByTagName(tagName);
+  const tags = document.getElementsByTagName(tagName);
 
-  for (var i = 0; i < tags.length; i++) {
+  for (let i = 0; i < tags.length; i++) {
     if (tags[i].textContent == innerText) {
       return tags[i];
     }
@@ -78,10 +78,10 @@ function getElementByText(tagName, innerText) {
 
 // return the first match
 function getElementByAttr(tagName, attrName, expectedVal) {
-  var tags = document.getElementsByTagName(tagName);
+  const tags = document.getElementsByTagName(tagName);
 
-  for (var i = 0; i < tags.length; i++) {
-    var attrVal = tags[i].getAttribute(attrName);
+  for (let i = 0; i < tags.length; i++) {
+    const attrVal = tags[i].getAttribute(attrName);
 
     if (attrVal && attrVal === expectedVal) {
       return tags[i];
@@ -92,10 +92,10 @@ function getElementByAttr(tagName, attrName, expectedVal) {
 }
 
 function isEdit() {
-  var divTags = document.getElementsByTagName('div');
+  const divTags = document.getElementsByTagName('div');
 
-  for (var i = 0; i < divTags.length; i++) {
-    var eventId = divTags[i].getAttribute('data-eventid');
+  for (let i = 0; i < divTags.length; i++) {
+    const eventId = divTags[i].getAttribute('data-eventid');
 
     if (eventId && window.location.href.includes(eventId)) {
       return true;
@@ -106,15 +106,15 @@ function isEdit() {
 }
 
 function hasInvitee() {
-  var guestList = getElementByAttr('div', 'aria-label', 'Guests invited to this event.');
-  var divTags = guestList.getElementsByTagName('div');
+  const guestList = getElementByAttr('div', 'aria-label', 'Guests invited to this event.');
+  const divTags = guestList.getElementsByTagName('div');
 
-  for (var i = 0; i < divTags.length; i++) {
-    var key = divTags[i].getAttribute('key');
-    var dataEmail = divTags[i].getAttribute('data-email');
-    var ariaLabel = divTags[i].getAttribute('aria-label');
-    var isInvitee = key && dataEmail && key === dataEmail;
-    var isSelf = ariaLabel && ariaLabel.toLocaleLowerCase().includes('organizer');
+  for (let i = 0; i < divTags.length; i++) {
+    const key = divTags[i].getAttribute('key');
+    const dataEmail = divTags[i].getAttribute('data-email');
+    const ariaLabel = divTags[i].getAttribute('aria-label');
+    const isInvitee = key && dataEmail && key === dataEmail;
+    let isSelf = ariaLabel && ariaLabel.toLocaleLowerCase().includes('organizer');
 
     if (isInvitee && !isSelf) {
       return true;
@@ -125,7 +125,7 @@ function hasInvitee() {
 }
 
 function dispatchMouseEvent(target, var_args) {
-  var e = document.createEvent("MouseEvents");
+  const e = document.createEvent("MouseEvents");
   // If you need clientX, clientY, etc., you can call
   // initMouseEvent instead of initEvent
   e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));

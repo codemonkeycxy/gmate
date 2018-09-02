@@ -1,14 +1,14 @@
 // self-invoking function to avoid name collision
 (function autoRoomBooking() {
-  var MAX_FAV_ROOMS = 20;
+  const MAX_FAV_ROOMS = 20;
 
   function registerFavoriteRooms() {
-    var initialRooms = getSelectedRooms();
+    const initialRooms = getSelectedRooms();
     addSaveListener(initialRooms);
   }
 
   function bookFavoriteRoom() {
-    var existingRooms = getSelectedRooms();
+    const existingRooms = getSelectedRooms();
     if (isEdit() || !isEmpty(existingRooms)) {
       // the user is trying to edit an existing meeting; don't auto book room in this case
       return;
@@ -20,12 +20,12 @@
   }
 
   function clickRoomsTab() {
-    var roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
+    const roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
     dispatchMouseEvent(roomsTab, 'click', true, true);
   }
 
   function clickGuestsTab() {
-    var roomsTab = document.querySelectorAll('[aria-label="Guests"]')[0];
+    const roomsTab = document.querySelectorAll('[aria-label="Guests"]')[0];
     dispatchMouseEvent(roomsTab, 'click', true, true);
   }
 
@@ -39,7 +39,7 @@
       return false;
     }
 
-    var suggestedRooms = getSuggestedRooms();
+    const suggestedRooms = getSuggestedRooms();
     selectRoom(suggestedRooms, function (favRoom) {
       if (favRoom) {
         dispatchMouseEvent(favRoom, 'click', true, true);
@@ -49,13 +49,13 @@
   }
 
   function getSuggestedRooms() {
-    var roomElements = getElementByText(
+    const roomElements = getElementByText(
       'div', 'Updating room suggestions'
     ).parentElement.nextSibling.children[0].children;
 
     // convert html element collection to standard array
-    var roomList = [];
-    for (var i = 0; i < roomElements.length; i++) {
+    const roomList = [];
+    for (let i = 0; i < roomElements.length; i++) {
       roomList.push(roomElements[i]);
     }
 
@@ -70,22 +70,22 @@
 
   function filterRooms(rooms, cb) {
     getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, function (result) {
-      var positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-      var negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
+      const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+      const negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
 
       if (positiveFilter) {
-        var posRe = new RegExp(positiveFilter);
+        const posRe = new RegExp(positiveFilter);
         rooms = rooms.filter(function (room) {
-          var roomName = room.getAttribute('data-name');
+          const roomName = room.getAttribute('data-name');
           // return if name matches with positive filter
           return roomName && roomName.match(posRe);
         });
       }
 
       if (negativeFilter) {
-        var negRe = new RegExp(negativeFilter);
+        const negRe = new RegExp(negativeFilter);
         rooms = rooms.filter(function (room) {
-          var roomName = room.getAttribute('data-name');
+          const roomName = room.getAttribute('data-name');
           // DON'T return if name matches with negative filter
           return roomName && !roomName.match(negRe);
         });
@@ -96,18 +96,18 @@
   }
 
   function pickFavoriteRoom(rooms, cb) {
-    var favoriteRoom;
-    var favorability = -1;
+    let favoriteRoom;
+    let favorability = -1;
 
     getFromStorage({'favorite-rooms': {}}, function (result) {
-      var favRooms = result['favorite-rooms'];
+      const favRooms = result['favorite-rooms'];
       rooms.forEach(function (candidate) {
-        var candidateId = candidate.getAttribute('data-email');
+        const candidateId = candidate.getAttribute('data-email');
         if (!favRooms[candidateId]) {
           return;
         }
 
-        var currFav = favRooms[candidateId].count;
+        const currFav = favRooms[candidateId].count;
         if (candidateId in favRooms && currFav > favorability) {
           favoriteRoom = candidate;
           favorability = currFav;
@@ -123,28 +123,28 @@
   }
 
   function isLoadingRooms() {
-    var loading = getElementByText('div', 'Finding rooms').parentElement;
-    var updating = getElementByText('div', 'Updating room suggestions').parentElement;
+    const loading = getElementByText('div', 'Finding rooms').parentElement;
+    const updating = getElementByText('div', 'Updating room suggestions').parentElement;
 
     return isElementVisible(loading) || isElementVisible(updating);
   }
 
   function noRoomFound() {
-    var noRoom = getElementByText('div', 'No rooms found.');
+    const noRoom = getElementByText('div', 'No rooms found.');
     return isElementVisible(noRoom);
   }
 
   function getSelectedRooms() {
-    var selectedRoomListUI = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
+    let selectedRoomListUI = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
     if (!selectedRoomListUI || !selectedRoomListUI.children) {
       return;
     }
 
-    var selectedRooms = {};
-    for (var i = 0; i < selectedRoomListUI.children.length; i++) {
-      var selectedRoom = selectedRoomListUI.children[i];
-      var roomId = selectedRoom.getAttribute('data-id');
-      var roomName = selectedRoom.getAttribute('aria-label');
+    const selectedRooms = {};
+    for (let i = 0; i < selectedRoomListUI.children.length; i++) {
+      const selectedRoom = selectedRoomListUI.children[i];
+      const roomId = selectedRoom.getAttribute('data-id');
+      const roomName = selectedRoom.getAttribute('aria-label');
 
       selectedRooms[roomId] = {id: roomId, name: roomName.trim()};
     }
@@ -153,16 +153,16 @@
   }
 
   function addSaveListener(initialRooms) {
-    var saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
+    let saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
     if (!saveBtn) {
       return;
     }
 
     saveBtn.addEventListener("click", function (e) {
-      var finalRooms = getSelectedRooms();
-      var selectedRooms = [];
+      const finalRooms = getSelectedRooms();
+      const selectedRooms = [];
 
-      for (var id in finalRooms) {
+      for (let id in finalRooms) {
         if (finalRooms.hasOwnProperty(id) && !initialRooms.hasOwnProperty(id)) {
           // if a room appears in the final list but not in the initial list, it is actively selected by user
           selectedRooms.push(finalRooms[id]);
@@ -177,7 +177,7 @@
 
   function updateFavorability(selectedRooms) {
     getFromStorage({'favorite-rooms': {}}, function (result) {
-      var favoriteRooms = result['favorite-rooms'];
+      const favoriteRooms = result['favorite-rooms'];
 
       selectedRooms.forEach(function (room) {
         updateFavorabilityForOne(room, favoriteRooms);
@@ -189,7 +189,7 @@
   }
 
   function updateFavorabilityForOne(newRoom, favoriteRooms) {
-    var newRoomId = newRoom.id;
+    const newRoomId = newRoom.id;
 
     if (favoriteRooms.hasOwnProperty(newRoomId)) {
       favoriteRooms[newRoomId].count += 1;
@@ -204,7 +204,7 @@
 
       if (Object.keys(favoriteRooms).length >= MAX_FAV_ROOMS) {
         // too many records, evict the least recently updated entry
-        var LRUKey = findTheMostKey(favoriteRooms, function (oldestItemSoFar, currItem) {
+        const LRUKey = findTheMostKey(favoriteRooms, function (oldestItemSoFar, currItem) {
           return oldestItemSoFar.updatedAt < currItem.updatedAt;
         });
 

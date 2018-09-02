@@ -1,7 +1,7 @@
 chrome.tabs.onUpdated.addListener(
   function (tabId, changeInfo, tab) {
-    var isEventPage = tab.url.startsWith('https://calendar.google.com/calendar/r/eventedit');
-    var isLoaded = changeInfo.status === 'complete';
+    const isEventPage = tab.url.startsWith('https://calendar.google.com/calendar/r/eventedit');
+    const isLoaded = changeInfo.status === 'complete';
 
     if (isEventPage && isLoaded) {
       // actions that always happen

@@ -6,13 +6,13 @@
       return;
     }
 
-    var existingZoomId = document.querySelectorAll('[data-initial-value*="https://uber.zoom.us/j/"]')[0];
+    const existingZoomId = document.querySelectorAll('[data-initial-value*="https://uber.zoom.us/j/"]')[0];
     if (existingZoomId) {
       // no action if the meeting is already setup over zoom
       return;
     }
 
-    var zoomBtn = document.getElementById('zoom_schedule_button');
+    const zoomBtn = document.getElementById('zoom_schedule_button');
     if (zoomBtn) {
       dispatchMouseEvent(zoomBtn, 'click', true, true);
     }
