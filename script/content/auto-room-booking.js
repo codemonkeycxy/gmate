@@ -222,7 +222,7 @@
   }
 
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.text === 'event_edit') {
+    if (msg.type === 'event_edit') {
       // give page some time to load
       setTimeout(main, 500);
     }
