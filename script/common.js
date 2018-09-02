@@ -1,14 +1,14 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
-const ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
-const ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
-const GENERATE_ZOOM_ID = 'generate-zoom-id';
+const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
+const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
+const GENERATE_ZOOM_ID = "generate-zoom-id";
 
-const AUTO_ROOM_BOOKING = 'auto-room-booking';
-const REGISTER_FAVORITE_ROOMS = 'register-favorite-rooms';
-const ROOM_BOOKING_FILTER_POSITIVE = 'room-booking-filter-positive-1';
-const ROOM_BOOKING_FILTER_NEGATIVE = 'room-booking-filter-negative';
+const AUTO_ROOM_BOOKING = "auto-room-booking";
+const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
+const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
+const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
@@ -17,8 +17,8 @@ DEFAULT_FEATURE_TOGGLES[GENERATE_ZOOM_ID] = false;
 DEFAULT_FEATURE_TOGGLES[AUTO_ROOM_BOOKING] = false;
 
 const DEFAULT_ROOM_BOOKING_FILTERS = {};
-DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = '';
-DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = '';
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
 
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
 // test results
@@ -35,22 +35,26 @@ DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = '';
 // Date      false
 // function  false
 function isEmpty(val) {
-  if (val === undefined)
-    return true;
+  if (val === undefined) return true;
 
-  if (typeof (val) == 'function' || typeof (val) == 'number' || typeof (val) == 'boolean' || Object.prototype.toString.call(val) === '[object Date]')
+  if (
+    typeof val == "function" ||
+    typeof val == "number" ||
+    typeof val == "boolean" ||
+    Object.prototype.toString.call(val) === "[object Date]"
+  )
     return false;
 
-  if (val == null || val.length === 0)        // null or 0 length array
+  if (val == null || val.length === 0)
+    // null or 0 length array
     return true;
 
-  if (typeof (val) == "object") {
+  if (typeof val == "object") {
     // empty object
 
     let r = true;
 
-    for (let f in val)
-      r = false;
+    for (let f in val) r = false;
 
     return r;
   }
@@ -59,9 +63,11 @@ function isEmpty(val) {
 }
 
 function isElementVisible(element) {
-  const styleStr = element.getAttribute('style');
+  const styleStr = element.getAttribute("style");
 
-  return !styleStr.includes('display: none') && !styleStr.includes('display:none');
+  return (
+    !styleStr.includes("display: none") && !styleStr.includes("display:none")
+  );
 }
 
 // ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
@@ -92,29 +98,34 @@ function getElementByAttr(tagName, attrName, expectedVal) {
 }
 
 function isEdit() {
-  const divTags = document.getElementsByTagName('div');
+  const divTags = document.getElementsByTagName("div");
 
   for (let i = 0; i < divTags.length; i++) {
-    const eventId = divTags[i].getAttribute('data-eventid');
+    const eventId = divTags[i].getAttribute("data-eventid");
 
     if (eventId && window.location.href.includes(eventId)) {
       return true;
     }
   }
 
-  return false
+  return false;
 }
 
 function hasInvitee() {
-  const guestList = getElementByAttr('div', 'aria-label', 'Guests invited to this event.');
-  const divTags = guestList.getElementsByTagName('div');
+  const guestList = getElementByAttr(
+    "div",
+    "aria-label",
+    "Guests invited to this event."
+  );
+  const divTags = guestList.getElementsByTagName("div");
 
   for (let i = 0; i < divTags.length; i++) {
-    const key = divTags[i].getAttribute('key');
-    const dataEmail = divTags[i].getAttribute('data-email');
-    const ariaLabel = divTags[i].getAttribute('aria-label');
+    const key = divTags[i].getAttribute("key");
+    const dataEmail = divTags[i].getAttribute("data-email");
+    const ariaLabel = divTags[i].getAttribute("aria-label");
     const isInvitee = key && dataEmail && key === dataEmail;
-    let isSelf = ariaLabel && ariaLabel.toLocaleLowerCase().includes('organizer');
+    let isSelf =
+      ariaLabel && ariaLabel.toLocaleLowerCase().includes("organizer");
 
     if (isInvitee && !isSelf) {
       return true;
@@ -139,8 +150,10 @@ function dispatchMouseEvent(target, var_args) {
  * @param predicate function (mostItemSoFar, currItem) - if true, throw away the current item
  */
 function findTheMostKey(obj, predicate) {
-  return Object.keys(obj).reduce(function (mostKey, currKey) {
-    return (mostKey === undefined || !predicate(obj[mostKey], obj[currKey])) ? currKey : mostKey;
+  return Object.keys(obj).reduce(function(mostKey, currKey) {
+    return mostKey === undefined || !predicate(obj[mostKey], obj[currKey])
+      ? currKey
+      : mostKey;
   });
 }
 

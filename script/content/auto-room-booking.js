@@ -21,12 +21,12 @@
 
   function clickRoomsTab() {
     const roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
-    dispatchMouseEvent(roomsTab, 'click', true, true);
+    dispatchMouseEvent(roomsTab, "click", true, true);
   }
 
   function clickGuestsTab() {
     const roomsTab = document.querySelectorAll('[aria-label="Guests"]')[0];
-    dispatchMouseEvent(roomsTab, 'click', true, true);
+    dispatchMouseEvent(roomsTab, "click", true, true);
   }
 
   function selectFromSuggestion() {
@@ -40,18 +40,17 @@
     }
 
     const suggestedRooms = getSuggestedRooms();
-    selectRoom(suggestedRooms, function (favRoom) {
+    selectRoom(suggestedRooms, function(favRoom) {
       if (favRoom) {
-        dispatchMouseEvent(favRoom, 'click', true, true);
+        dispatchMouseEvent(favRoom, "click", true, true);
       }
-      clickGuestsTab();  // switch back to guests tab after room booking
+      clickGuestsTab(); // switch back to guests tab after room booking
     });
   }
 
   function getSuggestedRooms() {
-    const roomElements = getElementByText(
-      'div', 'Updating room suggestions'
-    ).parentElement.nextSibling.children[0].children;
+    const roomElements = getElementByText("div", "Updating room suggestions")
+      .parentElement.nextSibling.children[0].children;
 
     // convert html element collection to standard array
     const roomList = [];
@@ -63,20 +62,20 @@
   }
 
   function selectRoom(rooms, cb) {
-    filterRooms(rooms, function (filteredRooms) {
+    filterRooms(rooms, function(filteredRooms) {
       pickFavoriteRoom(filteredRooms, cb);
     });
   }
 
   function filterRooms(rooms, cb) {
-    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, function (result) {
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, function(result) {
       const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
       const negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
 
       if (positiveFilter) {
         const posRe = new RegExp(positiveFilter);
-        rooms = rooms.filter(function (room) {
-          const roomName = room.getAttribute('data-name');
+        rooms = rooms.filter(function(room) {
+          const roomName = room.getAttribute("data-name");
           // return if name matches with positive filter
           return roomName && roomName.match(posRe);
         });
@@ -84,8 +83,8 @@
 
       if (negativeFilter) {
         const negRe = new RegExp(negativeFilter);
-        rooms = rooms.filter(function (room) {
-          const roomName = room.getAttribute('data-name');
+        rooms = rooms.filter(function(room) {
+          const roomName = room.getAttribute("data-name");
           // DON'T return if name matches with negative filter
           return roomName && !roomName.match(negRe);
         });
@@ -99,10 +98,10 @@
     let favoriteRoom;
     let favorability = -1;
 
-    getFromStorage({'favorite-rooms': {}}, function (result) {
-      const favRooms = result['favorite-rooms'];
-      rooms.forEach(function (candidate) {
-        const candidateId = candidate.getAttribute('data-email');
+    getFromStorage({ "favorite-rooms": {} }, function(result) {
+      const favRooms = result["favorite-rooms"];
+      rooms.forEach(function(candidate) {
+        const candidateId = candidate.getAttribute("data-email");
         if (!favRooms[candidateId]) {
           return;
         }
@@ -123,19 +122,22 @@
   }
 
   function isLoadingRooms() {
-    const loading = getElementByText('div', 'Finding rooms').parentElement;
-    const updating = getElementByText('div', 'Updating room suggestions').parentElement;
+    const loading = getElementByText("div", "Finding rooms").parentElement;
+    const updating = getElementByText("div", "Updating room suggestions")
+      .parentElement;
 
     return isElementVisible(loading) || isElementVisible(updating);
   }
 
   function noRoomFound() {
-    const noRoom = getElementByText('div', 'No rooms found.');
+    const noRoom = getElementByText("div", "No rooms found.");
     return isElementVisible(noRoom);
   }
 
   function getSelectedRooms() {
-    let selectedRoomListUI = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
+    let selectedRoomListUI = document.querySelectorAll(
+      '[aria-label="Rooms added to this event."]'
+    )[0];
     if (!selectedRoomListUI || !selectedRoomListUI.children) {
       return;
     }
@@ -143,10 +145,10 @@
     const selectedRooms = {};
     for (let i = 0; i < selectedRoomListUI.children.length; i++) {
       const selectedRoom = selectedRoomListUI.children[i];
-      const roomId = selectedRoom.getAttribute('data-id');
-      const roomName = selectedRoom.getAttribute('aria-label');
+      const roomId = selectedRoom.getAttribute("data-id");
+      const roomName = selectedRoom.getAttribute("aria-label");
 
-      selectedRooms[roomId] = {id: roomId, name: roomName.trim()};
+      selectedRooms[roomId] = { id: roomId, name: roomName.trim() };
     }
 
     return selectedRooms;
@@ -158,7 +160,7 @@
       return;
     }
 
-    saveBtn.addEventListener("click", function (e) {
+    saveBtn.addEventListener("click", function(e) {
       const finalRooms = getSelectedRooms();
       const selectedRooms = [];
 
@@ -176,15 +178,15 @@
   }
 
   function updateFavorability(selectedRooms) {
-    getFromStorage({'favorite-rooms': {}}, function (result) {
-      const favoriteRooms = result['favorite-rooms'];
+    getFromStorage({ "favorite-rooms": {} }, function(result) {
+      const favoriteRooms = result["favorite-rooms"];
 
-      selectedRooms.forEach(function (room) {
+      selectedRooms.forEach(function(room) {
         updateFavorabilityForOne(room, favoriteRooms);
       });
 
       console.log(favoriteRooms);
-      persist({'favorite-rooms': favoriteRooms});
+      persist({ "favorite-rooms": favoriteRooms });
     });
   }
 
@@ -204,7 +206,10 @@
 
       if (Object.keys(favoriteRooms).length >= MAX_FAV_ROOMS) {
         // too many records, evict the least recently updated entry
-        const LRUKey = findTheMostKey(favoriteRooms, function (oldestItemSoFar, currItem) {
+        const LRUKey = findTheMostKey(favoriteRooms, function(
+          oldestItemSoFar,
+          currItem
+        ) {
           return oldestItemSoFar.updatedAt < currItem.updatedAt;
         });
 
@@ -213,7 +218,7 @@
     }
   }
 
-  onMessage(function (msg, sender, sendResponse) {
+  onMessage(function(msg, sender, sendResponse) {
     if (msg.type === AUTO_ROOM_BOOKING) {
       // give page some time to load
       setTimeout(bookFavoriteRoom, 500);
@@ -224,4 +229,4 @@
       setTimeout(registerFavoriteRooms, 500);
     }
   });
-}());
+})();
