@@ -1,5 +1,5 @@
 // self-invoking function to avoid name collision
-(function generateZoomId() {
+(() => {
   function makeZoomMeeting() {
     if (isEdit()) {
       // the user is trying to edit an existing meeting; in this case, no zoom id should be generated
@@ -20,7 +20,7 @@
     }
   }
 
-  onMessage(function(msg, sender, sendResponse) {
+  onMessage((msg, sender, sendResponse) => {
     if (msg.type === GENERATE_ZOOM_ID) {
       // give page some time to load
       setTimeout(makeZoomMeeting, 1000);

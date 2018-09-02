@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## To be released
 
 - [fix] always switch back to "guest" tab even if no room is available
+- [maintenance] styling improvements such as es6, code prettify, etc.
 
 ## 0.0.3.1
 

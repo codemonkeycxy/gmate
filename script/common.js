@@ -65,9 +65,7 @@ function isEmpty(val) {
 function isElementVisible(element) {
   const styleStr = element.getAttribute("style");
 
-  return (
-    !styleStr.includes("display: none") && !styleStr.includes("display:none")
-  );
+  return !styleStr.includes("display: none") && !styleStr.includes("display:none");
 }
 
 // ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
@@ -150,11 +148,9 @@ function dispatchMouseEvent(target, var_args) {
  * @param predicate function (mostItemSoFar, currItem) - if true, throw away the current item
  */
 function findTheMostKey(obj, predicate) {
-  return Object.keys(obj).reduce(function(mostKey, currKey) {
-    return mostKey === undefined || !predicate(obj[mostKey], obj[currKey])
-      ? currKey
-      : mostKey;
-  });
+  return Object.keys(obj).reduce((mostKey, currKey) => mostKey === undefined || !predicate(obj[mostKey], obj[currKey])
+    ? currKey
+    : mostKey);
 }
 
 // wrappers around verbose chrome functions

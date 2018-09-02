@@ -2,7 +2,7 @@
 // ref 2: https://stackoverflow.com/questions/19758028/chrome-extension-get-dom-content
 
 // self-invoking function to avoid name collision
-(function allowGuestModifyEvent() {
+(() => {
   function allowModifyEvent() {
     const modifyEventCheckbox = document.querySelectorAll(
       '[aria-label="Let guests modify the event"]'
@@ -15,7 +15,7 @@
     }
   }
 
-  onMessage(function(msg, sender, sendResponse) {
+  onMessage((msg, sender, sendResponse) => {
     if (msg.type === ALLOW_GUEST_MODIFY_EVENT) {
       // give page some time to load
       setTimeout(allowModifyEvent, 500);

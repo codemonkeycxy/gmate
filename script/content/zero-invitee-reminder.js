@@ -1,12 +1,12 @@
 // self-invoking function to avoid name collision
-(function zeroInviteeReminder() {
+(() => {
   function addSaveListener() {
     let saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
     if (!saveBtn) {
       return;
     }
 
-    saveBtn.addEventListener("click", function(e) {
+    saveBtn.addEventListener("click", e => {
       triggerAction(e);
     });
   }
@@ -19,7 +19,7 @@
     }
   }
 
-  onMessage(function(msg, sender, sendResponse) {
+  onMessage((msg, sender, sendResponse) => {
     if (msg.type === ZERO_INVITEE_REMINDER) {
       // give page some time to load
       setTimeout(addSaveListener, 500);

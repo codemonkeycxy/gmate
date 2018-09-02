@@ -1,5 +1,5 @@
 // self-invoking function to avoid name collision
-(function autoRoomBooking() {
+(() => {
   const MAX_FAV_ROOMS = 20;
 
   function registerFavoriteRooms() {
@@ -40,7 +40,7 @@
     }
 
     const suggestedRooms = getSuggestedRooms();
-    selectRoom(suggestedRooms, function(favRoom) {
+    selectRoom(suggestedRooms, favRoom => {
       if (favRoom) {
         dispatchMouseEvent(favRoom, "click", true, true);
       }
@@ -62,19 +62,19 @@
   }
 
   function selectRoom(rooms, cb) {
-    filterRooms(rooms, function(filteredRooms) {
+    filterRooms(rooms, filteredRooms => {
       pickFavoriteRoom(filteredRooms, cb);
     });
   }
 
   function filterRooms(rooms, cb) {
-    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, function(result) {
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, result => {
       const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
       const negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
 
       if (positiveFilter) {
         const posRe = new RegExp(positiveFilter);
-        rooms = rooms.filter(function(room) {
+        rooms = rooms.filter(room => {
           const roomName = room.getAttribute("data-name");
           // return if name matches with positive filter
           return roomName && roomName.match(posRe);
@@ -83,7 +83,7 @@
 
       if (negativeFilter) {
         const negRe = new RegExp(negativeFilter);
-        rooms = rooms.filter(function(room) {
+        rooms = rooms.filter(room => {
           const roomName = room.getAttribute("data-name");
           // DON'T return if name matches with negative filter
           return roomName && !roomName.match(negRe);
@@ -98,9 +98,9 @@
     let favoriteRoom;
     let favorability = -1;
 
-    getFromStorage({ "favorite-rooms": {} }, function(result) {
+    getFromStorage({ "favorite-rooms": {} }, result => {
       const favRooms = result["favorite-rooms"];
-      rooms.forEach(function(candidate) {
+      rooms.forEach(candidate => {
         const candidateId = candidate.getAttribute("data-email");
         if (!favRooms[candidateId]) {
           return;
@@ -160,7 +160,7 @@
       return;
     }
 
-    saveBtn.addEventListener("click", function(e) {
+    saveBtn.addEventListener("click", e => {
       const finalRooms = getSelectedRooms();
       const selectedRooms = [];
 
@@ -178,10 +178,10 @@
   }
 
   function updateFavorability(selectedRooms) {
-    getFromStorage({ "favorite-rooms": {} }, function(result) {
+    getFromStorage({ "favorite-rooms": {} }, result => {
       const favoriteRooms = result["favorite-rooms"];
 
-      selectedRooms.forEach(function(room) {
+      selectedRooms.forEach(room => {
         updateFavorabilityForOne(room, favoriteRooms);
       });
 
@@ -206,19 +206,17 @@
 
       if (Object.keys(favoriteRooms).length >= MAX_FAV_ROOMS) {
         // too many records, evict the least recently updated entry
-        const LRUKey = findTheMostKey(favoriteRooms, function(
+        const LRUKey = findTheMostKey(favoriteRooms, (
           oldestItemSoFar,
           currItem
-        ) {
-          return oldestItemSoFar.updatedAt < currItem.updatedAt;
-        });
+        ) => oldestItemSoFar.updatedAt < currItem.updatedAt);
 
         delete favoriteRooms[LRUKey];
       }
     }
   }
 
-  onMessage(function(msg, sender, sendResponse) {
+  onMessage((msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
       // give page some time to load
       setTimeout(bookFavoriteRoom, 500);
