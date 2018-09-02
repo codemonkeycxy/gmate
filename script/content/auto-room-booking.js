@@ -2,16 +2,12 @@
 (function autoRoomBooking() {
   var MAX_FAV_ROOMS = 20;
 
-  function main() {
-    registerFavoriteRooms();
-    chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
-      if (settings[AUTO_ROOM_BOOKING]) {
-        triggerAction();
-      }
-    });
+  function registerFavoriteRooms() {
+    var initialRooms = getSelectedRooms();
+    addSaveListener(initialRooms);
   }
 
-  function triggerAction() {
+  function bookFavoriteRoom() {
     var existingRooms = getSelectedRooms();
     if (isEdit() || !isEmpty(existingRooms)) {
       // the user is trying to edit an existing meeting; don't auto book room in this case
@@ -138,11 +134,6 @@
     return isElementVisible(noRoom);
   }
 
-  function registerFavoriteRooms() {
-    var initialRooms = getSelectedRooms();
-    addSaveListener(initialRooms);
-  }
-
   function getSelectedRooms() {
     var selectedRoomListUI = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
     if (!selectedRoomListUI || !selectedRoomListUI.children) {
@@ -192,6 +183,7 @@
         updateFavorabilityForOne(room, favoriteRooms);
       });
 
+      console.log(favoriteRooms);
       chrome.storage.sync.set({'favorite-rooms': favoriteRooms});
     });
   }
@@ -224,7 +216,12 @@
   chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.type === AUTO_ROOM_BOOKING) {
       // give page some time to load
-      setTimeout(main, 500);
+      setTimeout(bookFavoriteRoom, 500);
+    }
+
+    if (msg.type === REGISTER_FAVORITE_ROOMS) {
+      // give page some time to load
+      setTimeout(registerFavoriteRooms, 500);
     }
   });
 }());

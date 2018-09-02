@@ -1,14 +1,6 @@
 // self-invoking function to avoid name collision
 (function generateZoomId() {
   function makeZoomMeeting() {
-    chrome.storage.sync.get(DEFAULT_FEATURE_TOGGLES, function (settings) {
-      if (settings[GENERATE_ZOOM_ID]) {
-        triggerAction();
-      }
-    });
-  }
-
-  function triggerAction() {
     if (isEdit()) {
       // the user is trying to edit an existing meeting; in this case, no zoom id should be generated
       return;

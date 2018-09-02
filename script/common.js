@@ -4,7 +4,9 @@
 var ALLOW_GUEST_MODIFY_EVENT = 'allow-guest-modify-event';
 var ZERO_INVITEE_REMINDER = 'zero-invitee-reminder';
 var GENERATE_ZOOM_ID = 'generate-zoom-id';
+
 var AUTO_ROOM_BOOKING = 'auto-room-booking';
+var REGISTER_FAVORITE_ROOMS = 'register-favorite-rooms';
 var ROOM_BOOKING_FILTER_POSITIVE = 'room-booking-filter-positive-1';
 var ROOM_BOOKING_FILTER_NEGATIVE = 'room-booking-filter-negative';
 
