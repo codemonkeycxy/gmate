@@ -192,7 +192,6 @@
         updateFavorabilityForOne(room, favoriteRooms);
       });
 
-      console.log(favoriteRooms);
       chrome.storage.sync.set({'favorite-rooms': favoriteRooms});
     });
   }
