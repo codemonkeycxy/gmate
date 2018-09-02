@@ -47,8 +47,8 @@
     selectRoom(suggestedRooms, function (favRoom) {
       if (favRoom) {
         dispatchMouseEvent(favRoom, 'click', true, true);
-        clickGuestsTab();  // switch back to guests tab after room booking
       }
+      clickGuestsTab();  // switch back to guests tab after room booking
     });
   }
 
