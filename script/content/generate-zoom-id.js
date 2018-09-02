@@ -32,8 +32,4 @@
       setTimeout(makeZoomMeeting, 1000);
     }
   });
-
-  if (document.URL.startsWith('https://calendar.google.com/calendar/r/eventedit')) {
-    setTimeout(makeZoomMeeting, 1000);
-  }
 }());

@@ -227,8 +227,4 @@
       setTimeout(main, 500);
     }
   });
-
-  if (document.URL.startsWith('https://calendar.google.com/calendar/r/eventedit')) {
-    setTimeout(main, 500);
-  }
 }());

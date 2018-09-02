@@ -29,8 +29,4 @@
       setTimeout(addSaveListener, 500);
     }
   });
-
-  if (document.URL.startsWith('https://calendar.google.com/calendar/r/eventedit')) {
-    setTimeout(addSaveListener, 500);
-  }
 }());
