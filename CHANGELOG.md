@@ -4,18 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## to be released
+
+- [fix] Avoid double trigger events upon meeting edit page exit
+
 ## 0.0.3.2
 
-- [fix] always switch back to "guest" tab even if no room is available
-- [maintenance] styling improvements such as es6, code prettify, etc.
+- [fix] Always switch back to "guest" tab even if no room is available
+- [maintenance] Styling improvements such as es6, code prettify, etc.
 
 ## 0.0.3.1
 
-- [fix] stop treating event organizer and booked rooms as invitees
+- [fix] Stop treating event organizer and booked rooms as invitees
 
 ## 0.0.3.0
 
-- [feature] room selection regex filters
+- [feature] Room selection regex filters
 
 ## 0.0.2.x
 

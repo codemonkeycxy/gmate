@@ -20,6 +20,8 @@ const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
 
+const EDIT_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r/eventedit';
+
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
 // test results
 //---------------
