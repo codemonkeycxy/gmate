@@ -23,25 +23,14 @@ function nextItem() {
   if (toBeFulfilled.length === 0) {
     hibernate();
   } else {
-    loadEvent(toBeFulfilled.shift());
+    loadEventPage(toBeFulfilled.shift());
   }
 }
 
-function loadEvent(eventId) {
+function loadEventPage(eventId) {
   const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
-  function pageLoadListener(tabId, changeInfo, tab) {
-    const isWorker = tabId === workerTabId;
-    const isTargetUrl = tab.url === urlToLoad;
-    const isLoaded = changeInfo.status === "complete";
-
-    if (isWorker && isTargetUrl && isLoaded) {
-      emit(workerTabId, {type: AUTO_ROOM_BOOKING});
-      chrome.tabs.onUpdated.removeListener(pageLoadListener);
-    }
-  }
-  chrome.tabs.onUpdated.addListener(pageLoadListener);
-
+  preparePostLoad(eventId, urlToLoad);
   chrome.tabs.update(workerTabId, {
     url: urlToLoad,
     active: false,
@@ -49,11 +38,34 @@ function loadEvent(eventId) {
   });
 }
 
-onMessage((msg, sender, sendResponse) => {
-  if (msg.type === ROOM_SELECTED) {
-    // todo: filter by event id
-    nextItem();
+function preparePostLoad(eventId, urlToLoad) {
+  function pageLoadListener(tabId, changeInfo, tab) {
+    const isWorker = tabId === workerTabId;
+    const isTargetUrl = tab.url === urlToLoad;
+    const isLoaded = changeInfo.status === "complete";
+
+    if (isWorker && isTargetUrl && isLoaded) {
+      chrome.tabs.onUpdated.removeListener(pageLoadListener);
+      triggerRoomBooking(eventId);
+    }
   }
-});
+  chrome.tabs.onUpdated.addListener(pageLoadListener);
+}
+
+function triggerRoomBooking(eventId) {
+  preparePostTrigger(eventId);
+  emit(workerTabId, {type: AUTO_ROOM_BOOKING});
+}
+
+function preparePostTrigger(eventId) {
+  function roomSelectionListener(msg, sender, sendResponse) {
+    if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
+      chrome.runtime.onMessage.removeListener(roomSelectionListener);
+      nextItem();
+    }
+  }
+
+  chrome.runtime.onMessage.addListener(roomSelectionListener);
+}
 
 nextItem();
