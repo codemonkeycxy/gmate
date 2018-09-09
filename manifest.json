@@ -14,7 +14,10 @@
   "background": {
     "scripts": [
       "script/common.js",
-      "script/background/index.js"
+      "script/background/index.js",
+      "script/background/meeting-scraper.js",
+      "script/background/edit-page-actions.js",
+      "script/background/auto-room-searcher.js"
     ]
   },
   "content_scripts": [
