@@ -27,7 +27,8 @@
         "script/content/allow-guest-modify-event.js",
         "script/content/zero-invitee-reminder.js",
         "script/content/generate-zoom-id.js",
-        "script/content/auto-room-booking.js"
+        "script/content/auto-room-booking.js",
+        "script/content/get-all-meetings.js"
       ]
     }
   ],

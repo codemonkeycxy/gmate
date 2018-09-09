@@ -8,10 +8,24 @@
   }
 
   function bookFavoriteRoom() {
+    // room book criteria
+    // 1) don't book for any meeting that already has a room
+    // 2) don't book for any meeting that I don't own
+    // 3) don't book any meeting that I don't need a room for
+
     const existingRooms = getSelectedRooms();
-    if (isEdit() || !isEmpty(existingRooms)) {
-      // the user is trying to edit an existing meeting; don't auto book room in this case
-      return;
+    if (!isEmpty(existingRooms)) {
+      // 1) don't book for any meeting that already has a room
+      // todo: consider to differentiate action vs no action
+      return sendFinishMessage();
+    }
+
+    if (isEdit()) {
+      if (!isMyMeeting() || !isRoomNeeded()) {
+        // 2) don't book for any meeting that I don't own
+        // 3) don't book any meeting that I don't need a room for
+        return sendFinishMessage();
+      }
     }
 
     clickRoomsTab();
@@ -25,8 +39,18 @@
   }
 
   function clickGuestsTab() {
-    const roomsTab = document.querySelectorAll('[aria-label="Guests"]')[0];
-    dispatchMouseEvent(roomsTab, "click", true, true);
+    const guestTab = document.querySelectorAll('[aria-label="Guests"]')[0];
+    dispatchMouseEvent(guestTab, "click", true, true);
+  }
+
+  function sendFinishMessage() {
+    chrome.runtime.sendMessage({
+      // todo: move constants to common.js
+      type: ROOM_SELECTED,
+      data: {
+        eventId: getEventId()
+      }
+    });
   }
 
   function selectFromSuggestion() {
@@ -45,6 +69,7 @@
         dispatchMouseEvent(favRoom, "click", true, true);
       }
       clickGuestsTab(); // switch back to guests tab after room booking
+      sendFinishMessage();
     });
   }
 

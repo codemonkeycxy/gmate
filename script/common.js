@@ -5,10 +5,13 @@ const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
 const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
+const ROOM_SELECTED = "room-selected";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
+
+const GET_ALL_MEETINGS = "get-all-meetings";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
@@ -20,6 +23,7 @@ const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
 
+const CALENDAR_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r';
 const EDIT_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r/eventedit';
 
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
@@ -98,17 +102,21 @@ function getElementByAttr(tagName, attrName, expectedVal) {
 }
 
 function isEdit() {
-  const divTags = document.getElementsByTagName("div");
+  return Boolean(getEventId());
+}
+
+function getEventId() {
+  const divTags = document.getElementsByTagName('div');
 
   for (let i = 0; i < divTags.length; i++) {
-    const eventId = divTags[i].getAttribute("data-eventid");
+    const eventId = divTags[i].getAttribute('data-eventid');
 
     if (eventId && window.location.href.includes(eventId)) {
-      return true;
+      return eventId;
     }
   }
 
-  return false;
+  return null;
 }
 
 function hasInvitee() {
@@ -170,4 +178,14 @@ function getFromStorage(keys, callback) {
 
 function persist(items) {
   chrome.storage.sync.set(items);
+}
+
+function isMyMeeting() {
+  // if I control what guests can do, that means this is a meeting I own
+  return Boolean(getElementByText('legend', 'Guests can:'));
+}
+
+function isRoomNeeded() {
+  // todo: move constants to common.js
+  return document.documentElement.innerHTML.toLowerCase().includes('i need a room');
 }
