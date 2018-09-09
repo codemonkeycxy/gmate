@@ -28,7 +28,7 @@ function nextItem() {
 }
 
 function loadEvent(eventId) {
-  const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${toBeFulfilled.shift()}`;
+  const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
   function pageLoadListener(tabId, changeInfo, tab) {
     const isWorker = tabId === workerTabId;
