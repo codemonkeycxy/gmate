@@ -17,14 +17,14 @@
     if (!isEmpty(existingRooms)) {
       // 1) don't book for any meeting that already has a room
       // todo: consider to differentiate action vs no action
-      return sendFinishMessage();
+      return sendFinishMessage(NO_ROOM_TO_SELECT);
     }
 
     if (isEdit()) {
       if (!isMyMeeting() || !isRoomNeeded()) {
         // 2) don't book for any meeting that I don't own
         // 3) don't book any meeting that I don't need a room for
-        return sendFinishMessage();
+        return sendFinishMessage(NO_ROOM_TO_SELECT);
       }
     }
 
@@ -43,10 +43,9 @@
     dispatchMouseEvent(guestTab, "click", true, true);
   }
 
-  function sendFinishMessage() {
+  function sendFinishMessage(eventType) {
     chrome.runtime.sendMessage({
-      // todo: move constants to common.js
-      type: ROOM_SELECTED,
+      type: eventType,
       data: {
         eventId: getEventId()
       }
@@ -67,9 +66,11 @@
     selectRoom(suggestedRooms, favRoom => {
       if (favRoom) {
         dispatchMouseEvent(favRoom, "click", true, true);
+        sendFinishMessage(ROOM_SELECTED);
+      } else {
+        sendFinishMessage(NO_ROOM_TO_SELECT);
       }
       clickGuestsTab(); // switch back to guests tab after room booking
-      sendFinishMessage();
     });
   }
 

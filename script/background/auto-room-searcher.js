@@ -61,11 +61,33 @@ function preparePostTrigger(eventId) {
   function roomSelectionListener(msg, sender, sendResponse) {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
+      save(eventId);
+    } else if (msg.type === NO_ROOM_TO_SELECT && msg.data.eventId === eventId) {
+      chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextItem();
     }
   }
 
   chrome.runtime.onMessage.addListener(roomSelectionListener);
+}
+
+function save(eventId) {
+  preparePostSave(eventId);
+  // todo: send extra data such as tab id + event id
+  // todo: do the same for all existing actions
+  emit(workerTabId, {type: SAVE_EDIT});
+}
+
+function preparePostSave(eventId) {
+  function editSavedListener(msg, sender, sendResponse) {
+    const saveDone = msg.type === EDIT_SAVED || msg.type === UNABLE_TO_SAVE;
+    if (saveDone && msg.data.eventId === eventId) {
+      chrome.runtime.onMessage.removeListener(editSavedListener);
+      nextItem();
+    }
+  }
+
+  chrome.runtime.onMessage.addListener(editSavedListener);
 }
 
 nextItem();

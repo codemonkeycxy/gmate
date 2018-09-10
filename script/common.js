@@ -6,10 +6,15 @@ const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
 const ROOM_SELECTED = "room-selected";
+const NO_ROOM_TO_SELECT = "no-room-to-select";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
+
+const SAVE_EDIT = "save-edit";
+const EDIT_SAVED = "edit-saved";
+const UNABLE_TO_SAVE = "unable-to-save";
 
 const GET_ALL_MEETINGS = "get-all-meetings";
 

@@ -18,7 +18,6 @@
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === GET_ALL_MEETINGS) {
-      // give page some time to load (maybe this is not needed?)
       sendResponse(getAllMeetingIds());
     }
   });
