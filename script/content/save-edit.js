@@ -1,40 +1,48 @@
 // self-invoking function to avoid name collision
 (() => {
   function saveEdit() {
+    const eventId = getEventId();
+    const eventName = getEventName();
+
     let saveBtn = document.querySelectorAll('[aria-label="Save"]');
     if (saveBtn.length !== 1) {
-      return sendFinishMessage(UNABLE_TO_SAVE);
+      return sendFinishMessage(UNABLE_TO_SAVE, eventId, eventName);
     }
 
     saveBtn = saveBtn[0];
     dispatchMouseEvent(saveBtn, "click", true, true);
-    setTimeout(confirmSaving, 1000);  // give some time for the confirmation screen to load
+    // give some time for the confirmation screen to load
+    // there are 3 possibilities:
+    // 1) no confirmation page (in case of no invitees)
+    // 2) confirmation to notify invitees
+    // 3) confirmation for recurring meetings + confirmation to notify invitees
+    setTimeout(() => confirmSaving(eventId, eventName), 1000);
   }
 
-  function confirmSaving() {
+  function confirmSaving(eventId, eventName) {
     // todo: set update message to advertise for gmate. don't forget to click "send" instead
     const okBtn = getElementByText('div', "OK");
     const dontSendBtn = getElementByText('div', "Don't send");
     if (okBtn) {
       dispatchMouseEvent(okBtn, "click", true, true);
       // todo: defensively break infinite loop, for this case and for all cases
-      return setTimeout(confirmSaving, 1000);
+      return setTimeout(() => confirmSaving(eventId, eventName), 1000);
     }
 
     if (dontSendBtn) {
       dispatchMouseEvent(dontSendBtn, "click", true, true);
-      return setTimeout(confirmSaving, 1000);
+      return setTimeout(() => confirmSaving(eventId, eventName), 1000);
     }
 
-    sendFinishMessage(EDIT_SAVED);
+    sendFinishMessage(EDIT_SAVED, eventId, eventName);
   }
 
-  function sendFinishMessage(eventType) {
+  function sendFinishMessage(eventType, eventId, eventName) {
     chrome.runtime.sendMessage({
       type: eventType,
       data: {
-        eventId: getEventId(),
-        eventName: getEventName()
+        eventId: eventId,
+        eventName: eventName
       }
     });
   }
