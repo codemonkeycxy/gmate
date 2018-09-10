@@ -15,6 +15,7 @@ chrome.tabs.create({
 // todo: think about network disruption
 // todo: resurrect dead cycles in an event based implementation
 // todo: don't book for meetings in the past
+// todo: add a room booking case: "i need a room" for other people's meetings
 
 function hibernate() {
   console.log('sleep for 5 min');
