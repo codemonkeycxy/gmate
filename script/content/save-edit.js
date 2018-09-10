@@ -8,6 +8,23 @@
 
     saveBtn = saveBtn[0];
     dispatchMouseEvent(saveBtn, "click", true, true);
+    setTimeout(confirmSaving, 1000);  // give some time for the confirmation screen to load
+  }
+
+  function confirmSaving() {
+    // todo: set update message to advertise for gmate. don't forget to click "send" instead
+    const okBtn = getElementByText('div', "OK");
+    const dontSendBtn = getElementByText('div', "Don't send");
+    if (okBtn) {
+      dispatchMouseEvent(okBtn, "click", true, true);
+      return setTimeout(confirmSaving, 1000);
+    }
+
+    if (dontSendBtn) {
+      dispatchMouseEvent(dontSendBtn, "click", true, true);
+      return confirmSaving();
+    }
+
     sendFinishMessage(EDIT_SAVED);
   }
 
