@@ -199,7 +199,8 @@ function isMyMeeting() {
 function isRoomNeeded() {
   // todo: move constants to common.js
   const locationInput = document.querySelectorAll('[aria-label="Location"]')[0];
-  return locationInput.innerHTML.toLowerCase().includes('i need a room');
+  const location = locationInput.getAttribute("value");
+  return location.toLowerCase().includes('i need a room');
 }
 
 function notify(title, msg) {
