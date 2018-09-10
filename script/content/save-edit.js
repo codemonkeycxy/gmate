@@ -22,7 +22,7 @@
 
     if (dontSendBtn) {
       dispatchMouseEvent(dontSendBtn, "click", true, true);
-      return confirmSaving();
+      return setTimeout(confirmSaving, 1000);
     }
 
     sendFinishMessage(EDIT_SAVED);

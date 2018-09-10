@@ -7,7 +7,7 @@ const GENERATE_ZOOM_ID = "generate-zoom-id";
 
 const ROOM_SELECTED = "room-selected";
 const NO_ROOM_FOUND = "no-room-found";
-const NO_NEED_TO_BOOK = "no-need-to-boo";
+const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
