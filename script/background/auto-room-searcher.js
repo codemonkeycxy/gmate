@@ -16,6 +16,9 @@ chrome.tabs.create({
 // todo: resurrect dead cycles in an event based implementation
 // todo: don't book for meetings in the past
 // todo: add a room booking case: "i need a room" for other people's meetings
+// todo: try out google calendar api
+// https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
+// https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
 
 function hibernate() {
   console.log('sleep for 5 min');
