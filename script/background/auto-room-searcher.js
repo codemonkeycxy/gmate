@@ -19,6 +19,7 @@ chrome.tabs.create({
 // todo: try out google calendar api
 // https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
 // https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
+// todo: (maybe) treat user triggered worker tab refresh as a resurrection signal
 
 let lastActiveTs = Date.now();
 
