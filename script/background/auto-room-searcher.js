@@ -20,19 +20,28 @@ chrome.tabs.create({
 // https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
 // https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
 
-function hibernate() {
-  console.log('sleep for 5 min');
-  return setTimeout(nextItem, 5 * 60 * 1000);
+let lastActiveTs = Date.now();
+
+function heartbeat() {
+  if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
+    console.log('worker idle for more than 5 min, resurrecting...');
+    nextItem();
+  }
 }
 
+// fire a heartbeat check every minute
+setInterval(heartbeat, ONE_MIN_MS);
+
 function nextItem() {
+  console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
+  lastActiveTs = Date.now();
+
   if (toBeFulfilled.length === 0) {
-    console.log('to sleep');
-    hibernate();
-  } else {
-    console.log('load next event');
-    loadEventPage(toBeFulfilled.shift());
+    return console.log('no event to fulfill');
   }
+
+  console.log('load next event');
+  loadEventPage(toBeFulfilled.shift());
 }
 
 function loadEventPage(eventId) {
@@ -59,6 +68,7 @@ function preparePostLoad(eventId, urlToLoad) {
       triggerRoomBooking(eventId);
     }
   }
+
   chrome.tabs.onUpdated.addListener(pageLoadListener);
 }
 

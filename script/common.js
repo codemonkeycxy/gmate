@@ -1,6 +1,9 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
+const ONE_MIN_MS = 60 * 1000;
+const FIVE_MIN_MS = 5 * ONE_MIN_MS;
+
 const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
 const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
