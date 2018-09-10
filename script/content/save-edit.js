@@ -17,6 +17,7 @@
     const dontSendBtn = getElementByText('div', "Don't send");
     if (okBtn) {
       dispatchMouseEvent(okBtn, "click", true, true);
+      // todo: defensively break infinite loop, for this case and for all cases
       return setTimeout(confirmSaving, 1000);
     }
 
