@@ -1,6 +1,7 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
+const TEN_SEC_MS = 10 * 1000;
 const ONE_MIN_MS = 60 * 1000;
 const FIVE_MIN_MS = 5 * ONE_MIN_MS;
 
@@ -213,4 +214,8 @@ function notify(title, msg) {
     title: title,
     message: msg
   });
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
 }

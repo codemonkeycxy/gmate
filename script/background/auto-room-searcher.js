@@ -34,16 +34,17 @@ function heartbeat() {
 setInterval(heartbeat, ONE_MIN_MS);
 
 function nextItem() {
-  // todo: throw in a random delay to avoid getting throttled by google
-  console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
-  lastActiveTs = Date.now();
+  setTimeout(() => {
+    console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
+    lastActiveTs = Date.now();
 
-  if (toBeFulfilled.length === 0) {
-    return console.log('no event to fulfill');
-  }
+    if (toBeFulfilled.length === 0) {
+      return console.log('no event to fulfill');
+    }
 
-  console.log('load next event');
-  loadEventPage(toBeFulfilled.shift());
+    console.log('load next event');
+    loadEventPage(toBeFulfilled.shift());
+  }, getRandomInt(TEN_SEC_MS));  // throw in a random delay to avoid getting throttled by Google
 }
 
 function loadEventPage(eventId) {
