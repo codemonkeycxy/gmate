@@ -14,6 +14,7 @@ chrome.tabs.create({
 // https://calendar.google.com/calendar/r/eventedit/Nmw1cHA2YnAxNmhtbGl0cWx1OGthdmNjNWtfMjAxODEwMTFUMjIwMDAwWiB4aW55aUB1YmVyLmNvbQ
 // todo: think about network disruption
 // todo: resurrect dead cycles in an event based implementation
+// todo: don't book for meetings in the past
 
 function hibernate() {
   return setTimeout(nextItem, 5 * 60 * 1000);
@@ -62,7 +63,17 @@ function preparePostTrigger(eventId) {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       save(eventId);
-    } else if (msg.type === NO_ROOM_TO_SELECT && msg.data.eventId === eventId) {
+    }
+
+    if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
+      chrome.runtime.onMessage.removeListener(roomSelectionListener);
+      nextItem();
+    }
+
+    if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
+      // requeue the event to be searched later
+      // todo: this will make toBeFulfilled loop endlessly until a room is booked
+      toBeFulfilled.push(eventId);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextItem();
     }
@@ -80,8 +91,16 @@ function save(eventId) {
 
 function preparePostSave(eventId) {
   function editSavedListener(msg, sender, sendResponse) {
-    const saveDone = msg.type === EDIT_SAVED || msg.type === UNABLE_TO_SAVE;
-    if (saveDone && msg.data.eventId === eventId) {
+    if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
+      // todo: replace eventId with event name and use eventId as a fallback
+      // todo: (maybe) make message a clickable link
+      // todo: throttle notifications by aggregating nearby messages
+      notify('We found a room for you!', eventId);
+      chrome.runtime.onMessage.removeListener(editSavedListener);
+      nextItem();
+    }
+
+    if (msg.type === UNABLE_TO_SAVE && msg.data.eventId === eventId) {
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextItem();
     }

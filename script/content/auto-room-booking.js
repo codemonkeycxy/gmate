@@ -17,14 +17,14 @@
     if (!isEmpty(existingRooms)) {
       // 1) don't book for any meeting that already has a room
       // todo: consider to differentiate action vs no action
-      return sendFinishMessage(NO_ROOM_TO_SELECT);
+      return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
     if (isEdit()) {
       if (!isMyMeeting() || !isRoomNeeded()) {
         // 2) don't book for any meeting that I don't own
         // 3) don't book any meeting that I don't need a room for
-        return sendFinishMessage(NO_ROOM_TO_SELECT);
+        return sendFinishMessage(NO_NEED_TO_BOOK);
       }
     }
 
@@ -68,7 +68,7 @@
         dispatchMouseEvent(favRoom, "click", true, true);
         sendFinishMessage(ROOM_SELECTED);
       } else {
-        sendFinishMessage(NO_ROOM_TO_SELECT);
+        sendFinishMessage(NO_ROOM_FOUND);
       }
       clickGuestsTab(); // switch back to guests tab after room booking
     });
