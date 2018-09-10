@@ -15,7 +15,8 @@
     chrome.runtime.sendMessage({
       type: eventType,
       data: {
-        eventId: getEventId()
+        eventId: getEventId(),
+        eventName: getEventName()
       }
     });
   }

@@ -92,10 +92,9 @@ function save(eventId) {
 function preparePostSave(eventId) {
   function editSavedListener(msg, sender, sendResponse) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
-      // todo: replace eventId with event name and use eventId as a fallback
       // todo: (maybe) make message a clickable link
       // todo: throttle notifications by aggregating nearby messages
-      notify('We found a room for you!', eventId);
+      notify('We found a room for you!', msg.data.eventName || eventId);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextItem();
     }

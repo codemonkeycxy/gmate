@@ -125,6 +125,11 @@ function getEventId() {
   return null;
 }
 
+function getEventName() {
+  const title = document.querySelectorAll('[aria-label="Title"]')[0];
+  return title.getAttribute('value');
+}
+
 function hasInvitee() {
   const guestList = getElementByAttr(
     "div",
