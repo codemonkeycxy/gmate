@@ -23,6 +23,7 @@ chrome.tabs.create({
 let lastActiveTs = Date.now();
 
 function heartbeat() {
+  console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
     nextItem();
