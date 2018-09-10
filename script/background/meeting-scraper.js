@@ -9,6 +9,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
   if (isCalendarPage && !isEventPage && isLoaded) {
     chrome.tabs.sendMessage(tabId, {type: GET_ALL_MEETINGS}, null, meetingIds =>
+      // todo: handle undefined meetingIds
       meetingIds.forEach(id => {
         if (!toBeFulfilled.includes(id)) {
           toBeFulfilled.push(id);
