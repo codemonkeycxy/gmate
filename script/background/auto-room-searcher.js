@@ -20,6 +20,9 @@ chrome.tabs.create({
 // https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
 // https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
 // todo: (maybe) treat user triggered worker tab refresh as a resurrection signal
+// todo: (maybe) auto room booking should ignore rejected rooms (think if this is Uber specific)
+// todo: make sure get_all_meetings is triggered after a new event is created
+// todo: persist frontend thread crash log
 
 let lastActiveTs = Date.now();
 
@@ -99,6 +102,7 @@ function preparePostTrigger(eventId) {
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // requeue the event to be searched later
       // todo: this will make toBeFulfilled loop endlessly until a room is booked
+      // todo: don't requeue if the event is already in
       console.log(`no room found for ${eventId}. requeuing`);
       toBeFulfilled.push(eventId);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
