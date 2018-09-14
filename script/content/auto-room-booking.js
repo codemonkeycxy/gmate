@@ -28,18 +28,34 @@
       }
     }
 
-    tryUntilPass(isRoomTabLoaded, clickRoomsTab);
+    tryUntilPass(getRoomsTab, clickRoomsTab);
     // wait for room tab to activate
-    tryUntilPass(isRoomSuggestionLoaded, selectFromSuggestion);
+    tryUntilPass(() => isRoomSuggestionLoaded() && hasNoRoomFlag(), selectFromSuggestion);
   }
 
-  function isRoomTabLoaded() {
-    return !!document.querySelectorAll('[aria-label="Rooms"]')[0];
+  function getRoomsTab() {
+    return document.querySelectorAll('[aria-label="Rooms"]')[0];
   }
 
   function clickRoomsTab() {
-    const roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
+    const roomsTab = getRoomsTab();
     dispatchMouseEvent(roomsTab, "click", true, true);
+  }
+
+  function getNoRoomFlag() {
+    return getElementByText("div", "No rooms found.");
+  }
+
+  function hasNoRoomFlag() {
+    // I occasionally run into situations that getNoRoomFlag returns me a result but it doesn't have the "style"
+    // attribute, which further checks rely on down the line. So I'm forced to create this function as a prerequisite
+    const flag = getNoRoomFlag();
+    return flag && flag.hasAttribute('style');
+  }
+
+  function noRoomFound() {
+    const noRoom = getNoRoomFlag();
+    return isElementVisible(noRoom);
   }
 
   function isGuestTabLoaded() {
@@ -159,11 +175,6 @@
       // in case elements are not found
       return false;
     }
-  }
-
-  function noRoomFound() {
-    const noRoom = getElementByText("div", "No rooms found.");
-    return isElementVisible(noRoom);
   }
 
   function getSelectedRooms() {
