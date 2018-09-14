@@ -111,6 +111,10 @@ function getElementByAttr(tagName, attrName, expectedVal) {
   return null;
 }
 
+function isEventPageLoaded() {
+  return !!getElementByText('span', 'Event details');
+}
+
 function isEdit() {
   return Boolean(getEventId());
 }

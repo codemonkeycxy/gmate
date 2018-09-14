@@ -142,4 +142,4 @@ function preparePostSave(eventId) {
   chrome.runtime.onMessage.addListener(editSavedListener);
 }
 
-nextItem();
+tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);

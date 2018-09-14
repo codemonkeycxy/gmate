@@ -261,13 +261,11 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      // give page some time to load
-      setTimeout(bookFavoriteRoom, 500);
+      tryUntilPass(isEventPageLoaded, bookFavoriteRoom);
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
-      // give page some time to load
-      setTimeout(registerFavoriteRooms, 500);
+      tryUntilPass(isEventPageLoaded, registerFavoriteRooms);
     }
   });
 })();
