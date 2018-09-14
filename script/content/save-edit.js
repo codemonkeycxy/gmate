@@ -16,7 +16,7 @@
     // 1) no confirmation page (in case of no invitees)
     // 2) confirmation to notify invitees
     // 3) confirmation for recurring meetings + confirmation to notify invitees
-    setTimeout(() => confirmSaving(eventId, eventName), 1000);
+    setTimeout(() => confirmSaving(eventId, eventName), 2000);
   }
 
   function confirmSaving(eventId, eventName) {
@@ -26,12 +26,12 @@
     if (okBtn) {
       dispatchMouseEvent(okBtn, "click", true, true);
       // todo: defensively break infinite loop, for this case and for all cases
-      return setTimeout(() => confirmSaving(eventId, eventName), 1000);
+      return setTimeout(() => confirmSaving(eventId, eventName), 2000);
     }
 
     if (dontSendBtn) {
       dispatchMouseEvent(dontSendBtn, "click", true, true);
-      return setTimeout(() => confirmSaving(eventId, eventName), 1000);
+      return setTimeout(() => confirmSaving(eventId, eventName), 2000);
     }
 
     sendFinishMessage(EDIT_SAVED, eventId, eventName);

@@ -28,14 +28,22 @@
       }
     }
 
-    clickRoomsTab();
+    tryUntilPass(isRoomTabLoaded, clickRoomsTab);
     // wait for room tab to activate
-    setTimeout(selectFromSuggestion, 500);
+    tryUntilPass(isRoomSuggestionLoaded, selectFromSuggestion);
+  }
+
+  function isRoomTabLoaded() {
+    return !!document.querySelectorAll('[aria-label="Rooms"]')[0];
   }
 
   function clickRoomsTab() {
     const roomsTab = document.querySelectorAll('[aria-label="Rooms"]')[0];
     dispatchMouseEvent(roomsTab, "click", true, true);
+  }
+
+  function isGuestTabLoaded() {
+    return !!document.querySelectorAll('[aria-label="Guests"]')[0];
   }
 
   function clickGuestsTab() {
@@ -53,11 +61,6 @@
   }
 
   function selectFromSuggestion() {
-    if (isLoadingRooms()) {
-      // room suggestion is still loading, check again later
-      return setTimeout(selectFromSuggestion, 500);
-    }
-
     if (noRoomFound()) {
       return false;
     }
@@ -70,7 +73,7 @@
       } else {
         sendFinishMessage(NO_ROOM_FOUND);
       }
-      clickGuestsTab(); // switch back to guests tab after room booking
+      tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
     });
   }
 
@@ -147,12 +150,15 @@
     });
   }
 
-  function isLoadingRooms() {
-    const loading = getElementByText("div", "Finding rooms").parentElement;
-    const updating = getElementByText("div", "Updating room suggestions")
-      .parentElement;
-
-    return isElementVisible(loading) || isElementVisible(updating);
+  function isRoomSuggestionLoaded() {
+    try {
+      const loading = getElementByText("div", "Finding rooms").parentElement;
+      const updating = getElementByText("div", "Updating room suggestions").parentElement;
+      return !isElementVisible(loading) && !isElementVisible(updating);
+    } catch (e) {
+      // in case elements are not found
+      return false;
+    }
   }
 
   function noRoomFound() {

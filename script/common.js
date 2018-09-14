@@ -219,3 +219,25 @@ function notify(title, msg) {
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
+
+function tryUntilPass(predicate, callback, sleepMs, countdown) {
+  sleepMs = sleepMs || 500;
+  countdown = countdown || 10;
+
+  _tryUntilPassRecursive(predicate, callback, sleepMs, countdown);
+}
+
+function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown) {
+  if (countdown === 0) {
+    throw new Error('tryUntilPass ran into infinite loop. force break...');
+  }
+
+  if (!predicate()) {
+    setTimeout(
+      _tryUntilPassRecursive(predicate, callback, sleepMs, countdown - 1),
+      sleepMs
+    );
+  } else {
+    callback();
+  }
+}
