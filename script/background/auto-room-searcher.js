@@ -20,8 +20,10 @@ function startWorker() {
     url: CALENDAR_PAGE_URL_PREFIX,
     active: false,
     pinned: true
-  }, tab => workerTabId = tab.id);
-  tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);
+  }, tab => {
+    workerTabId = tab.id;
+    tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);
+  });
 }
 
 function stopWorker() {
@@ -58,8 +60,8 @@ function heartbeat() {
   }
 }
 
-function getNapFillers(napCount) {
-  return Array(napCount).fill(NAP);
+function getNapFillers(napMinutes) {
+  return Array(napMinutes).fill(NAP);
 }
 
 // fire a heartbeat check every minute
