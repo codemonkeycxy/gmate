@@ -22,7 +22,7 @@ function startWorker() {
     pinned: true
   }, tab => {
     workerTabId = tab.id;
-    tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);
+    tryUntilPass(() => toBeFulfilled.length > 0, nextTask, 1000, 20);
   });
 }
 
@@ -56,18 +56,35 @@ function heartbeat() {
   console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
-    nextItem();
+    nextTask();
   }
 }
 
 function getNapFillers(napMinutes) {
+  console.log(`trying to add a ${napMinutes} minutes nap to the task queue...`);
+
+  const avgEventTaskTime = 1/6;
+  let timeToCompletion = 0;
+
+  toBeFulfilled.forEach(task => {
+    timeToCompletion += task === NAP ? 1 : avgEventTaskTime;
+  });
+  timeToCompletion = Math.round(timeToCompletion);
+
+  if (timeToCompletion >= napMinutes) {
+    console.log(`just kidding. it will already take ${timeToCompletion} minutes to complete the current tasks. no need to nap more`);
+    return [];
+  }
+
+  napMinutes = timeToCompletion - napMinutes;
+  console.log(`given the current tasks will ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
   return Array(napMinutes).fill(NAP);
 }
 
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
 
-function nextItem() {
+function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
   lastActiveTs = Date.now();
 
@@ -82,7 +99,7 @@ function nextItem() {
   const nextAction = toBeFulfilled.shift();
   if (nextAction === NAP) {
     console.log('nap for one min');
-    return setTimeout(nextItem, ONE_MIN_MS);
+    return setTimeout(nextTask, ONE_MIN_MS);
   }
 
   setTimeout(() => {
@@ -136,7 +153,7 @@ function preparePostTrigger(eventId) {
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
       console.log(`no need to book for ${eventId}`);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextItem();
+      nextTask();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
@@ -149,7 +166,7 @@ function preparePostTrigger(eventId) {
       }
 
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextItem();
+      nextTask();
     }
   }
 
@@ -175,13 +192,13 @@ function preparePostSave(eventId) {
       // add some buffer so we don't turn this into an arms race
       toBeFulfilled.unshift(...getNapFillers(60));
 
-      nextItem();
+      nextTask();
     }
 
     if (msg.type === UNABLE_TO_SAVE && msg.data.eventId === eventId) {
       console.log(`unable to save for ${msg.data.eventName}`);
       chrome.runtime.onMessage.removeListener(editSavedListener);
-      nextItem();
+      nextTask();
     }
   }
 
