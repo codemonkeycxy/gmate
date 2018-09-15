@@ -47,7 +47,6 @@ function stopWorker() {
     workerTabId = null;
   });
 }
-// ==================== worker management ======================
 
 // todo: add start and stop control on settings
 // todo: don't book for meetings in the past
@@ -63,6 +62,8 @@ function stopWorker() {
 // todo: estimate time to complete and add at least a 5min buffer for requeued items
 // todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
 
+// ==================== heartbeat ======================
+
 let lastActiveTs = Date.now();
 
 function heartbeat() {
@@ -73,29 +74,11 @@ function heartbeat() {
   }
 }
 
-function getNapFillers(napMinutes) {
-  console.log(`trying to add a ${napMinutes} minutes nap to the task queue...`);
-
-  const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
-  let timeToCompletion = 0;
-
-  toBeFulfilled.forEach(task => {
-    timeToCompletion += task === NAP ? 1 : avgEventTaskTime;
-  });
-  timeToCompletion = Math.round(timeToCompletion);
-
-  if (timeToCompletion >= napMinutes) {
-    console.log(`just kidding. it will already take ${timeToCompletion} minutes to complete the current tasks. no need to nap more`);
-    return [];
-  }
-
-  napMinutes = timeToCompletion - napMinutes;
-  console.log(`given the current tasks will ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
-  return Array(napMinutes).fill(NAP);
-}
-
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
+
+
+// ==================== state machine ======================
 
 function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
@@ -219,4 +202,28 @@ function preparePostSave(eventId) {
   }
 
   chrome.runtime.onMessage.addListener(editSavedListener);
+}
+
+// ==================== helpers ======================
+
+function estimateTimeToCompletion() {
+  const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
+  let timeToCompletion = 0;
+
+  toBeFulfilled.forEach(task => timeToCompletion += task === NAP ? 1 : avgEventTaskTime);
+  return Math.round(timeToCompletion);
+}
+
+function getNapFillers(napMinutes) {
+  console.log(`trying to add a ${napMinutes} minutes nap to the task queue...`);
+
+  const timeToCompletion = estimateTimeToCompletion();
+  if (timeToCompletion >= napMinutes) {
+    console.log(`just kidding. it will already take ${timeToCompletion} minutes to complete the current tasks. no need to nap more`);
+    return [];
+  }
+
+  napMinutes = timeToCompletion - napMinutes;
+  console.log(`given the current tasks will ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
+  return Array(napMinutes).fill(NAP);
 }
