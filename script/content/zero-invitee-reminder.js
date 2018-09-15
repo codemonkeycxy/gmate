@@ -1,14 +1,13 @@
 // self-invoking function to avoid name collision
 (() => {
   function addSaveListener() {
-    const saveBtn = getSaveButton();
-    if (!saveBtn) {
-      return;
-    }
-
-    saveBtn.addEventListener("click", e => {
+    getSaveButton().addEventListener("click", e => {
       triggerAction(e);
     });
+  }
+
+  function getSaveButton() {
+    return document.querySelectorAll('[aria-label="Save"]')[0];
   }
 
   function triggerAction(e) {

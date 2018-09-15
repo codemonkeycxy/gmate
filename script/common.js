@@ -13,7 +13,9 @@ const ROOM_SELECTED = "room-selected";
 const NO_ROOM_FOUND = "no-room-found";
 const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
+const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
+const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
@@ -135,10 +137,6 @@ function getEventId() {
   return null;
 }
 
-function getSaveButton() {
-  return document.querySelectorAll('[aria-label="Save"]')[0];
-}
-
 function getEventName() {
   const title = document.querySelectorAll('[aria-label="Title"]')[0];
   return title.getAttribute('value');
@@ -174,6 +172,10 @@ function dispatchMouseEvent(target, var_args) {
   // initMouseEvent instead of initEvent
   e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));
   target.dispatchEvent(e);
+}
+
+function insertAfter(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
 /**

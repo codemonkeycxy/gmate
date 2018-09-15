@@ -62,10 +62,26 @@ function stopWorker() {
 // todo: estimate time to complete and add at least a 5min buffer for requeued items
 // todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
 // todo: add google analytics on queue size and other user behaviors
-// todo: convert regex to more user-friendly settings (use google sheet condition as a reference)
+// todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
 // todo: allow per "i need a room" regex setting
 // todo: show a to-be-fulfilled list
 // todo: notify on each new "i need a room"
+// todo: (maybe) register "i need a room" not just when creating new meetings but also when editing existing meetings
+
+// ==================== Task Queue Management ======================
+// todo: (maybe) persist toBeFulfilled
+onMessage((msg, sender, sendResponse) => {
+  if (msg.type === ROOM_TO_BE_FULFILLED) {
+    notify('You are all set!', 'we will work hard to book a room for you on the background');
+
+    const eventId = msg.data.eventId;
+    if (!toBeFulfilled.includes(eventId)) {
+      // todo: start worker if there's toBeFulfilled, close worker if there's no toBeFulfilled
+      toBeFulfilled.push(eventId);
+    }
+  }
+});
+
 
 // ==================== heartbeat ======================
 
@@ -208,7 +224,7 @@ function preparePostSave(eventId) {
     }
   }
 
-  chrome.runtime.onMessage.addListener(editSavedListener);
+  onMessage(editSavedListener);
 }
 
 // ==================== helpers ======================

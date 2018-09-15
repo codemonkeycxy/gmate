@@ -30,7 +30,8 @@
         "script/content/zero-invitee-reminder.js",
         "script/content/generate-zoom-id.js",
         "script/content/auto-room-booking.js",
-        "script/content/save-edit.js"
+        "script/content/save-edit.js",
+        "script/content/register-meeting-to-book.js"
       ]
     }
   ],

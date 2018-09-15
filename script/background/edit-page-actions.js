@@ -30,6 +30,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     // actions that always happen
     emit(tabId, {type: REGISTER_FAVORITE_ROOMS});
+    emit(tabId, {type: REGISTER_MEETING_TO_BOOK});
 
     // actions controlled by feature toggles
     getFromStorage(DEFAULT_FEATURE_TOGGLES, settings => {
