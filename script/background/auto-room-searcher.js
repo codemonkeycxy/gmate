@@ -64,6 +64,8 @@ function stopWorker() {
 // todo: add google analytics on queue size and other user behaviors
 // todo: convert regex to more user-friendly settings (use google sheet condition as a reference)
 // todo: allow per "i need a room" regex setting
+// todo: show a to-be-fulfilled list
+// todo: notify on each new "i need a room"
 
 // ==================== heartbeat ======================
 
