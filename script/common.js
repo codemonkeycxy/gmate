@@ -25,8 +25,6 @@ const START_WORKER = "start-worker";
 const STOP_WORKER = "stop-worker";
 const NAP = "nap";
 
-const GET_ALL_MEETINGS = "get-all-meetings";
-
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;
