@@ -1,12 +1,14 @@
 // self-invoking function to avoid name collision
 (() => {
+  let eventToFulfill = null;
+
   function addNeedRoomListener() {
     const locationInput = getLocationInput();
     const needRoomButton = document.createElement('button');
 
     needRoomButton.textContent = "I need a room";
     insertAfter(needRoomButton, locationInput);
-    needRoomButton.addEventListener("click", () => registerRoomToBeFulfilled());
+    needRoomButton.addEventListener("click", () => eventToFulfill = getEventId() || 'no id yet');
   }
 
   function getLocationInput() {

@@ -4,12 +4,7 @@
     const eventId = getEventId();
     const eventName = getEventName();
 
-    let saveBtn = document.querySelectorAll('[aria-label="Save"]');
-    if (saveBtn.length !== 1) {
-      return sendFinishMessage(UNABLE_TO_SAVE, eventId, eventName);
-    }
-
-    saveBtn = saveBtn[0];
+    const saveBtn = getSaveButton();
     dispatchMouseEvent(saveBtn, "click", true, true);
     // give some time for the confirmation screen to load
     // there are 3 possibilities:
@@ -49,7 +44,7 @@
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === SAVE_EDIT) {
-      saveEdit();
+      tryUntilPass(getSaveButton, saveEdit);
     }
   });
 })();

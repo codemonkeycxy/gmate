@@ -21,7 +21,6 @@ const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
-const UNABLE_TO_SAVE = "unable-to-save";
 
 const START_WORKER = "start-worker";
 const STOP_WORKER = "stop-worker";
@@ -164,6 +163,10 @@ function hasInvitee() {
   }
 
   return false;
+}
+
+function getSaveButton() {
+  return document.querySelectorAll('[aria-label="Save"]')[0];
 }
 
 function dispatchMouseEvent(target, var_args) {

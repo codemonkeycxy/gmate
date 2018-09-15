@@ -227,12 +227,6 @@ function preparePostSave(eventId) {
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
-
-    if (msg.type === UNABLE_TO_SAVE && msg.data.eventId === eventId) {
-      console.log(`unable to save for ${msg.data.eventName}`);
-      chrome.runtime.onMessage.removeListener(editSavedListener);
-      nextTask();
-    }
   }
 
   onMessage(editSavedListener);

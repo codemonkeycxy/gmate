@@ -6,10 +6,6 @@
     });
   }
 
-  function getSaveButton() {
-    return document.querySelectorAll('[aria-label="Save"]')[0];
-  }
-
   function triggerAction(e) {
     if (!hasInvitee()) {
       e.preventDefault();
