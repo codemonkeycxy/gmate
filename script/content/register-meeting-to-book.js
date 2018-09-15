@@ -3,8 +3,9 @@
   function addNeedRoomListener() {
     const locationInput = getLocationInput();
     const needRoomButton = document.createElement('button');
-    insertAfter(needRoomButton, locationInput);
 
+    needRoomButton.textContent = "I need a room";
+    insertAfter(needRoomButton, locationInput);
     needRoomButton.addEventListener("click", () => registerRoomToBeFulfilled());
   }
 
