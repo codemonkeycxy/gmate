@@ -84,7 +84,7 @@ onMessage((msg, sender, sendResponse) => {
       return;
     }
 
-    toBeFulfilled.push(eventId);
+    toBeFulfilled.push(...getNapFillers(5), eventId);
     if (!workerTabId) {
       startWorker();
     }
