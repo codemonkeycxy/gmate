@@ -1,4 +1,4 @@
-chrome.extension.onConnect.addListener(port => {
+chrome.extension.onConnect.addListener(port =>
   port.onMessage.addListener(msg => {
     if (msg.type === START_WORKER) {
       startWorker();
@@ -7,8 +7,8 @@ chrome.extension.onConnect.addListener(port => {
     if (msg.type === STOP_WORKER) {
       stopWorker();
     }
-  });
-});
+  })
+);
 
 function startWorker() {
   if (workerTabId) {
@@ -58,6 +58,10 @@ function heartbeat() {
   }
 }
 
+function getNapFillers(napCount) {
+  return Array(napCount).fill(NAP);
+}
+
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
 
@@ -73,9 +77,15 @@ function nextItem() {
     return console.log('no event to fulfill');
   }
 
+  const nextAction = toBeFulfilled.shift();
+  if (nextAction === NAP) {
+    console.log('nap for one min');
+    return setTimeout(nextItem, ONE_MIN_MS);
+  }
+
   setTimeout(() => {
     console.log('load next event');
-    loadEventPage(toBeFulfilled.shift());
+    loadEventPage(nextAction);
   }, getRandomInt(TEN_SEC_MS));  // throw in a random delay to avoid getting throttled by Google
 }
 
@@ -129,11 +139,13 @@ function preparePostTrigger(eventId) {
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // requeue the event to be searched later
-      // todo: this will make toBeFulfilled loop endlessly until a room is booked
       console.log(`no room found for ${eventId}. requeuing`);
+
       if (!toBeFulfilled.includes(eventId)) {
-        toBeFulfilled.push(eventId);
+        // add some buffer so that we don't retry immediately
+        toBeFulfilled.push(...getNapFillers(5), eventId);
       }
+
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextItem();
     }
@@ -156,7 +168,11 @@ function preparePostSave(eventId) {
       // todo: (maybe) make message a clickable link
       console.log(`room saved for ${msg.data.eventName}`);
       notify('We found a room for you!', msg.data.eventName || eventId);
+
       chrome.runtime.onMessage.removeListener(editSavedListener);
+      // add some buffer so we don't turn this into an arms race
+      toBeFulfilled.unshift(...getNapFillers(60));
+
       nextItem();
     }
 

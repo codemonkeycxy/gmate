@@ -23,6 +23,7 @@ const UNABLE_TO_SAVE = "unable-to-save";
 
 const START_WORKER = "start-worker";
 const STOP_WORKER = "stop-worker";
+const NAP = "nap";
 
 const GET_ALL_MEETINGS = "get-all-meetings";
 
