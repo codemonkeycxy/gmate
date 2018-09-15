@@ -61,6 +61,9 @@ function stopWorker() {
 // todo: persist toBeFulfilled
 // todo: estimate time to complete and add at least a 5min buffer for requeued items
 // todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
+// todo: add google analytics on queue size and other user behaviors
+// todo: convert regex to more user-friendly settings (use google sheet condition as a reference)
+// todo: allow per "i need a room" regex setting
 
 // ==================== heartbeat ======================
 
@@ -80,16 +83,18 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 // ==================== state machine ======================
 
+// todo: add guards against race condition between heartbeat and nap
+// todo: consider retiring super old tasks
 function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
   lastActiveTs = Date.now();
 
   if (!workerTabId) {
-    return console.log('worker not available');
+    return console.log('worker not available. processing paused');
   }
 
   if (toBeFulfilled.length === 0) {
-    return console.log('no event to fulfill');
+    return console.log('no task to fulfill. waiting for new tasks to come in');
   }
 
   const nextAction = toBeFulfilled.shift();
