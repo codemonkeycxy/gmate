@@ -135,6 +135,10 @@ function getEventId() {
   return null;
 }
 
+function getSaveButton() {
+  return document.querySelectorAll('[aria-label="Save"]')[0];
+}
+
 function getEventName() {
   const title = document.querySelectorAll('[aria-label="Title"]')[0];
   return title.getAttribute('value');

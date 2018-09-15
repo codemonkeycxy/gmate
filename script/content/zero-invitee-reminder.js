@@ -1,7 +1,7 @@
 // self-invoking function to avoid name collision
 (() => {
   function addSaveListener() {
-    const saveBtn = document.querySelectorAll('[aria-label="Save"]')[0];
+    const saveBtn = getSaveButton();
     if (!saveBtn) {
       return;
     }
@@ -21,8 +21,7 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === ZERO_INVITEE_REMINDER) {
-      // give page some time to load
-      setTimeout(addSaveListener, 500);
+      tryUntilPass(getSaveButton, addSaveListener)
     }
   });
 })();
