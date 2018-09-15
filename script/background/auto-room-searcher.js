@@ -211,9 +211,6 @@ function preparePostSave(eventId) {
       notify('We found a room for you!', msg.data.eventName || eventId);
 
       chrome.runtime.onMessage.removeListener(editSavedListener);
-      // add some buffer so we don't turn this into an arms race
-      toBeFulfilled.unshift(...getNapFillers(60));
-
       nextTask();
     }
 
