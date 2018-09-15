@@ -24,6 +24,7 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
+      // todo: (maybe) bug: button disappears on page refresh (due to leavingEventPage logic)
       tryUntilPass(getLocationInput, addNeedRoomListener)
     }
   });
