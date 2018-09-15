@@ -1,16 +1,4 @@
 // ==================== worker management ======================
-chrome.extension.onConnect.addListener(port =>
-  port.onMessage.addListener(msg => {
-    if (msg.type === START_WORKER) {
-      startWorker();
-    }
-
-    if (msg.type === STOP_WORKER) {
-      stopWorker();
-    }
-  })
-);
-
 chrome.tabs.onRemoved.addListener(tabId => {
   if (tabId === workerTabId) {
     stopWorker();

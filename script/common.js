@@ -23,8 +23,6 @@ const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
 
-const START_WORKER = "start-worker";
-const STOP_WORKER = "stop-worker";
 const NAP = "nap";
 
 const DEFAULT_FEATURE_TOGGLES = {};
