@@ -97,9 +97,10 @@ function preparePostTrigger(eventId) {
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // requeue the event to be searched later
       // todo: this will make toBeFulfilled loop endlessly until a room is booked
-      // todo: don't requeue if the event is already in
       console.log(`no room found for ${eventId}. requeuing`);
-      toBeFulfilled.push(eventId);
+      if (!toBeFulfilled.includes(eventId)) {
+        toBeFulfilled.push(eventId);
+      }
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextItem();
     }
@@ -120,7 +121,6 @@ function preparePostSave(eventId) {
   function editSavedListener(msg, sender, sendResponse) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       // todo: (maybe) make message a clickable link
-      // todo: throttle notifications by aggregating nearby messages
       console.log(`room saved for ${msg.data.eventName}`);
       notify('We found a room for you!', msg.data.eventName || eventId);
       chrome.runtime.onMessage.removeListener(editSavedListener);
