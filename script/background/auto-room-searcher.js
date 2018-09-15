@@ -72,10 +72,14 @@ function stopWorker() {
 // todo: (maybe) persist toBeFulfilled
 onMessage((msg, sender, sendResponse) => {
   if (msg.type === ROOM_TO_BE_FULFILLED) {
+    const eventId = msg.data.eventId;
+    if (!eventId) {
+      // if this happens there's a bug
+      return;
+    }
+
     // todo: add link to setting to show toBeFulfilled list
     notify('You are all set!', 'we will work hard to book a room for you on the background');
-
-    const eventId = msg.data.eventId;
     if (toBeFulfilled.includes(eventId)) {
       return;
     }
