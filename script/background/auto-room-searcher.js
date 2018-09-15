@@ -75,11 +75,11 @@ onMessage((msg, sender, sendResponse) => {
     const eventId = msg.data.eventId;
     if (!eventId) {
       // if this happens there's a bug
-      return;
+      throw new Error(`received empty event id. event name: ${msg.data.eventName}`);
     }
 
     // todo: add link to setting to show toBeFulfilled list
-    notify('You are all set!', 'we will work hard to book a room for you on the background');
+    notify('You are all set!', 'we will work hard to book a room for you in the background');
     if (toBeFulfilled.includes(eventId)) {
       return;
     }
@@ -89,8 +89,15 @@ onMessage((msg, sender, sendResponse) => {
       startWorker();
     }
   }
-});
 
+  if (msg.type === ROOM_TO_BE_FULFILLED_FAILURE) {
+    // todo: show a better error message
+    notify(
+      'Oops. We encountered a problem',
+      'we were not able to uniquely identify the meeting you just created. Please open it up and click "I need a room" again'
+    );
+  }
+});
 
 // ==================== heartbeat ======================
 

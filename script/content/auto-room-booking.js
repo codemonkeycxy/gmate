@@ -213,7 +213,6 @@
         updateFavorabilityForOne(room, favoriteRooms);
       });
 
-      console.log(favoriteRooms);
       persist({"favorite-rooms": favoriteRooms});
     });
   }

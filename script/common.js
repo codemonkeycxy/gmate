@@ -14,6 +14,7 @@ const NO_ROOM_FOUND = "no-room-found";
 const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
+const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
@@ -136,9 +137,29 @@ function getEventId() {
   return null;
 }
 
+function isMainCalendarPage() {
+  return !!getElementByText('div', 'My calendars');
+}
+
 function getEventName() {
   const title = document.querySelectorAll('[aria-label="Title"]')[0];
   return title.getAttribute('value');
+}
+
+function getEventIdByName(eventName) {
+  const meetingIds = [];
+  const divTags = document.getElementsByTagName('div');
+
+  for (let i = 0; i < divTags.length; i++) {
+    const curr = divTags[i];
+    const eventId = curr.getAttribute('data-eventid');
+
+    if (eventId && curr.innerHTML.includes(eventName)) {
+      meetingIds.push(eventId);
+    }
+  }
+
+  return meetingIds;
 }
 
 function hasInvitee() {

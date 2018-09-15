@@ -1,9 +1,7 @@
 // self-invoking function to avoid name collision
 (() => {
   function addSaveListener() {
-    getSaveButton().addEventListener("click", e => {
-      triggerAction(e);
-    });
+    getSaveButton().addEventListener("click", triggerAction);
   }
 
   function triggerAction(e) {
