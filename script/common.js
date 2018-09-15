@@ -212,13 +212,6 @@ function isMyMeeting() {
   return Boolean(getElementByText('legend', 'Guests can:'));
 }
 
-function isRoomNeeded() {
-  // todo: move constants to common.js
-  const locationInput = document.querySelectorAll('[aria-label="Location"]')[0];
-  const location = locationInput.getAttribute("value");
-  return location.toLowerCase().includes('i need a room');
-}
-
 function notify(title, msg) {
   chrome.notifications.create(null, {
     iconUrl: "icon.png",

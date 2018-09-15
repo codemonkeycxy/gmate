@@ -31,7 +31,7 @@ function startWorker() {
   }, tab => {
     workerTabId = tab.id;
     console.log(`worker ${workerTabId} initiated`);
-    tryUntilPass(() => toBeFulfilled.length > 0, nextTask, 1000, 20);
+    nextTask();
   });
 }
 
@@ -75,9 +75,13 @@ onMessage((msg, sender, sendResponse) => {
     notify('You are all set!', 'we will work hard to book a room for you on the background');
 
     const eventId = msg.data.eventId;
-    if (!toBeFulfilled.includes(eventId)) {
-      // todo: start worker if there's toBeFulfilled, close worker if there's no toBeFulfilled
-      toBeFulfilled.push(eventId);
+    if (toBeFulfilled.includes(eventId)) {
+      return;
+    }
+
+    toBeFulfilled.push(eventId);
+    if (!workerTabId) {
+      startWorker();
     }
   }
 });
@@ -161,7 +165,12 @@ function preparePostLoad(eventId, urlToLoad) {
 function triggerRoomBooking(eventId) {
   preparePostTrigger(eventId);
   console.log('trigger room booking');
-  emit(workerTabId, {type: AUTO_ROOM_BOOKING});
+  emit(workerTabId, {
+    type: AUTO_ROOM_BOOKING,
+    options: {
+      forceBook: true
+    }
+  });
 }
 
 function preparePostTrigger(eventId) {

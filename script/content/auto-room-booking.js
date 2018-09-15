@@ -7,25 +7,10 @@
     addSaveListener(initialRooms);
   }
 
-  function bookFavoriteRoom() {
-    // room book criteria
-    // 1) don't book for any meeting that already has a room
-    // 2) don't book for any meeting that I don't own
-    // 3) don't book any meeting that I don't need a room for
-
-    const existingRooms = getSelectedRooms();
-    if (!isEmpty(existingRooms)) {
-      // 1) don't book for any meeting that already has a room
-      // todo: consider to differentiate action vs no action
+  function bookFavoriteRoom(forceBook) {
+    if (!forceBook && isEdit()) {
+      // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
-    }
-
-    if (isEdit()) {
-      if (!isMyMeeting() || !isRoomNeeded()) {
-        // 2) don't book for any meeting that I don't own
-        // 3) don't book any meeting that I don't need a room for
-        return sendFinishMessage(NO_NEED_TO_BOOK);
-      }
     }
 
     tryUntilPass(getRoomsTab, clickRoomsTab);
@@ -143,7 +128,7 @@
     let favoriteRoom;
     let favorability = -1;
 
-    getFromStorage({ "favorite-rooms": {} }, result => {
+    getFromStorage({"favorite-rooms": {}}, result => {
       const favRooms = result["favorite-rooms"];
       rooms.forEach(candidate => {
         const candidateId = candidate.getAttribute("data-email");
@@ -191,7 +176,7 @@
       const roomId = selectedRoom.getAttribute("data-id");
       const roomName = selectedRoom.getAttribute("aria-label");
 
-      selectedRooms[roomId] = { id: roomId, name: roomName.trim() };
+      selectedRooms[roomId] = {id: roomId, name: roomName.trim()};
     }
 
     return selectedRooms;
@@ -221,7 +206,7 @@
   }
 
   function updateFavorability(selectedRooms) {
-    getFromStorage({ "favorite-rooms": {} }, result => {
+    getFromStorage({"favorite-rooms": {}}, result => {
       const favoriteRooms = result["favorite-rooms"];
 
       selectedRooms.forEach(room => {
@@ -229,7 +214,7 @@
       });
 
       console.log(favoriteRooms);
-      persist({ "favorite-rooms": favoriteRooms });
+      persist({"favorite-rooms": favoriteRooms});
     });
   }
 
@@ -261,7 +246,8 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      tryUntilPass(isEventPageLoaded, bookFavoriteRoom);
+      const forceBook = msg.options && msg.options.forceBook;
+      tryUntilPass(isEventPageLoaded, () => bookFavoriteRoom(forceBook));
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
