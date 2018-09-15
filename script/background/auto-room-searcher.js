@@ -6,14 +6,6 @@ chrome.tabs.create({
 }, tab => workerTabId = tab.id);
 
 // todo: add start and stop control on settings
-// todo: deal with deleted events
-// https://calendar.google.com/calendar/r?msg=The+requested+event+has+been+cancelled+and+removed+from+your+calendar.&msgtok=24f0c00ea165bd51063a9d36a2d76ee2fed84987
-// todo: deal with non-editable events
-// https://calendar.google.com/calendar/r/eventedit/Nm5uNWdzNGJkMTlrOTczcjg2dXBobDRsb3MgdWJlci5jb21fM3JycGtoZGRuazY2MTRycW5kbTVzMnFoMHNAZw
-// todo: deal with 403 error
-// https://calendar.google.com/calendar/r/eventedit/Nmw1cHA2YnAxNmhtbGl0cWx1OGthdmNjNWtfMjAxODEwMTFUMjIwMDAwWiB4aW55aUB1YmVyLmNvbQ
-// todo: think about network disruption
-// todo: resurrect dead cycles in an event based implementation
 // todo: don't book for meetings in the past
 // todo: add a room booking case: "i need a room" for other people's meetings
 // todo: try out google calendar api
@@ -21,8 +13,11 @@ chrome.tabs.create({
 // https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
 // todo: (maybe) treat user triggered worker tab refresh as a resurrection signal
 // todo: (maybe) auto room booking should ignore rejected rooms (think if this is Uber specific)
-// todo: make sure get_all_meetings is triggered after a new event is created
 // todo: persist frontend thread crash log
+// todo: add daily quota and anti-greedy mechanism
+// todo: persist toBeFulfilled
+// todo: estimate time to complete and add at least a 5min buffer for requeued items
+// todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
 
 let lastActiveTs = Date.now();
 
