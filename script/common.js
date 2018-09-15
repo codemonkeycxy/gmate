@@ -21,6 +21,9 @@ const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
 const UNABLE_TO_SAVE = "unable-to-save";
 
+const START_WORKER = "start-worker";
+const STOP_WORKER = "stop-worker";
+
 const GET_ALL_MEETINGS = "get-all-meetings";
 
 const DEFAULT_FEATURE_TOGGLES = {};

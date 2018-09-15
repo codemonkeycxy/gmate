@@ -1,3 +1,7 @@
+const port = chrome.extension.connect({
+  name: "long-lived pipe"
+});
+
 // Saves options to chrome.storage
 function setOption(settingName, value) {
   const newSetting = {};
@@ -22,6 +26,18 @@ function restoreOptions() {
   });
 }
 
+function startWorker() {
+  port.postMessage({
+    type: START_WORKER
+  });
+}
+
+function stopWorker() {
+  port.postMessage({
+    type: STOP_WORKER
+  });
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 // add feature toggle click listener
@@ -37,3 +53,7 @@ Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key => {
     setOption(key, e.target.value);
   });
 });
+
+// add worker controller buttons
+document.getElementById(START_WORKER).onclick = startWorker;
+document.getElementById(STOP_WORKER).onclick = stopWorker;

@@ -1,9 +1,38 @@
-// todo: search for already pinned tab, search for existing worker
-chrome.tabs.create({
-  url: CALENDAR_PAGE_URL_PREFIX,
-  active: false,
-  pinned: true
-}, tab => workerTabId = tab.id);
+chrome.extension.onConnect.addListener(port => {
+  port.onMessage.addListener(msg => {
+    if (msg.type === START_WORKER) {
+      startWorker();
+    }
+
+    if (msg.type === STOP_WORKER) {
+      stopWorker();
+    }
+  });
+});
+
+function startWorker() {
+  if (workerTabId) {
+    // don't spawn if there's already one
+    return;
+  }
+
+  chrome.tabs.create({
+    url: CALENDAR_PAGE_URL_PREFIX,
+    active: false,
+    pinned: true
+  }, tab => workerTabId = tab.id);
+  tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);
+}
+
+function stopWorker() {
+  if (!workerTabId) {
+    // nothing to kill
+    return;
+  }
+
+  chrome.tabs.remove(workerTabId);
+  workerTabId = null;
+}
 
 // todo: add start and stop control on settings
 // todo: don't book for meetings in the past
@@ -33,14 +62,18 @@ function heartbeat() {
 setInterval(heartbeat, ONE_MIN_MS);
 
 function nextItem() {
+  console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
+  lastActiveTs = Date.now();
+
+  if (!workerTabId) {
+    return console.log('worker not available');
+  }
+
+  if (toBeFulfilled.length === 0) {
+    return console.log('no event to fulfill');
+  }
+
   setTimeout(() => {
-    console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
-    lastActiveTs = Date.now();
-
-    if (toBeFulfilled.length === 0) {
-      return console.log('no event to fulfill');
-    }
-
     console.log('load next event');
     loadEventPage(toBeFulfilled.shift());
   }, getRandomInt(TEN_SEC_MS));  // throw in a random delay to avoid getting throttled by Google
@@ -136,5 +169,3 @@ function preparePostSave(eventId) {
 
   chrome.runtime.onMessage.addListener(editSavedListener);
 }
-
-tryUntilPass(() => toBeFulfilled.length > 0, nextItem, 1000, 20);
