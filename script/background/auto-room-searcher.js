@@ -11,7 +11,7 @@ chrome.extension.onConnect.addListener(port =>
   })
 );
 
-chrome.tabs.onRemoved(tabId => {
+chrome.tabs.onRemoved.addListener(tabId => {
   if (tabId === workerTabId) {
     stopWorker();
   }
@@ -30,7 +30,7 @@ function startWorker() {
     pinned: true
   }, tab => {
     workerTabId = tab.id;
-    console.log(`woker ${workerTabId} initiated`);
+    console.log(`worker ${workerTabId} initiated`);
     tryUntilPass(() => toBeFulfilled.length > 0, nextTask, 1000, 20);
   });
 }
@@ -42,8 +42,10 @@ function stopWorker() {
   }
 
   console.log(`removing worker ${workerTabId}...`);
-  chrome.tabs.remove(workerTabId);
-  workerTabId = null;
+  chrome.tabs.remove(workerTabId, () => {
+    console.log(`worker ${workerTabId} removed`);
+    workerTabId = null;
+  });
 }
 // ==================== worker management ======================
 
