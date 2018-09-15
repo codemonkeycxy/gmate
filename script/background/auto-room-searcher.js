@@ -1,3 +1,4 @@
+// ==================== worker management ======================
 chrome.extension.onConnect.addListener(port =>
   port.onMessage.addListener(msg => {
     if (msg.type === START_WORKER) {
@@ -10,18 +11,26 @@ chrome.extension.onConnect.addListener(port =>
   })
 );
 
+chrome.tabs.onRemoved(tabId => {
+  if (tabId === workerTabId) {
+    stopWorker();
+  }
+});
+
 function startWorker() {
   if (workerTabId) {
     // don't spawn if there's already one
     return;
   }
 
+  console.log('initiating worker...');
   chrome.tabs.create({
     url: CALENDAR_PAGE_URL_PREFIX,
     active: false,
     pinned: true
   }, tab => {
     workerTabId = tab.id;
+    console.log(`woker ${workerTabId} initiated`);
     tryUntilPass(() => toBeFulfilled.length > 0, nextTask, 1000, 20);
   });
 }
@@ -32,9 +41,11 @@ function stopWorker() {
     return;
   }
 
+  console.log(`removing worker ${workerTabId}...`);
   chrome.tabs.remove(workerTabId);
   workerTabId = null;
 }
+// ==================== worker management ======================
 
 // todo: add start and stop control on settings
 // todo: don't book for meetings in the past
@@ -102,10 +113,13 @@ function nextTask() {
     return setTimeout(nextTask, ONE_MIN_MS);
   }
 
+  // throw in a random delay to avoid getting throttled by Google
+  const randDelay = getRandomInt(TEN_SEC_MS);
+  console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
   setTimeout(() => {
     console.log('load next event');
     loadEventPage(nextAction);
-  }, getRandomInt(TEN_SEC_MS));  // throw in a random delay to avoid getting throttled by Google
+  }, randDelay);
 }
 
 function loadEventPage(eventId) {
