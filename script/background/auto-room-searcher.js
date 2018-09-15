@@ -223,7 +223,7 @@ function getNapFillers(napMinutes) {
     return [];
   }
 
-  napMinutes = timeToCompletion - napMinutes;
+  napMinutes = napMinutes - timeToCompletion;
   console.log(`given the current tasks will ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
   return Array(napMinutes).fill(NAP);
 }
