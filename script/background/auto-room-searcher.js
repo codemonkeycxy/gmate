@@ -76,7 +76,7 @@ function heartbeat() {
 function getNapFillers(napMinutes) {
   console.log(`trying to add a ${napMinutes} minutes nap to the task queue...`);
 
-  const avgEventTaskTime = 1/6;
+  const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
   let timeToCompletion = 0;
 
   toBeFulfilled.forEach(task => {
