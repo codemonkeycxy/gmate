@@ -11,25 +11,27 @@
     // 1) no confirmation page (in case of no invitees)
     // 2) confirmation to notify invitees
     // 3) confirmation for recurring meetings + confirmation to notify invitees
-    setTimeout(() => confirmSaving(eventId, eventName), 2000);
+    tryUntilPass(
+      () => confirmSaving() && isMainCalendarPage(),
+      () => sendFinishMessage(EDIT_SAVED, eventId, eventName),
+      1000,
+      20
+    )
   }
 
-  function confirmSaving(eventId, eventName) {
+  function confirmSaving() {
     // todo: set update message to advertise for gmate. don't forget to click "send" instead
     const okBtn = getElementByText('div', "OK");
-    const dontSendBtn = getElementByText('div', "Don't send");
     if (okBtn) {
       dispatchMouseEvent(okBtn, "click", true, true);
-      // todo: defensively break infinite loop, for this case and for all cases
-      return setTimeout(() => confirmSaving(eventId, eventName), 2000);
     }
 
+    const dontSendBtn = getElementByText('div', "Don't send");
     if (dontSendBtn) {
       dispatchMouseEvent(dontSendBtn, "click", true, true);
-      return setTimeout(() => confirmSaving(eventId, eventName), 2000);
     }
 
-    sendFinishMessage(EDIT_SAVED, eventId, eventName);
+    return true;
   }
 
   function sendFinishMessage(eventType, eventId, eventName) {

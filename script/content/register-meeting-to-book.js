@@ -13,6 +13,7 @@
     needRoomButton.addEventListener("click", () => eventIdToFulfill = getEventId() || NO_ID_YET);
 
     const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
+    eventName = titleInput.value;  // record initial title value
     titleInput.addEventListener('input', e => eventName = e.target.value);
 
     const saveBtn = getSaveButton();
@@ -34,6 +35,7 @@
   }
 
   function sendFinishMessage() {
+    // todo: the current algo can't differentiate between "test" and "test bot"
     const eventIds = getEventIdByName(eventName);
     if (eventIds.length !== 1) {
       return chrome.runtime.sendMessage({

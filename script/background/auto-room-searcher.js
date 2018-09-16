@@ -73,6 +73,7 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     // todo: add link to setting to show toBeFulfilled list
+    // todo: include meeting name for better clarity
     notify('You are all set!', 'we will work hard to book a room for you in the background');
     if (toBeFulfilled.includes(eventId)) {
       return;
@@ -85,7 +86,13 @@ onMessage((msg, sender, sendResponse) => {
   }
 
   if (msg.type === ROOM_TO_BE_FULFILLED_FAILURE) {
-    // todo: show a better error message
+    // todo: differentiate error UI from regular notification
+    const eventName = msg.data.eventName;
+    const eventIds = msg.data.eventIds;
+
+    console.log(
+      `Expecting to register 1 event to the queue but found - event name: ${eventName} event ids: ${JSON.stringify(eventIds)}`
+    );
     notify(
       'Oops. We encountered a problem',
       'we were not able to uniquely identify the meeting you just created. Please open it up and click "I need a room" again'

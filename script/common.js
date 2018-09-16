@@ -88,8 +88,9 @@ function isElementVisible(element) {
 
 // ref: https://stackoverflow.com/questions/3813294/how-to-get-element-by-innertext
 // return the first match
-function getElementByText(tagName, innerText) {
-  const tags = document.getElementsByTagName(tagName);
+function getElementByText(tagName, innerText, parentNode) {
+  parentNode = parentNode || document;
+  const tags = parentNode.getElementsByTagName(tagName);
 
   for (let i = 0; i < tags.length; i++) {
     if (tags[i].textContent == innerText) {
@@ -151,8 +152,9 @@ function getEventIdByName(eventName) {
   for (let i = 0; i < divTags.length; i++) {
     const curr = divTags[i];
     const eventId = curr.getAttribute('data-eventid');
+    const eventNameSpan = getElementByText('span', eventName, curr);
 
-    if (eventId && curr.innerHTML.includes(eventName)) {
+    if (eventId && eventNameSpan) {
       meetingIds.push(eventId);
     }
   }
