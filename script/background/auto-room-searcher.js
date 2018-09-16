@@ -61,6 +61,8 @@ function stopWorker() {
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page
 // todo: (in the future) donation
+// todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
+// todo: handle close and reopen browser
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled

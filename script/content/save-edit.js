@@ -13,9 +13,7 @@
     // 3) confirmation for recurring meetings + confirmation to notify invitees
     tryUntilPass(
       () => confirmSaving() && isMainCalendarPage(),
-      () => sendFinishMessage(EDIT_SAVED, eventId, eventName),
-      1000,
-      20
+      () => sendFinishMessage(EDIT_SAVED, eventId, eventName)
     )
   }
 
