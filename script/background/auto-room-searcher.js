@@ -77,11 +77,10 @@ onMessage((msg, sender, sendResponse) => {
     // todo: add link to setting to show toBeFulfilled list
     // todo: include meeting name for better clarity
     notify('You are all set!', 'we will work hard to book a room for you in the background');
-    if (toBeFulfilled.includes(eventId)) {
-      return;
+    if (!toBeFulfilled.includes(eventId)) {
+      toBeFulfilled.push(...getNapFillers(5), eventId);
     }
 
-    toBeFulfilled.push(...getNapFillers(5), eventId);
     if (!workerTabId) {
       startWorker();
     }

@@ -35,7 +35,7 @@
   }
 
   function sendFinishMessage() {
-    // todo: the current algo can't differentiate between "test" and "test bot"
+    // todo: use meeting time as a second differentiator
     const eventIds = getEventIdByName(eventName);
     if (eventIds.length !== 1) {
       return chrome.runtime.sendMessage({
