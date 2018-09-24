@@ -13,6 +13,7 @@ const ROOM_SELECTED = "room-selected";
 const NO_ROOM_FOUND = "no-room-found";
 const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
+const CONFIRM_ROOM_BOOKING_PREFIX = 'confirm_room_booking_';
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
@@ -250,15 +251,21 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-function tryUntilPass(predicate, callback, sleepMs, countdown) {
-  sleepMs = sleepMs || 500;
-  countdown = countdown || 10;
+function tryUntilPass(predicate, callback, options) {
+  options = options || {};
+  const sleepMs = options.sleepMs || 500;
+  const countdown = options.countdown || 10;
+  const onError = options.onError;
 
-  _tryUntilPassRecursive(predicate, callback, sleepMs, countdown);
+  _tryUntilPassRecursive(predicate, callback, sleepMs, countdown, onError);
 }
 
-function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown) {
+function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown, onError) {
   if (countdown === 0) {
+    if (onError) {
+      return onError();
+    }
+
     throw new Error(
       `tryUntilPass(${predicate.name}, ${callback.name}) ran into infinite loop. force break...`
     );
@@ -266,7 +273,7 @@ function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown) {
 
   if (!predicate()) {
     setTimeout(
-      () => _tryUntilPassRecursive(predicate, callback, sleepMs, countdown - 1),
+      () => _tryUntilPassRecursive(predicate, callback, sleepMs, countdown - 1, onError),
       sleepMs
     );
   } else {

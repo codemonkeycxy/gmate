@@ -191,6 +191,19 @@ function preparePostTrigger(eventId) {
   function roomSelectionListener(msg, sender, sendResponse) {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       console.log(`room selected for ${eventId}`);
+
+      chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
+        iconUrl: "icon.png",
+        type: 'basic',
+        title: 'We found a room for you!',
+        message: '[!!IMPORTANT!!] Click "more" => "confirm"',
+        buttons: [{title: 'confirm'}],
+        requireInteraction: true
+      }, notificationId => {
+        // withdraw notification if the user doesn't take an action in 30 sec, otherwise the room hold will become stale
+        setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
+      });
+
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       save(eventId);
     }
@@ -213,6 +226,16 @@ function preparePostTrigger(eventId) {
   chrome.runtime.onMessage.addListener(roomSelectionListener);
 }
 
+(function handleRoomBookingConfirmation() {
+  chrome.notifications.onButtonClicked.addListener((notificationId, buttonId) => {
+    if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
+      return;
+    }
+
+    chrome.tabs.update(workerTabId, {active: true});
+  });
+})();
+
 function save(eventId) {
   preparePostSave(eventId);
   // todo: send extra data such as tab id + event id
@@ -226,8 +249,6 @@ function preparePostSave(eventId) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       // todo: (maybe) make message a clickable link
       console.log(`room saved for ${msg.data.eventName}`);
-      notify('We found a room for you!', msg.data.eventName || eventId);
-
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
