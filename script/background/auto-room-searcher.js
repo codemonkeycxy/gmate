@@ -51,7 +51,7 @@ function stopWorker() {
 // todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
 // todo: add google analytics on queue size and other user behaviors
 // todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
-// todo: allow per "i need a room" regex setting
+// todo: allow per "i need a room" regex setting, and save past configurations for quick select
 // todo: show a to-be-fulfilled list
 // todo: notify on each new "i need a room"
 // todo: (maybe) register "i need a room" not just when creating new meetings but also when editing existing meetings
@@ -77,9 +77,7 @@ onMessage((msg, sender, sendResponse) => {
     // todo: add link to setting to show toBeFulfilled list
     // todo: include meeting name for better clarity
     notify('You are all set!', 'we will work hard to book a room for you in the background');
-    if (!toBeFulfilled.includes(eventId)) {
-      toBeFulfilled.push(...getNapFillers(5), eventId);
-    }
+    enqueue(eventId);
 
     if (!workerTabId) {
       startWorker();
@@ -133,7 +131,7 @@ function nextTask() {
     return console.log('no task to fulfill. waiting for new tasks to come in');
   }
 
-  const nextAction = toBeFulfilled.shift();
+  const nextAction = dequeue();
   if (nextAction === NAP) {
     console.log('nap for one min');
     return setTimeout(nextTask, ONE_MIN_MS);
@@ -215,9 +213,9 @@ function preparePostTrigger(eventId) {
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
-      // requeue the event to be searched later
+      // enqueue the event to be searched later
       console.log(`no room found for ${eventId}`);
-      requeue(eventId);
+      enqueue(eventId);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
@@ -255,7 +253,7 @@ function preparePostSave(eventId) {
 
     if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
       console.log(`failed to save room for ${msg.data.eventName}`);
-      requeue(eventId);
+      enqueue(eventId);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
@@ -266,13 +264,19 @@ function preparePostSave(eventId) {
 
 // ==================== helpers ======================
 
-function requeue(eventId) {
-  console.log(`requeuing ${eventId}...`);
+function enqueue(eventId) {
+  console.log(`enqueuing ${eventId}...`);
 
   if (!toBeFulfilled.includes(eventId)) {
     // add some buffer so that we don't retry immediately
     toBeFulfilled.push(...getNapFillers(5), eventId);
   }
+}
+
+function dequeue() {
+  console.log(`dequeuing ...`);
+
+  return toBeFulfilled.shift();
 }
 
 function estimateTimeToCompletion() {

@@ -26,6 +26,8 @@ const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NAP = "nap";
+const GET_QUEUE = "get-queue";
+const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;

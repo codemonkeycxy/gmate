@@ -6,3 +6,9 @@
 /* ==================== Global Variables ======================= */
 const toBeFulfilled = [];
 let workerTabId = null;
+
+chrome.runtime.onMessage.addListener((msg, sender, cb) => {
+  if (msg.type === GET_QUEUE) {
+    cb(toBeFulfilled.filter(item => item !== NAP));
+  }
+});
