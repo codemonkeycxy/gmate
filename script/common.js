@@ -22,6 +22,7 @@ const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
+const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NAP = "nap";
 

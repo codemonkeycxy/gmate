@@ -11,10 +11,15 @@
     // 1) no confirmation page (in case of no invitees)
     // 2) confirmation to notify invitees
     // 3) confirmation for recurring meetings + confirmation to notify invitees
-    tryUntilPass(
-      () => confirmSaving() && isMainCalendarPage(),
-      () => sendFinishMessage(EDIT_SAVED, eventId, eventName)
-    )
+    try {
+      tryUntilPass(
+        () => confirmSaving() && isMainCalendarPage(),
+        () => sendFinishMessage(EDIT_SAVED, eventId, eventName),
+        1000, 30  // wait up to 30 sec
+      )
+    } catch (e) {
+      sendFinishMessage(SAVE_EDIT_FAILURE, eventId, eventName);
+    }
   }
 
   function confirmSaving() {

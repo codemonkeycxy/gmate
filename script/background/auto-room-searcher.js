@@ -203,13 +203,8 @@ function preparePostTrigger(eventId) {
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // requeue the event to be searched later
-      console.log(`no room found for ${eventId}. requeuing`);
-
-      if (!toBeFulfilled.includes(eventId)) {
-        // add some buffer so that we don't retry immediately
-        toBeFulfilled.push(...getNapFillers(5), eventId);
-      }
-
+      console.log(`no room found for ${eventId}`);
+      requeue(eventId);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
@@ -236,12 +231,28 @@ function preparePostSave(eventId) {
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
+
+    if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
+      console.log(`failed to save room for ${msg.data.eventName}`);
+      requeue(eventId);
+      chrome.runtime.onMessage.removeListener(editSavedListener);
+      nextTask();
+    }
   }
 
   onMessage(editSavedListener);
 }
 
 // ==================== helpers ======================
+
+function requeue(eventId) {
+  console.log(`requeuing ${eventId}...`);
+
+  if (!toBeFulfilled.includes(eventId)) {
+    // add some buffer so that we don't retry immediately
+    toBeFulfilled.push(...getNapFillers(5), eventId);
+  }
+}
 
 function estimateTimeToCompletion() {
   const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
