@@ -56,7 +56,6 @@ function stopWorker() {
 // todo: notify on each new "i need a room"
 // todo: (maybe) register "i need a room" not just when creating new meetings but also when editing existing meetings
 // todo: ask users for room name examples and find commonality among them
-// todo: "i need a room" should turn green after clicking
 // todo: add verify booking step
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page

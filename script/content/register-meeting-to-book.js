@@ -10,7 +10,11 @@
 
     needRoomButton.textContent = "I need a room";
     insertAfter(needRoomButton, locationInput);
-    needRoomButton.addEventListener("click", () => eventIdToFulfill = getEventId() || NO_ID_YET);
+    needRoomButton.addEventListener("click", () => {
+      eventIdToFulfill = getEventId() || NO_ID_YET;
+      needRoomButton.style.background = '#7CB342';
+      needRoomButton.style.color = '#FFFFFF';
+    });
 
     const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
     eventName = titleInput.value;  // record initial title value
