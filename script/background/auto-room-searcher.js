@@ -55,6 +55,7 @@ function stopWorker() {
 // todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
 // todo: handle close and reopen browser
 // todo: remove a meeting from the queue from popup list
+// todo: consider retiring super old tasks
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -68,13 +69,7 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     notify('You are all set!', 'we will work hard to book a room for you in the background');
-    enqueue({
-      type: EVENT,
-      data: {
-        eventId: eventId,
-        eventName: eventName
-      }
-    });
+    enqueue(eventTask(eventId, eventName));
 
     if (!workerTabId) {
       startWorker();
@@ -86,11 +81,13 @@ onMessage((msg, sender, sendResponse) => {
     const eventIds = msg.data.eventIds;
 
     console.log(
-      `Expecting to register 1 event to the queue but found - event name: ${eventName} event ids: ${JSON.stringify(eventIds)}`
+      `Expecting to register 1 event to the queue but found - event name: ${
+        eventName
+      } event ids: ${JSON.stringify(eventIds)}`
     );
     notify(
       'Oops. We encountered a problem',
-      'we were not able to uniquely identify the meeting you just created. Please open it up and click "I need a room" again'
+      'Please open the meeting up and click "I need a room" again'
     );
   }
 });
@@ -103,7 +100,7 @@ function heartbeat() {
   console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
-    enqueue(currentWork);
+    enqueue(currentTask);
     nextTask();
   }
 }
@@ -114,7 +111,6 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 // ==================== state machine ======================
 
-// todo: consider retiring super old tasks
 function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
   lastActiveTs = Date.now();
@@ -128,12 +124,12 @@ function nextTask() {
   }
 
   const nextAction = dequeue();
+  currentTask = nextAction;
   if (nextAction.type === NAP) {
     console.log('nap for one min');
     return setTimeout(nextTask, ONE_MIN_MS);
   }
 
-  currentWork = nextAction;
   // throw in a random delay to avoid getting throttled by Google
   const randDelay = getRandomInt(TEN_SEC_MS);
   console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
@@ -265,7 +261,7 @@ function preparePostSave(task) {
 
 function enqueue(task) {
   if (task.type !== EVENT) {
-    console.log(`WARNING! Expected to enqueue an event but got ${JSON.stringify(task)}`);
+    console.log(`only need enqueue event tasks. ignoring ${JSON.stringify(task)}`);
     return;
   }
 
@@ -283,6 +279,20 @@ function dequeue() {
   console.log(`dequeuing ${JSON.stringify(task)}...`);
 
   return task;
+}
+
+function eventTask(eventId, eventName) {
+  return {
+    type: EVENT,
+    data: {
+      eventId: eventId,
+      eventName: eventName
+    }
+  };
+}
+
+function napTask() {
+  return {type: NAP}
 }
 
 function estimateTimeToCompletion() {
@@ -314,5 +324,5 @@ function getNapFillers(napMinutes) {
 
   napMinutes = napMinutes - timeToCompletion;
   console.log(`given the current tasks will take ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
-  return Array(napMinutes).fill({type: NAP});
+  return Array(napMinutes).fill(napTask());
 }
