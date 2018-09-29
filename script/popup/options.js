@@ -3,8 +3,14 @@ chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, resp => {
     return;
   }
 
-  document.getElementById(TO_BE_FULFILLED_QUEUE).innerHTML = `<div>We are currently searching the following room(s) for you:</div>${
-    resp.map(task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a></li>`).join('')
+  document.getElementById(
+    TO_BE_FULFILLED_QUEUE
+  ).innerHTML = `<div>We are currently searching rooms for the following event(s):</div>${
+    resp.map(
+      task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${
+        task.data.eventName
+        }</a></li>`
+    ).join('')
   }`;
 });
 
