@@ -198,7 +198,7 @@ function preparePostTrigger(task) {
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
         type: 'basic',
-        title: 'We found a room for you!',
+        title: `We found a room for ${task.data.eventName}!`,
         message: '[!!IMPORTANT!!] Click "more" => "confirm"',
         buttons: [{title: 'confirm'}],
         requireInteraction: true
