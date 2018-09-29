@@ -23,6 +23,7 @@ function startWorker() {
   });
 }
 
+// todo: notify user that stopping the worker will pause room searching
 function stopWorker() {
   if (!workerTabId) {
     // nothing to kill
@@ -62,6 +63,8 @@ function stopWorker() {
 // todo: (in the future) donation
 // todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
 // todo: handle close and reopen browser
+// todo: remove a meeting from the queue from popup list
+// todo: requeue event after crash resurrection "worker idle for more than 5 min, resurrecting..."
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -106,6 +109,7 @@ function heartbeat() {
   console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
+    enqueue(currentWork);
     nextTask();
   }
 }
@@ -136,6 +140,7 @@ function nextTask() {
     return setTimeout(nextTask, ONE_MIN_MS);
   }
 
+  currentWork = nextAction;
   // throw in a random delay to avoid getting throttled by Google
   const randDelay = getRandomInt(TEN_SEC_MS);
   console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
@@ -264,6 +269,10 @@ function preparePostSave(eventId) {
 // ==================== helpers ======================
 
 function enqueue(eventId) {
+  if (!eventId) {
+    console.log('Trying to enqueue an empty item. skipping...');
+  }
+
   console.log(`enqueuing ${eventId}...`);
 
   if (!toBeFulfilled.includes(eventId)) {
@@ -296,6 +305,6 @@ function getNapFillers(napMinutes) {
   }
 
   napMinutes = napMinutes - timeToCompletion;
-  console.log(`given the current tasks will ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
+  console.log(`given the current tasks will take ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
   return Array(napMinutes).fill(NAP);
 }
