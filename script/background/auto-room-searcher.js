@@ -23,13 +23,13 @@ function startWorker() {
   });
 }
 
-// todo: notify user that stopping the worker will pause room searching
 function stopWorker() {
   if (!workerTabId) {
     // nothing to kill
     return;
   }
 
+  notify('Caution!', 'Room searching is paused');
   console.log(`removing worker ${workerTabId}...`);
   chrome.tabs.remove(workerTabId, () => {
     console.log(`worker ${workerTabId} removed`);
