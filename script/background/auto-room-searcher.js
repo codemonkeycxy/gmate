@@ -93,9 +93,6 @@ onMessage((msg, sender, sendResponse) => {
 });
 
 // ==================== heartbeat ======================
-
-let lastActiveTs = Date.now();
-
 function heartbeat() {
   console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {

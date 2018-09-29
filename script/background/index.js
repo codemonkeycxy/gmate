@@ -5,6 +5,7 @@
 const toBeFulfilled = [];
 let workerTabId = null;
 let currentTask = null;
+let lastActiveTs = Date.now();
 
 chrome.runtime.onMessage.addListener((msg, sender, cb) => {
   if (msg.type === GET_QUEUE) {
