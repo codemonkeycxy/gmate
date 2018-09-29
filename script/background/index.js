@@ -10,6 +10,6 @@ let currentWork = null;
 
 chrome.runtime.onMessage.addListener((msg, sender, cb) => {
   if (msg.type === GET_QUEUE) {
-    cb(toBeFulfilled.filter(item => item !== NAP));
+    cb(toBeFulfilled.filter(task => task.type !== NAP));
   }
 });

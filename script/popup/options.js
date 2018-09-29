@@ -4,7 +4,7 @@ chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, resp => {
   }
 
   document.getElementById(TO_BE_FULFILLED_QUEUE).innerHTML = `<div>Searching room for:</div><ul>${
-    resp.map(item => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${item}" target="_blank">${item}</a></li>`)
+    resp.map(task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a></li>`)
   }</ul>`;
 });
 

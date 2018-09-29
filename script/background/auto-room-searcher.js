@@ -29,7 +29,10 @@ function stopWorker() {
     return;
   }
 
-  notify('Caution!', 'Room searching is paused');
+  if (toBeFulfilled.filter(task => task.type !== NAP).length > 0) {
+    notify('Caution!', 'Room searching is paused');
+  }
+
   console.log(`removing worker ${workerTabId}...`);
   chrome.tabs.remove(workerTabId, () => {
     console.log(`worker ${workerTabId} removed`);
@@ -37,7 +40,6 @@ function stopWorker() {
   });
 }
 
-// todo: add start and stop control on settings
 // todo: don't book for meetings in the past
 // todo: add a room booking case: "i need a room" for other people's meetings
 // todo: try out google calendar api
@@ -71,15 +73,21 @@ function stopWorker() {
 onMessage((msg, sender, sendResponse) => {
   if (msg.type === ROOM_TO_BE_FULFILLED) {
     const eventId = msg.data.eventId;
+    const eventName = msg.data.eventName;
     if (!eventId) {
       // if this happens there's a bug
-      throw new Error(`received empty event id. event name: ${msg.data.eventName}`);
+      throw new Error(`received empty event id. event name: ${eventName}`);
     }
 
-    // todo: add link to setting to show toBeFulfilled list
     // todo: include meeting name for better clarity
     notify('You are all set!', 'we will work hard to book a room for you in the background');
-    enqueue(eventId);
+    enqueue({
+      type: EVENT,
+      data: {
+        eventId: eventId,
+        eventName: eventName
+      }
+    });
 
     if (!workerTabId) {
       startWorker();
@@ -87,7 +95,6 @@ onMessage((msg, sender, sendResponse) => {
   }
 
   if (msg.type === ROOM_TO_BE_FULFILLED_FAILURE) {
-    // todo: differentiate error UI from regular notification
     const eventName = msg.data.eventName;
     const eventIds = msg.data.eventIds;
 
@@ -135,7 +142,7 @@ function nextTask() {
   }
 
   const nextAction = dequeue();
-  if (nextAction === NAP) {
+  if (nextAction.type === NAP) {
     console.log('nap for one min');
     return setTimeout(nextTask, ONE_MIN_MS);
   }
@@ -150,10 +157,11 @@ function nextTask() {
   }, randDelay);
 }
 
-function loadEventPage(eventId) {
+function loadEventPage(task) {
+  const eventId = task.data.eventId;
   const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
-  preparePostLoad(eventId, urlToLoad);
+  preparePostLoad(task, urlToLoad);
   console.log(`load new url ${urlToLoad}`);
   chrome.tabs.update(workerTabId, {
     url: urlToLoad,
@@ -162,7 +170,7 @@ function loadEventPage(eventId) {
   });
 }
 
-function preparePostLoad(eventId, urlToLoad) {
+function preparePostLoad(task, urlToLoad) {
   function pageLoadListener(tabId, changeInfo, tab) {
     const isWorker = tabId === workerTabId;
     const isTargetUrl = tab.url === urlToLoad;
@@ -171,15 +179,15 @@ function preparePostLoad(eventId, urlToLoad) {
     if (isWorker && isTargetUrl && isLoaded) {
       console.log(`${urlToLoad} loaded.`);
       chrome.tabs.onUpdated.removeListener(pageLoadListener);
-      triggerRoomBooking(eventId);
+      triggerRoomBooking(task);
     }
   }
 
   chrome.tabs.onUpdated.addListener(pageLoadListener);
 }
 
-function triggerRoomBooking(eventId) {
-  preparePostTrigger(eventId);
+function triggerRoomBooking(task) {
+  preparePostTrigger(task);
   console.log('trigger room booking');
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
@@ -189,10 +197,12 @@ function triggerRoomBooking(eventId) {
   });
 }
 
-function preparePostTrigger(eventId) {
+function preparePostTrigger(task) {
+  const eventId = task.data.eventId;
+
   function roomSelectionListener(msg, sender, sendResponse) {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
-      console.log(`room selected for ${eventId}`);
+      console.log(`room selected for ${JSON.stringify(task)}`);
 
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
@@ -207,19 +217,19 @@ function preparePostTrigger(eventId) {
       });
 
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      save(eventId);
+      save(task);
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
-      console.log(`no need to book for ${eventId}`);
+      console.log(`no need to book for ${JSON.stringify(task)}`);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // enqueue the event to be searched later
-      console.log(`no room found for ${eventId}`);
-      enqueue(eventId);
+      console.log(`no room found for ${JSON.stringify(task)}`);
+      enqueue(task);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
@@ -229,7 +239,7 @@ function preparePostTrigger(eventId) {
 }
 
 (function handleRoomBookingConfirmation() {
-  chrome.notifications.onButtonClicked.addListener((notificationId, buttonId) => {
+  chrome.notifications.onButtonClicked.addListener(notificationId => {
     if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
       return;
     }
@@ -238,26 +248,27 @@ function preparePostTrigger(eventId) {
   });
 })();
 
-function save(eventId) {
-  preparePostSave(eventId);
-  // todo: send extra data such as tab id + event id
+function save(task) {
+  preparePostSave(task);
   // todo: do the same for all existing actions
-  console.log(`trigger save for ${eventId}`);
+  console.log(`trigger save for ${JSON.stringify(task)}`);
   emit(workerTabId, {type: SAVE_EDIT});
 }
 
-function preparePostSave(eventId) {
+function preparePostSave(task) {
+  const eventId = task.data.eventId;
+
   function editSavedListener(msg, sender, sendResponse) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       // todo: (maybe) make message a clickable link
-      console.log(`room saved for ${msg.data.eventName}`);
+      console.log(`room saved for ${JSON.stringify(task)}`);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
 
     if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
-      console.log(`failed to save room for ${msg.data.eventName}`);
-      enqueue(eventId);
+      console.log(`failed to save room for ${JSON.stringify(task)}`);
+      enqueue(task);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
@@ -268,31 +279,42 @@ function preparePostSave(eventId) {
 
 // ==================== helpers ======================
 
-function enqueue(eventId) {
-  if (!eventId) {
-    console.log('Trying to enqueue an empty item. skipping...');
+function enqueue(task) {
+  if (task.type !== EVENT) {
+    console.log(`WARNING! Expected to enqueue an event but got ${JSON.stringify(task)}`);
+    return;
   }
 
-  console.log(`enqueuing ${eventId}...`);
-
-  if (!toBeFulfilled.includes(eventId)) {
+  console.log(`enqueuing ${JSON.stringify(task)}...`);
+  if (!isEventInQueue(task)) {
     // add some buffer so that we don't retry immediately
-    toBeFulfilled.push(...getNapFillers(5), eventId);
+    toBeFulfilled.push(...getNapFillers(5), task);
   }
 }
 
 function dequeue() {
-  console.log(`dequeuing ...`);
+  const task = toBeFulfilled.shift();
+  console.log(`dequeuing ${JSON.stringify(task)}...`);
 
-  return toBeFulfilled.shift();
+  return task;
 }
 
 function estimateTimeToCompletion() {
   const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
   let timeToCompletion = 0;
 
-  toBeFulfilled.forEach(task => timeToCompletion += task === NAP ? 1 : avgEventTaskTime);
+  toBeFulfilled.forEach(task => timeToCompletion += task.type === NAP ? 1 : avgEventTaskTime);
   return Math.round(timeToCompletion);
+}
+
+function isEventInQueue(eventTask) {
+  return toBeFulfilled.filter(task => {
+    if (task.type !== EVENT) {
+      return false;
+    }
+
+    return task.data.eventId === eventTask.data.eventId;
+  }).length > 0;
 }
 
 function getNapFillers(napMinutes) {
@@ -306,5 +328,5 @@ function getNapFillers(napMinutes) {
 
   napMinutes = napMinutes - timeToCompletion;
   console.log(`given the current tasks will take ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
-  return Array(napMinutes).fill(NAP);
+  return Array(napMinutes).fill({type: NAP});
 }

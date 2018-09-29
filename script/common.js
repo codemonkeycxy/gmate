@@ -26,6 +26,7 @@ const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NAP = "nap";
+const EVENT = "event";
 const GET_QUEUE = "get-queue";
 const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 
