@@ -5,6 +5,7 @@
 const toBeFulfilled = [];
 let workerTabId = null;
 let currentTask = null;
+let taskVersion = 0;
 let lastActiveTs = Date.now();
 
 chrome.runtime.onMessage.addListener((msg, sender, cb) => {

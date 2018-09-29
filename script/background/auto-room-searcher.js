@@ -97,7 +97,11 @@ function heartbeat() {
   console.log('heartbeat check. still alive...');
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
+
     enqueue(currentTask);
+    taskVersion++;
+
+    console.log(`current work: ${JSON.stringify(toBeFulfilled)}; task version: ${taskVersion}`);
     nextTask();
   }
 }
@@ -124,7 +128,7 @@ function nextTask() {
   currentTask = nextAction;
   if (nextAction.type === NAP) {
     console.log('nap for one min');
-    return setTimeout(nextTask, ONE_MIN_MS);
+    return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
   // throw in a random delay to avoid getting throttled by Google
@@ -134,6 +138,14 @@ function nextTask() {
     console.log('load next event');
     loadEventPage(nextAction);
   }, randDelay);
+}
+
+function wakeUp(taskVersionBeforeNap) {
+  if (taskVersionBeforeNap !== taskVersion) {
+    console.log(`the world has changed when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
+  } else {
+    nextTask();
+  }
 }
 
 function loadEventPage(task) {
