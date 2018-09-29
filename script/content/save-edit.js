@@ -23,7 +23,6 @@
   }
 
   function confirmSaving() {
-    // todo: set update message to advertise for gmate. don't forget to click "send" instead
     const okBtn = getElementByText('div', "OK");
     if (okBtn) {
       dispatchMouseEvent(okBtn, "click", true, true);

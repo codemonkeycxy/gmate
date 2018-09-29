@@ -41,32 +41,20 @@ function stopWorker() {
 }
 
 // todo: don't book for meetings in the past
-// todo: add a room booking case: "i need a room" for other people's meetings
 // todo: try out google calendar api
 // https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
 // https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
-// todo: (maybe) treat user triggered worker tab refresh as a resurrection signal
-// todo: (maybe) auto room booking should ignore rejected rooms (think if this is Uber specific)
-// todo: persist frontend thread crash log
 // todo: add daily quota and anti-greedy mechanism
-// todo: persist toBeFulfilled
-// todo: estimate time to complete and add at least a 5min buffer for requeued items
-// todo: estimate time to complete and add at and add at least 1 hour buffer after each fulfillment
 // todo: add google analytics on queue size and other user behaviors
 // todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
 // todo: allow per "i need a room" regex setting, and save past configurations for quick select
-// todo: show a to-be-fulfilled list
-// todo: notify on each new "i need a room"
-// todo: (maybe) register "i need a room" not just when creating new meetings but also when editing existing meetings
 // todo: ask users for room name examples and find commonality among them
-// todo: add verify booking step
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page
 // todo: (in the future) donation
 // todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
 // todo: handle close and reopen browser
 // todo: remove a meeting from the queue from popup list
-// todo: requeue event after crash resurrection "worker idle for more than 5 min, resurrecting..."
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -79,7 +67,6 @@ onMessage((msg, sender, sendResponse) => {
       throw new Error(`received empty event id. event name: ${eventName}`);
     }
 
-    // todo: include meeting name for better clarity
     notify('You are all set!', 'we will work hard to book a room for you in the background');
     enqueue({
       type: EVENT,
@@ -127,7 +114,6 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 // ==================== state machine ======================
 
-// todo: add guards against race condition between heartbeat and nap
 // todo: consider retiring super old tasks
 function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
@@ -250,7 +236,6 @@ function preparePostTrigger(task) {
 
 function save(task) {
   preparePostSave(task);
-  // todo: do the same for all existing actions
   console.log(`trigger save for ${JSON.stringify(task)}`);
   emit(workerTabId, {type: SAVE_EDIT});
 }
@@ -260,7 +245,6 @@ function preparePostSave(task) {
 
   function editSavedListener(msg, sender, sendResponse) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
-      // todo: (maybe) make message a clickable link
       console.log(`room saved for ${JSON.stringify(task)}`);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
