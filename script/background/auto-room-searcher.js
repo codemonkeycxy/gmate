@@ -285,11 +285,13 @@ function enqueue(task) {
     return;
   }
 
-  console.log(`enqueuing ${JSON.stringify(task)}...`);
-  if (!isEventInQueue(task)) {
-    // add some buffer so that we don't retry immediately
-    toBeFulfilled.push(...getNapFillers(5), task);
+  if (isEventInQueue(task)) {
+    return console.log(`${JSON.stringify(task)} is already in the queue`);
   }
+
+  // add some buffer so that we don't retry immediately
+  console.log(`enqueuing ${JSON.stringify(task)}...`);
+  toBeFulfilled.push(...getNapFillers(5), task);
 }
 
 function dequeue() {
