@@ -230,7 +230,7 @@ function onMessage(callback, recycleTtl) {
 
   if (recycleTtl) {
     setTimeout(() => {
-      console.log(`recycling listener ${callback.toString()}...`);
+      console.log(`recycling listener ${callback.name}...`);
       chrome.runtime.onMessage.removeListener(callback);
     }, recycleTtl);
   }
@@ -241,7 +241,7 @@ function onTabUpdated(callback, recycleTtl) {
 
   if (recycleTtl) {
     setTimeout(() => {
-      console.log(`recycling listener ${callback.toString()}...`);
+      console.log(`recycling listener ${callback.name}...`);
       chrome.tabs.onUpdated.removeListener(callback);
     }, recycleTtl);
   }
