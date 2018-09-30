@@ -4,6 +4,7 @@
 const TEN_SEC_MS = 10 * 1000;
 const ONE_MIN_MS = 60 * 1000;
 const FIVE_MIN_MS = 5 * ONE_MIN_MS;
+const ONE_HOUR_MS = 60 * ONE_MIN_MS;
 
 const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
 const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
@@ -224,8 +225,26 @@ function emit(tabId, msg) {
   chrome.tabs.sendMessage(tabId, msg);
 }
 
-function onMessage(callback) {
+function onMessage(callback, recycleTtl) {
   chrome.runtime.onMessage.addListener(callback);
+
+  if (recycleTtl) {
+    setTimeout(() => {
+      console.log(`recycling listener ${callback.toString()}...`);
+      chrome.runtime.onMessage.removeListener(callback);
+    }, recycleTtl);
+  }
+}
+
+function onTabUpdated(callback, recycleTtl) {
+  chrome.tabs.onUpdated.addListener(callback);
+
+  if (recycleTtl) {
+    setTimeout(() => {
+      console.log(`recycling listener ${callback.toString()}...`);
+      chrome.tabs.onUpdated.removeListener(callback);
+    }, recycleTtl);
+  }
 }
 
 function getFromStorage(keys, callback) {

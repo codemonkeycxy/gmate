@@ -4,7 +4,7 @@
 
 let tabInAction = [];  // track tabs that are current being act upon
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+onTabUpdated((tabId, changeInfo, tab) => {
   const isEventPage = tab.url.startsWith(EDIT_PAGE_URL_PREFIX);
   const leavingEventPage = changeInfo.url && !changeInfo.url.startsWith(EDIT_PAGE_URL_PREFIX);
   const isLoaded = changeInfo.status === "complete";

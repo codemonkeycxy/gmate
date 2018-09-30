@@ -56,6 +56,7 @@ function stopWorker() {
 // todo: handle close and reopen browser
 // todo: remove a meeting from the queue from popup list
 // todo: consider retiring super old tasks
+// todo: send crash log to google analytics for debugging
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -136,23 +137,23 @@ function nextTask() {
   console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
   setTimeout(() => {
     console.log('load next event');
-    loadEventPage(nextAction);
+    loadEventPage();
   }, randDelay);
 }
 
 function wakeUp(taskVersionBeforeNap) {
   if (taskVersionBeforeNap !== taskVersion) {
-    console.log(`the world has changed when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
+    console.log(`the world has moved on when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
   } else {
     nextTask();
   }
 }
 
-function loadEventPage(task) {
-  const eventId = task.data.eventId;
+function loadEventPage() {
+  const eventId = currentTask.data.eventId;
   const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
-  preparePostLoad(task, urlToLoad);
+  preparePostLoad(urlToLoad);
   console.log(`load new url ${urlToLoad}`);
   chrome.tabs.update(workerTabId, {
     url: urlToLoad,
@@ -161,7 +162,7 @@ function loadEventPage(task) {
   });
 }
 
-function preparePostLoad(task, urlToLoad) {
+function preparePostLoad(urlToLoad) {
   function pageLoadListener(tabId, changeInfo, tab) {
     const isWorker = tabId === workerTabId;
     const isTargetUrl = tab.url === urlToLoad;
@@ -170,15 +171,15 @@ function preparePostLoad(task, urlToLoad) {
     if (isWorker && isTargetUrl && isLoaded) {
       console.log(`${urlToLoad} loaded.`);
       chrome.tabs.onUpdated.removeListener(pageLoadListener);
-      triggerRoomBooking(task);
+      triggerRoomBooking();
     }
   }
 
-  chrome.tabs.onUpdated.addListener(pageLoadListener);
+  onTabUpdated(pageLoadListener, ONE_HOUR_MS);
 }
 
-function triggerRoomBooking(task) {
-  preparePostTrigger(task);
+function triggerRoomBooking() {
+  preparePostTrigger();
   console.log('trigger room booking');
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
@@ -188,17 +189,18 @@ function triggerRoomBooking(task) {
   });
 }
 
-function preparePostTrigger(task) {
-  const eventId = task.data.eventId;
+function preparePostTrigger() {
+  const eventId = currentTask.data.eventId;
+  const eventName = currentTask.data.eventName;
 
   function roomSelectionListener(msg, sender, sendResponse) {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
-      console.log(`room selected for ${JSON.stringify(task)}`);
+      console.log(`room selected for ${JSON.stringify(currentTask)}`);
 
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
         type: 'basic',
-        title: `We found a room for ${task.data.eventName}!`,
+        title: `We found a room for ${eventName}!`,
         message: '[!!IMPORTANT!!] Click "more" => "confirm"',
         buttons: [{title: 'confirm'}],
         requireInteraction: true
@@ -208,25 +210,25 @@ function preparePostTrigger(task) {
       });
 
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      save(task);
+      save();
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
-      console.log(`no need to book for ${JSON.stringify(task)}`);
+      console.log(`no need to book for ${JSON.stringify(currentTask)}`);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // enqueue the event to be searched later
-      console.log(`no room found for ${JSON.stringify(task)}`);
-      enqueue(task);
+      console.log(`no room found for ${JSON.stringify(currentTask)}`);
+      enqueue(currentTask);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
   }
 
-  chrome.runtime.onMessage.addListener(roomSelectionListener);
+  onMessage(roomSelectionListener, ONE_HOUR_MS);
 }
 
 (function handleRoomBookingConfirmation() {
@@ -239,36 +241,41 @@ function preparePostTrigger(task) {
   });
 })();
 
-function save(task) {
-  preparePostSave(task);
-  console.log(`trigger save for ${JSON.stringify(task)}`);
+function save() {
+  preparePostSave();
+  console.log(`trigger save for ${JSON.stringify(currentTask)}`);
   emit(workerTabId, {type: SAVE_EDIT});
 }
 
-function preparePostSave(task) {
-  const eventId = task.data.eventId;
+function preparePostSave() {
+  const eventId = currentTask.data.eventId;
 
   function editSavedListener(msg, sender, sendResponse) {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
-      console.log(`room saved for ${JSON.stringify(task)}`);
+      console.log(`room saved for ${JSON.stringify(currentTask)}`);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
 
     if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
-      console.log(`failed to save room for ${JSON.stringify(task)}`);
-      enqueue(task);
+      console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
+      enqueue(currentTask);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
   }
 
-  onMessage(editSavedListener);
+  onMessage(editSavedListener, ONE_HOUR_MS);
 }
 
 // ==================== helpers ======================
 
 function enqueue(task) {
+  if (!task) {
+    console.log('nothing to enqueue, move on...');
+    return;
+  }
+
   if (task.type !== EVENT) {
     console.log(`only need enqueue event tasks. ignoring ${JSON.stringify(task)}`);
     return;
