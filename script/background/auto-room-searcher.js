@@ -190,10 +190,14 @@ function triggerRoomBooking() {
 }
 
 function preparePostTrigger() {
-  const eventId = currentTask.data.eventId;
-  const eventName = currentTask.data.eventName;
-
   function roomSelectionListener(msg, sender, sendResponse) {
+    if (!currentTask || currentTask.type !== EVENT) {
+      return;
+    }
+
+    const eventId = currentTask.data.eventId;
+    const eventName = currentTask.data.eventName;
+
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       console.log(`room selected for ${JSON.stringify(currentTask)}`);
 
@@ -248,9 +252,14 @@ function save() {
 }
 
 function preparePostSave() {
-  const eventId = currentTask.data.eventId;
 
   function editSavedListener(msg, sender, sendResponse) {
+    if (!currentTask || currentTask.type !== EVENT) {
+      return;
+    }
+
+    const eventId = currentTask.data.eventId;
+
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       console.log(`room saved for ${JSON.stringify(currentTask)}`);
       chrome.runtime.onMessage.removeListener(editSavedListener);
