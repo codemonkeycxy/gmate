@@ -7,8 +7,10 @@
   function addNeedRoomListener() {
     const locationInput = getLocationInput();
     const needRoomButton = document.createElement('button');
-
     needRoomButton.textContent = "I need a room";
+    needRoomButton.style.background = '#4285f4';
+    needRoomButton.style.color = '#fff';
+
     insertAfter(needRoomButton, locationInput);
     needRoomButton.addEventListener("click", () => {
       eventIdToFulfill = getEventId() || NO_ID_YET;
