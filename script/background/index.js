@@ -10,6 +10,6 @@ let lastActiveTs = Date.now();
 
 chrome.runtime.onMessage.addListener((msg, sender, cb) => {
   if (msg.type === GET_QUEUE) {
-    cb(toBeFulfilled.filter(task => task.type !== NAP));
+    cb(getAllEventTasks());
   }
 });

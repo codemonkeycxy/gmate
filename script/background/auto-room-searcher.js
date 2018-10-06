@@ -29,7 +29,7 @@ function stopWorker() {
     return;
   }
 
-  if (toBeFulfilled.filter(task => task.type !== NAP).length > 0) {
+  if (getNapFillers().length > 0) {
     notify('Caution!', 'Room searching is paused');
   }
 
@@ -57,6 +57,10 @@ function stopWorker() {
 // todo: remove a meeting from the queue from popup list
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
+// todo: room booking notification "confirm" button doesn't work on windows
+// todo: more feedback when "i need a room" is clicked
+// todo: don't look for a room if there's already one that fulfills the filter - stop overbooking (be careful about rooms that are registered but rejected)
+// todo: the ability to remove a meeting from the control panel (settings)
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -96,6 +100,7 @@ onMessage((msg, sender, sendResponse) => {
 // ==================== heartbeat ======================
 function heartbeat() {
   console.log('heartbeat check. still alive...');
+
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
 
@@ -201,6 +206,7 @@ function preparePostTrigger() {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       console.log(`room selected for ${JSON.stringify(currentTask)}`);
 
+      // todo: event name is cut off
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
         type: 'basic',
@@ -226,6 +232,7 @@ function preparePostTrigger() {
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
       // enqueue the event to be searched later
       console.log(`no room found for ${JSON.stringify(currentTask)}`);
+
       enqueue(currentTask);
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
@@ -262,12 +269,14 @@ function preparePostSave() {
 
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       console.log(`room saved for ${JSON.stringify(currentTask)}`);
+
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
 
     if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
       console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
+
       enqueue(currentTask);
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
@@ -336,6 +345,10 @@ function isEventInQueue(eventTask) {
 
     return task.data.eventId === eventTask.data.eventId;
   }).length > 0;
+}
+
+function getAllEventTasks() {
+  return toBeFulfilled.filter(task => task.type !== NAP);
 }
 
 function getNapFillers(napMinutes) {
