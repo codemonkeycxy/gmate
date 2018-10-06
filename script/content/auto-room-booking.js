@@ -13,14 +13,31 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    tryUntilPass(getRoomsTab, clickRoomsTab);
-    // wait for room tab to activate
-    tryUntilPass(() => isRoomSuggestionLoaded() && hasNoRoomFlag(), selectFromSuggestion);
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, result => {
+      const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+      if (positiveFilter && hasMatchingRoom(positiveFilter)) {
+        return sendFinishMessage(NO_NEED_TO_BOOK);
+      }
+
+      tryUntilPass(getRoomsTab, clickRoomsTab);
+      // wait for room tab to activate
+      tryUntilPass(() => isRoomSuggestionLoaded() && hasNoRoomFlag(), selectFromSuggestion);
+    });
   }
 
-  function getExistingRooms() {
-    const existingRooms = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
-    return existingRooms.childNodes.map(node => node.getAttribute("aria-label"));
+  function hasMatchingRoom(positiveFilter) {
+    const filter = new RegExp(positiveFilter);
+    const selectedRooms = getSelectedRooms();
+
+    for (let id in selectedRooms) {
+      const room = selectedRooms[id];
+
+      if (room.status !== DECLINED && room.name.match(filter)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   function getRoomsTab() {
@@ -172,7 +189,7 @@
       '[aria-label="Rooms added to this event."]'
     )[0];
     if (!selectedRoomListUI || !selectedRoomListUI.children) {
-      return;
+      return {};
     }
 
     const selectedRooms = {};
@@ -181,10 +198,26 @@
       const roomId = selectedRoom.getAttribute("data-id");
       const roomName = selectedRoom.getAttribute("aria-label");
 
-      selectedRooms[roomId] = {id: roomId, name: roomName.trim()};
+      selectedRooms[roomId] = {
+        id: roomId,
+        name: roomName.trim().replace(', Attending', '').replace(', Declined', ''),
+        status: getRoomStatus(roomName)
+      };
     }
 
     return selectedRooms;
+  }
+
+  function getRoomStatus(roomName) {
+    if (roomName.includes('Attending')) {
+      return ACCEPTED;
+    }
+
+    if (roomName.includes('Declined')) {
+      return DECLINED;
+    }
+
+    return UNKNOWN;
   }
 
   function addSaveListener(initialRooms) {
@@ -213,10 +246,7 @@
   function updateFavorability(selectedRooms) {
     getFromStorage({"favorite-rooms": {}}, result => {
       const favoriteRooms = result["favorite-rooms"];
-
-      selectedRooms.forEach(room => {
-        updateFavorabilityForOne(room, favoriteRooms);
-      });
+      selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 
       persist({"favorite-rooms": favoriteRooms});
     });
