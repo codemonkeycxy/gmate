@@ -186,7 +186,7 @@ function triggerRoomBooking() {
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
     options: {
-      forceBook: true
+      forceBookOnEdit: true
     }
   });
 }

@@ -7,8 +7,8 @@
     addSaveListener(initialRooms);
   }
 
-  function bookFavoriteRoom(forceBook) {
-    if (!forceBook && isEdit()) {
+  function bookFavoriteRoom(forceBookOnEdit) {
+    if (!forceBookOnEdit && isEdit()) {
       // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
@@ -16,6 +16,11 @@
     tryUntilPass(getRoomsTab, clickRoomsTab);
     // wait for room tab to activate
     tryUntilPass(() => isRoomSuggestionLoaded() && hasNoRoomFlag(), selectFromSuggestion);
+  }
+
+  function getExistingRooms() {
+    const existingRooms = document.querySelectorAll('[aria-label="Rooms added to this event."]')[0];
+    return existingRooms.childNodes.map(node => node.getAttribute("aria-label"));
   }
 
   function getRoomsTab() {
@@ -245,8 +250,8 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      const forceBook = msg.options && msg.options.forceBook;
-      tryUntilPass(isEventPageLoaded, () => bookFavoriteRoom(forceBook));
+      const forceBookOnEdit = msg.options && msg.options.forceBookOnEdit;
+      tryUntilPass(isEventPageLoaded, () => bookFavoriteRoom(forceBookOnEdit));
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
