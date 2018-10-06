@@ -58,7 +58,6 @@ function stopWorker() {
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: more feedback when "i need a room" is clicked
 // todo: don't look for a room if there's already one that fulfills the filter - stop overbooking (be careful about rooms that are registered but rejected)
 // todo: the ability to remove a meeting from the control panel (settings)
 
@@ -73,9 +72,7 @@ onMessage((msg, sender, sendResponse) => {
       throw new Error(`received empty event id. event name: ${eventName}`);
     }
 
-    notify('You are all set!', 'we will work hard to book a room for you in the background');
     enqueue(eventTask(eventId, eventName));
-
     if (!workerTabId) {
       startWorker();
     }

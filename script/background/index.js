@@ -12,4 +12,8 @@ chrome.runtime.onMessage.addListener((msg, sender, cb) => {
   if (msg.type === GET_QUEUE) {
     cb(getAllEventTasks());
   }
+
+  if (msg.type === NOTIFY) {
+    notify(msg.data.title, msg.data.message);
+  }
 });

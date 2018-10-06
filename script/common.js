@@ -26,6 +26,8 @@ const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
 
+const NOTIFY = "notify";
+
 const NAP = "nap";
 const EVENT = "event";
 const GET_QUEUE = "get-queue";
@@ -261,12 +263,22 @@ function isMyMeeting() {
 }
 
 function notify(title, msg) {
-  chrome.notifications.create(null, {
-    iconUrl: "icon.png",
-    type: 'basic',
-    title: title,
-    message: msg
-  });
+  if (chrome.notifications) {  // for background script
+    chrome.notifications.create(null, {
+      iconUrl: "icon.png",
+      type: 'basic',
+      title: title,
+      message: msg
+    });
+  } else {  // for content script
+    chrome.runtime.sendMessage({
+      type: NOTIFY,
+      data: {
+        title: title,
+        message: msg
+      }
+    });
+  }
 }
 
 function getRandomInt(max) {
