@@ -318,3 +318,9 @@ function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown, onError
     callback();
   }
 }
+
+const nextId = (() => {
+  let id = 0;
+
+  return () => id++;
+})();

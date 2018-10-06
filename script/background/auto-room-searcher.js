@@ -312,6 +312,7 @@ function dequeue() {
 
 function eventTask(eventId, eventName) {
   return {
+    id: nextId(),
     type: EVENT,
     data: {
       eventId: eventId,
@@ -321,7 +322,10 @@ function eventTask(eventId, eventName) {
 }
 
 function napTask() {
-  return {type: NAP}
+  return {
+    id: nextId(),
+    type: NAP
+  }
 }
 
 function estimateTimeToCompletion() {
