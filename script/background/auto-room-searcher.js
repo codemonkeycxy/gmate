@@ -58,7 +58,6 @@ function stopWorker() {
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: don't look for a room if there's already one that fulfills the filter - stop overbooking (be careful about rooms that are registered but rejected)
 // todo: the ability to remove a meeting from the control panel (settings)
 
 // ==================== Task Queue Management ======================
@@ -203,11 +202,10 @@ function preparePostTrigger() {
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       console.log(`room selected for ${JSON.stringify(currentTask)}`);
 
-      // todo: event name is cut off
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
         type: 'basic',
-        title: `We found a room for ${eventName}!`,
+        title: `Room found for ${eventName}!`,
         message: '[!!IMPORTANT!!] Click "more" => "confirm"',
         buttons: [{title: 'confirm'}],
         requireInteraction: true
