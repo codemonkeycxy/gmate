@@ -46,7 +46,7 @@
     });
   }
 
-  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  onMessage((msg, sender, sendResponse) => {
     if (msg.type === SAVE_EDIT) {
       tryUntilPass(getSaveButton, saveEdit);
     }

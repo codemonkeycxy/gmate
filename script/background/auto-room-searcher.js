@@ -54,11 +54,9 @@ function stopWorker() {
 // todo: (in the future) donation
 // todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
 // todo: handle close and reopen browser
-// todo: remove a meeting from the queue from popup list
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: the ability to remove a meeting from the control panel (settings)
 
 // ==================== Task Queue Management ======================
 // todo: (maybe) persist toBeFulfilled
@@ -90,6 +88,17 @@ onMessage((msg, sender, sendResponse) => {
       'Oops. We encountered a problem',
       'Please open the meeting up and click "I need a room" again'
     );
+  }
+});
+
+onMessage((msg, sender, cb) => {
+  if (msg.type === GET_QUEUE) {
+    cb(getAllEventTasks());
+  }
+
+  if (msg.type === REMOVE_TASK) {
+    removeTask(msg.data.taskId);
+    cb(getAllEventTasks());
   }
 });
 
@@ -348,6 +357,24 @@ function isEventInQueue(eventTask) {
 
 function getAllEventTasks() {
   return toBeFulfilled.filter(task => task.type !== NAP);
+}
+
+function removeTask(taskId) {
+  console.log(`trying to remove task with id ${taskId}...`);
+
+  if (currentTask.id === taskId) {
+    return console.warn(`unable to remove the current task ${currentTask} that's under lock`);
+  }
+
+  const oldLength = toBeFulfilled.length;
+  toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
+  const newLength = toBeFulfilled.length;
+
+  if (newLength === oldLength - 1) {
+    return console.log(`successfully removed task with id ${taskId}`);
+  }
+
+  console.error(`an error occurred during task removal. old task count ${oldLength}, new task count ${newLength}`);
 }
 
 function getNapFillers(napMinutes) {

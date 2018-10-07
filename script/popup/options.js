@@ -1,18 +1,38 @@
-chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, resp => {
-  if (resp.length === 0) {
-    return;
+chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
+
+function addRemovalListener() {
+  const trashes = document.getElementsByClassName('fa fa-trash');
+  for (let i = 0; i < trashes.length; i++) {
+    const trash = trashes[i];
+    trash.addEventListener("click", () => removeTask(parseInt(trash.getAttribute('data-id'))));
+  }
+}
+
+function removeTask(taskId) {
+  chrome.runtime.sendMessage(null, {
+    type: REMOVE_TASK,
+    data: {
+      taskId: taskId
+    }
+  }, null, injectTaskQueueUI);
+}
+
+function injectTaskQueueUI(eventTasks) {
+  const taskQueueUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
+  if (eventTasks.length === 0) {
+    return taskQueueUI.innerHTML = '';
   }
 
-  document.getElementById(
-    TO_BE_FULFILLED_QUEUE
-  ).innerHTML = `<div>We are currently searching rooms for the following event(s):</div>${
-    resp.map(
+  taskQueueUI.innerHTML = `<div>We are currently searching rooms for the following event(s):</div>${
+    eventTasks.map(
       task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${
         task.data.eventName
-        }</a></li>`
+        }</a>&nbsp;<i data-id=${task.id} class="fa fa-trash"></i></li>`
     ).join('')
-  }`;
-});
+    }`;
+
+  addRemovalListener();
+}
 
 // Saves options to chrome.storage
 function setOption(settingName, value) {

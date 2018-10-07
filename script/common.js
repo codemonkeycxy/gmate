@@ -31,6 +31,7 @@ const NOTIFY = "notify";
 const NAP = "nap";
 const EVENT = "event";
 const GET_QUEUE = "get-queue";
+const REMOVE_TASK = "remove-task";
 const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 
 const ACCEPTED = "accepted";

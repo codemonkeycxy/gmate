@@ -2,17 +2,13 @@
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 
 /* ==================== Global Variables ======================= */
-const toBeFulfilled = [];
+let toBeFulfilled = [];
 let workerTabId = null;
 let currentTask = null;
 let taskVersion = 0;
 let lastActiveTs = Date.now();
 
-chrome.runtime.onMessage.addListener((msg, sender, cb) => {
-  if (msg.type === GET_QUEUE) {
-    cb(getAllEventTasks());
-  }
-
+onMessage((msg, sender, cb) => {
   if (msg.type === NOTIFY) {
     notify(msg.data.title, msg.data.message);
   }
