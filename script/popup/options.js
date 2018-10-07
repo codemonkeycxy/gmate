@@ -1,6 +1,6 @@
 chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
 
-function addRemovalListener() {
+function addTaskRemovalListener() {
   const trashes = document.getElementsByClassName('fa fa-trash');
   for (let i = 0; i < trashes.length; i++) {
     const trash = trashes[i];
@@ -31,7 +31,7 @@ function injectTaskQueueUI(eventTasks) {
     ).join('')
     }`;
 
-  addRemovalListener();
+  addTaskRemovalListener();
 }
 
 // Saves options to chrome.storage
