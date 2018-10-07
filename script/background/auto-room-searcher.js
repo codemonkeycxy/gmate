@@ -29,7 +29,7 @@ function stopWorker() {
     return;
   }
 
-  if (getNapFillers().length > 0) {
+  if (getAllEventTasks().length > 0) {
     notify('Caution!', 'Room searching is paused');
   }
 
