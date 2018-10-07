@@ -381,12 +381,17 @@ function getNapFillers(napMinutes) {
   console.log(`trying to add a ${napMinutes} minutes nap to the task queue...`);
 
   const timeToCompletion = estimateTimeToCompletion();
+  const fillers = [];
   if (timeToCompletion >= napMinutes) {
     console.log(`just kidding. it will already take ${timeToCompletion} minutes to complete the current tasks. no need to nap more`);
-    return [];
+    return fillers;
   }
 
   napMinutes = napMinutes - timeToCompletion;
   console.log(`given the current tasks will take ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
-  return Array(napMinutes).fill(napTask());
+  for (let i = 0; i < napMinutes; i++) {
+    fillers.push(napTask());
+  }
+
+  return fillers;
 }
