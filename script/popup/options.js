@@ -22,35 +22,21 @@ function removeTask(taskId) {
 }
 
 function injectTaskQueueUI(eventTasks) {
-  const taskQueueUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
+  const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
   if (eventTasks.length === 0) {
-    return taskQueueUI.innerHTML = '';
+    return taskQueueUIGroup.style.display = 'none';
   }
 
-  taskQueueUI.innerHTML = `<div>We are currently searching rooms for the following event(s):</div>${
+  taskQueueUIGroup.style.display = 'block';
+  document.getElementById(TO_BE_FULFILLED_QUEUE).innerHTML = `${
     eventTasks.map(
       task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${
         task.data.eventName
         }</a>&nbsp;<i data-id=${task.id} class="fa fa-trash"></i></li>`
     ).join('')
-    }`;
+  }`;
 
-  addWorkerToggle();
   addTaskRemovalListener();
-}
-
-function addWorkerToggle() {
-  const taskQueueUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
-
-  const startWorkBtn = document.createElement('button');
-  startWorkBtn.textContent = "Start searching";
-  startWorkBtn.addEventListener("click", startWorker);
-  insertAfter(startWorkBtn, taskQueueUI);
-
-  const stopWorkerBtn = document.createElement('button');
-  stopWorkerBtn.textContent = "Stop searching";
-  stopWorkerBtn.addEventListener("click", stopWorker);
-  insertAfter(stopWorkerBtn, taskQueueUI);
 }
 
 // Saves options to chrome.storage
@@ -96,3 +82,7 @@ Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(key =>
 Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
   document.getElementById(key).addEventListener("input", e => setOption(key, e.target.value))
 );
+
+// add worker controller buttons
+document.getElementById(START_WORKER).onclick = startWorker;
+document.getElementById(STOP_WORKER).onclick = stopWorker;

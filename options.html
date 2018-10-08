@@ -49,8 +49,16 @@ Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
         id="room-booking-filter-negative"
 >
 <br>
-<br>
-<div id="to-be-fulfilled-queue"></div>
+
+<div id="task-queue-ui-group">
+    <br>
+    <div>We are currently searching rooms for the following event(s):</div>
+    <div id="to-be-fulfilled-queue"></div>  <!-- the content will be programmatically filled -->
+
+    <br>
+    <button type="button" id="start-worker">Start search</button>
+    <button type="button" id="stop-worker">Stop search</button>
+</div>
 
 <script src="script/common.js"></script>
 <script src="script/popup/options.js"></script>
