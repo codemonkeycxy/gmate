@@ -66,7 +66,7 @@ function stopWorker() {
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page
 // todo: (in the future) donation
-// todo: add pause feature (manual or with setting, automatically pause when on battery/battery is low)
+// todo: option to automatically pause when on battery/battery is low
 // todo: handle close and reopen browser
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
