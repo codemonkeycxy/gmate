@@ -1,3 +1,7 @@
+const port = chrome.extension.connect({
+  name: "long-lived pipe"
+});
+
 chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
 
 function addTaskRemovalListener() {
@@ -31,7 +35,22 @@ function injectTaskQueueUI(eventTasks) {
     ).join('')
     }`;
 
+  addWorkerToggle();
   addTaskRemovalListener();
+}
+
+function addWorkerToggle() {
+  const taskQueueUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
+
+  const startWorkBtn = document.createElement('button');
+  startWorkBtn.textContent = "Start searching";
+  startWorkBtn.addEventListener("click", startWorker);
+  insertAfter(startWorkBtn, taskQueueUI);
+
+  const stopWorkerBtn = document.createElement('button');
+  stopWorkerBtn.textContent = "Stop searching";
+  stopWorkerBtn.addEventListener("click", stopWorker);
+  insertAfter(stopWorkerBtn, taskQueueUI);
 }
 
 // Saves options to chrome.storage
@@ -52,6 +71,18 @@ function restoreOptions() {
   getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, settings =>
     Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key => document.getElementById(key).value = settings[key])
   );
+}
+
+function startWorker() {
+  port.postMessage({
+    type: START_WORKER
+  });
+}
+
+function stopWorker() {
+  port.postMessage({
+    type: STOP_WORKER
+  });
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

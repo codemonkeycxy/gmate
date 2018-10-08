@@ -1,4 +1,16 @@
 // ==================== worker management ======================
+chrome.extension.onConnect.addListener(port =>
+  port.onMessage.addListener(msg => {
+    if (msg.type === START_WORKER) {
+      startWorker();
+    }
+
+    if (msg.type === STOP_WORKER) {
+      stopWorker();
+    }
+  })
+);
+
 chrome.tabs.onRemoved.addListener(tabId => {
   if (tabId === workerTabId) {
     stopWorker();
@@ -29,6 +41,8 @@ function stopWorker() {
     return;
   }
 
+  enqueue(currentTask);
+  currentTask = null;
   if (getAllEventTasks().length > 0) {
     notify('Caution!', 'Room searching is paused');
   }
@@ -82,7 +96,7 @@ onMessage((msg, sender, sendResponse) => {
     console.log(
       `Expecting to register 1 event to the queue but found - event name: ${
         eventName
-      } event ids: ${JSON.stringify(eventIds)}`
+        } event ids: ${JSON.stringify(eventIds)}`
     );
     notify(
       'Oops. We encountered a problem',
@@ -110,9 +124,6 @@ function heartbeat() {
     console.log('worker idle for more than 5 min, resurrecting...');
 
     enqueue(currentTask);
-    taskVersion++;
-
-    console.log(`current work: ${JSON.stringify(toBeFulfilled)}; task version: ${taskVersion}`);
     nextTask();
   }
 }
@@ -125,7 +136,9 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
+  console.log(`current work: ${JSON.stringify(toBeFulfilled)}; task version: ${taskVersion}`);
   lastActiveTs = Date.now();
+  taskVersion++;
 
   if (!workerTabId) {
     return console.log('worker not available. processing paused');
@@ -160,6 +173,10 @@ function wakeUp(taskVersionBeforeNap) {
 }
 
 function loadEventPage() {
+  if (!currentTask || currentTask.type !== EVENT) {
+    return;
+  }
+
   const eventId = currentTask.data.eventId;
   const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
@@ -294,13 +311,11 @@ function preparePostSave() {
 
 function enqueue(task) {
   if (!task) {
-    console.log('nothing to enqueue, move on...');
-    return;
+    return console.log('nothing to enqueue, move on...');
   }
 
   if (task.type !== EVENT) {
-    console.log(`only need enqueue event tasks. ignoring ${JSON.stringify(task)}`);
-    return;
+    return console.log(`only need enqueue event tasks. ignoring ${JSON.stringify(task)}`);
   }
 
   if (isEventInQueue(task)) {
@@ -338,7 +353,7 @@ function napTask() {
 }
 
 function estimateTimeToCompletion() {
-  const avgEventTaskTime = 1/10;  // one tenth of a minute (aka 10 tasks per minute)
+  const avgEventTaskTime = 1 / 10;  // one tenth of a minute (aka 10 tasks per minute)
   let timeToCompletion = 0;
 
   toBeFulfilled.forEach(task => timeToCompletion += task.type === NAP ? 1 : avgEventTaskTime);
@@ -362,7 +377,7 @@ function getAllEventTasks() {
 function removeTask(taskId) {
   console.log(`trying to remove task with id ${taskId}...`);
 
-  if (currentTask.id === taskId) {
+  if (currentTask && currentTask.id === taskId) {
     return console.warn(`unable to remove the current task ${currentTask} that's under lock`);
   }
 
