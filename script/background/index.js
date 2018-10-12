@@ -30,6 +30,10 @@ function loadGlobalVariables() {
     taskVersion = globalVars.taskVersion || 0;
     lastActiveTs = globalVars.lastActiveTs || Date.now();
 
+    // push the saved current task into the task queue to start afresh
+    enqueue(currentTask);
+    currentTask = null;
+
     if (workerTabId) {
       chrome.tabs.get(workerTabId, () => {
         if (chrome.runtime.lastError) {
