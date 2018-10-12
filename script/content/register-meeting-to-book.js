@@ -16,7 +16,7 @@
       eventIdToFulfill = getEventId() || NO_ID_YET;
       needRoomButton.style.background = '#7CB342';
       needRoomButton.style.color = '#FFFFFF';
-      notify('You are all set!', 'Once you save this meeting, we will work on booking a room for you in the background');
+      notify('The magic shall be made!', 'Save this meeting and we will work on booking a room for you in the background');
     });
 
     const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
