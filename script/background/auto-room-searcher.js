@@ -67,13 +67,17 @@ function stopWorker() {
 // todo: link to rating page
 // todo: (in the future) donation
 // todo: option to automatically pause when on battery/battery is low
-// todo: handle close and reopen browser
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
+// todo: show worker status in popup with appropriate controller button (status: paused <btn>start searching</btn>, status: active <btn>stop searching</btn>)
+// todo: cancel task when user clicks "cancel" instead "confirm"
+// todo: list the currentTask in settings panel
+// todo: "i need a room" button not showing in the worker tab. more than that, the entire chrome plug-in doesn't work on the worker tab
+// todo: (maybe) put a banner to tell people it's worker tab, just leave it alone
+// todo: (maybe) change the icon of the worker tab
 
 // ==================== Task Queue Management ======================
-// todo: (maybe) persist toBeFulfilled
 onMessage((msg, sender, sendResponse) => {
   if (msg.type === ROOM_TO_BE_FULFILLED) {
     const eventId = msg.data.eventId;
@@ -119,6 +123,7 @@ onMessage((msg, sender, cb) => {
 // ==================== heartbeat ======================
 function heartbeat() {
   console.log('heartbeat check. still alive...');
+  saveGlobalVariables();
 
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
