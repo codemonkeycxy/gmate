@@ -10,8 +10,14 @@ onTabUpdated((tabId, changeInfo, tab) => {
   const isLoaded = changeInfo.status === "complete";
 
   if (tabId === workerTabId) {
-    // don't trigger any event for automated room searching
-    return;
+    // mask out the worker page to avoid accidental disruption from the user
+    return emit(tabId, {
+      type: SHOW_BANNER,
+      data: {
+        level: WARNING,
+        message: "Warning! This page is reserved for GMate auto room searching. Please leave it running by itself and avoid interrupting it"
+      }
+    });
   }
 
   if (leavingEventPage) {

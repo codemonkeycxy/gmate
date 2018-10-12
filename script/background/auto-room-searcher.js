@@ -72,10 +72,8 @@ function stopWorker() {
 // todo: room booking notification "confirm" button doesn't work on windows
 // todo: show worker status in popup with appropriate controller button (status: paused <btn>start searching</btn>, status: active <btn>stop searching</btn>)
 // todo: cancel task when user clicks "cancel" instead "confirm"
-// todo: list the currentTask in settings panel
-// todo: "i need a room" button not showing in the worker tab. more than that, the entire chrome plug-in doesn't work on the worker tab
-// todo: (maybe) put a banner to tell people it's worker tab, just leave it alone
 // todo: (maybe) change the icon of the worker tab
+// todo: (maybe) replace the worker warning banner with a whole page mask (overlay)
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {

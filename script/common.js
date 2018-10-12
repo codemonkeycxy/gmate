@@ -22,6 +22,8 @@ const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
+const SHOW_BANNER = "show-banner";
+
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
@@ -40,6 +42,11 @@ const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 const ACCEPTED = "accepted";
 const DECLINED = "declined";
 const UNKNOWN = "unknown";
+
+const SUCCESS = "success";
+const INFO = "info";
+const WARNING = "warning";
+const ERROR = "danger";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
