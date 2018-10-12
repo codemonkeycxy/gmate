@@ -328,3 +328,8 @@ const nextId = (() => {
 
   return () => id++;
 })();
+
+/**
+ * a function that does nothing. can be used as noop or noop(), both have the same effect
+ */
+const noop = () => () => {};

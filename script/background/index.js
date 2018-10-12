@@ -31,13 +31,13 @@ function loadGlobalVariables() {
     lastActiveTs = globalVars.lastActiveTs || Date.now();
 
     if (workerTabId) {
-      try {
-        chrome.tabs.get(workerTabId);
-      } catch (e) {
-        console.log(`worker ${workerTabId} is no longer available. resetting...`);
-        workerTabId = null;
-        startWorker();
-      }
+      chrome.tabs.get(workerTabId, () => {
+        if (chrome.runtime.lastError) {
+          console.log(`worker ${workerTabId} is no longer available. resetting...`);
+          workerTabId = null;
+          startWorker();
+        }
+      });
     }
   });
 }
