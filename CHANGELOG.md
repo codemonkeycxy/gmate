@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## to be released
+- [feature] Preserve the task queue and reload upon chrome window reopen
+- [feature] Allow start/stop room searching worker from settings panel
+- [feature] Allow removing tasks from settings panel
+- [fix] Avoid auto booking if there's already a booked room that matches the searching criteria
+- [enhancement] Show a warning banner on the worker tab to warn users from interruption
+- [enhancement] Change "I need a room" button color to call for attention
+- [enhancement] Trigger notification after "I need a room" button is clicked
+
 ## 0.1.0.1
 - [fix] Fix the race condition between different events that compete for the room searching worker
 
