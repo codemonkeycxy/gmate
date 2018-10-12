@@ -375,8 +375,17 @@ function isEventInQueue(eventTask) {
   }).length > 0;
 }
 
+/**
+ * return all the event tasks from the task queue. Note the return value includes the currentTask as well
+ */
 function getAllEventTasks() {
-  return toBeFulfilled.filter(task => task.type !== NAP);
+  const toBeFulFilledEventTasks = toBeFulfilled.filter(task => task.type === EVENT);
+
+  if (currentTask && currentTask.type === EVENT) {
+    return [currentTask, ...toBeFulFilledEventTasks];
+  } else {
+    return toBeFulFilledEventTasks;
+  }
 }
 
 function removeTask(taskId) {
