@@ -109,12 +109,24 @@ onMessage((msg, sender, sendResponse) => {
 
 onMessage((msg, sender, cb) => {
   if (msg.type === GET_QUEUE) {
-    cb(getAllEventTasks());
+    cb({
+      type: GET_QUEUE,
+      data: {
+        eventTasks: getAllEventTasks(),
+        workerTabId: workerTabId
+      }
+    });
   }
 
   if (msg.type === REMOVE_TASK) {
     removeTask(msg.data.taskId);
-    cb(getAllEventTasks());
+    cb({
+      type: REMOVE_TASK,
+      data: {
+        eventTasks: getAllEventTasks(),
+        workerTabId: workerTabId
+      }
+    });
   }
 });
 

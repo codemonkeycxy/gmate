@@ -2,7 +2,12 @@ const port = chrome.extension.connect({
   name: "long-lived pipe"
 });
 
-chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
+renderTaskQueueUI();
+setInterval(renderTaskQueueUI, 500);  // periodically refresh the UI
+
+function renderTaskQueueUI() {
+  chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
+}
 
 function addTaskRemovalListener() {
   const trashes = document.getElementsByClassName('fa fa-trash');
@@ -21,13 +26,21 @@ function removeTask(taskId) {
   }, null, injectTaskQueueUI);
 }
 
-function injectTaskQueueUI(eventTasks) {
+function injectTaskQueueUI(payload) {
+  const eventTasks = payload.data.eventTasks;
+  const workerTabId = payload.data.workerTabId;
   const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
+
   if (eventTasks.length === 0) {
     return taskQueueUIGroup.style.display = 'none';
   }
 
   taskQueueUIGroup.style.display = 'block';
+  populateTasks(eventTasks);
+  displayWorkerController(workerTabId);
+}
+
+function populateTasks(eventTasks) {
   document.getElementById(TO_BE_FULFILLED_QUEUE).innerHTML = `${
     eventTasks.map(
       task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${
@@ -37,6 +50,14 @@ function injectTaskQueueUI(eventTasks) {
   }`;
 
   addTaskRemovalListener();
+}
+
+function displayWorkerController(workerTabId) {
+  const workerActiveUIGroup = document.getElementById(WORKER_ACTIVE_UI_GROUP);
+  const workerStoppedUIGroup = document.getElementById(WORKER_STOPPED_UI_GROUP);
+
+  workerActiveUIGroup.style.display = workerTabId ? 'block' : 'none';
+  workerStoppedUIGroup.style.display = !workerTabId ? 'block' : 'none';
 }
 
 // Saves options to chrome.storage

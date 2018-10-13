@@ -37,6 +37,8 @@ const REMOVE_TASK = "remove-task";
 const START_WORKER = "start-worker";
 const STOP_WORKER = "stop-worker";
 const TASK_QUEUE_UI_GROUP = "task-queue-ui-group";
+const WORKER_ACTIVE_UI_GROUP = "worker-active-ui-group";
+const WORKER_STOPPED_UI_GROUP = "worker-stopped-ui-group";
 const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 
 const ACCEPTED = "accepted";
