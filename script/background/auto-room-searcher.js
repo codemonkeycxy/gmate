@@ -340,13 +340,34 @@ function enqueue(task) {
   // add some buffer so that we don't retry immediately
   console.log(`enqueuing ${JSON.stringify(task)}...`);
   toBeFulfilled.push(...getNapFillers(5), task);
+  saveGlobalVariables();
 }
 
 function dequeue() {
   const task = toBeFulfilled.shift();
   console.log(`dequeuing ${JSON.stringify(task)}...`);
 
+  saveGlobalVariables();
   return task;
+}
+
+function removeTask(taskId) {
+  console.log(`trying to remove task with id ${taskId}...`);
+
+  if (currentTask && currentTask.id === taskId) {
+    return console.warn(`unable to remove the current task ${currentTask} that's under lock`);
+  }
+
+  const oldLength = toBeFulfilled.length;
+  toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
+  saveGlobalVariables();
+  const newLength = toBeFulfilled.length;
+
+  if (newLength === oldLength - 1) {
+    return console.log(`successfully removed task with id ${taskId}`);
+  }
+
+  console.error(`an error occurred during task removal. old task count ${oldLength}, new task count ${newLength}`);
 }
 
 function eventTask(eventId, eventName) {
@@ -396,24 +417,6 @@ function getAllEventTasks() {
   } else {
     return toBeFulFilledEventTasks;
   }
-}
-
-function removeTask(taskId) {
-  console.log(`trying to remove task with id ${taskId}...`);
-
-  if (currentTask && currentTask.id === taskId) {
-    return console.warn(`unable to remove the current task ${currentTask} that's under lock`);
-  }
-
-  const oldLength = toBeFulfilled.length;
-  toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
-  const newLength = toBeFulfilled.length;
-
-  if (newLength === oldLength - 1) {
-    return console.log(`successfully removed task with id ${taskId}`);
-  }
-
-  console.error(`an error occurred during task removal. old task count ${oldLength}, new task count ${newLength}`);
 }
 
 function getNapFillers(napMinutes) {

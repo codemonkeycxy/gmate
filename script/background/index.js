@@ -13,7 +13,7 @@ function saveGlobalVariables() {
     taskVersion: taskVersion,
     lastActiveTs: lastActiveTs
   };
-  console.log(`taking a snapshot of the current global variables ${JSON.stringify(snapshot)}`);
+  console.log(`taking a snapshot of the current global variables`);
   persist({
     'background-global-variables': snapshot
   });
