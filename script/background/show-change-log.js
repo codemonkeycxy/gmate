@@ -12,5 +12,5 @@ getFromStorage({[LAST_VERSION]: null}, result => {
   }
 
   // todo: show version specific page
-  chrome.tabs.create({url: 'https://github.com/codemonkeycxy/gmate/blob/master/CHANGELOG.md'});
+  chrome.tabs.create({url: `https://github.com/codemonkeycxy/gmate/blob/master/CHANGELOG.md#user-content-${currVersion.replace(/\./gi, "")}`});
 });
