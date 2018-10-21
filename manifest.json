@@ -33,7 +33,8 @@
         "script/content/auto-room-booking.js",
         "script/content/save-edit.js",
         "script/content/register-meeting-to-book.js",
-        "script/content/show-banner.js"
+        "script/content/show-banner.js",
+        "script/content/add-overlay.js"
       ]
     }
   ],

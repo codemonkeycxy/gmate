@@ -23,6 +23,7 @@ const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
 const SHOW_BANNER = "show-banner";
+const ADD_OVERLAY = "add-overlay";
 
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
@@ -221,6 +222,10 @@ function dispatchMouseEvent(target, var_args) {
   // initMouseEvent instead of initEvent
   e.initEvent.apply(e, Array.prototype.slice.call(arguments, 1));
   target.dispatchEvent(e);
+}
+
+function insertBefore(newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode);
 }
 
 function insertAfter(newNode, referenceNode) {

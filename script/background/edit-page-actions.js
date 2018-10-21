@@ -12,9 +12,8 @@ onTabUpdated((tabId, changeInfo, tab) => {
   if (tabId === workerTabId) {
     // mask out the worker page to avoid accidental disruption from the user
     return emit(tabId, {
-      type: SHOW_BANNER,
+      type: ADD_OVERLAY,
       data: {
-        level: WARNING,
         message: "Warning! This page is reserved for GMate auto room searching. Please leave it running by itself and avoid interrupting it"
       }
     });
