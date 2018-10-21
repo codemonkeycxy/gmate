@@ -2,7 +2,7 @@
 (() => {
   const overlayId = 'overlay';
 
-  function addOverlay(message) {
+  function addOverlay() {
     if (document.getElementById(overlayId)) {
       return;
     }
@@ -25,7 +25,7 @@
 
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === ADD_OVERLAY) {
-      addOverlay(msg.data.message);
+      addOverlay();
     }
   });
 })();
