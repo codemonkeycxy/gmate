@@ -61,6 +61,7 @@ function stopWorker() {
 // todo: add daily quota and anti-greedy mechanism
 // todo: add google analytics on queue size and other user behaviors
 // todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
+// todo: after ^, maybe start simulate typing the must have strings in room searching box to get fuller results
 // todo: allow per "i need a room" regex setting, and save past configurations for quick select
 // todo: ask users for room name examples and find commonality among them
 // todo: who's holding my fav room. or large room for small group

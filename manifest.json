@@ -15,6 +15,7 @@
     "scripts": [
       "script/common.js",
       "script/background/index.js",
+      "script/background/show-change-log.js",
       "script/background/edit-page-actions.js",
       "script/background/auto-room-searcher.js"
     ]
