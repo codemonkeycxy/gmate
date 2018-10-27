@@ -278,14 +278,18 @@
     }
   }
 
+  function isRoomTabLoaded() {
+    return !!getElementByText('span', 'Rooms');
+  }
+
   onMessage((msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
       const forceBookOnEdit = msg.options && msg.options.forceBookOnEdit;
-      tryUntilPass(isEventPageLoaded, () => bookFavoriteRoom(forceBookOnEdit));
+      tryUntilPass(isRoomTabLoaded, () => bookFavoriteRoom(forceBookOnEdit));
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
-      tryUntilPass(isEventPageLoaded, registerFavoriteRooms);
+      tryUntilPass(isRoomTabLoaded, registerFavoriteRooms);
     }
   });
 })();

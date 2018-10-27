@@ -75,6 +75,7 @@ function stopWorker() {
 // todo: cancel task when user clicks "cancel" instead "confirm"
 // todo: (maybe) change the icon of the worker tab
 // todo: (maybe) replace the worker warning banner with a whole page mask (overlay)
+// todo: offer a venue for bug report
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
