@@ -18,7 +18,7 @@
     overlay.style.bottom = '0';
     overlay.style.backgroundColor = 'rgba(0,0,0,0.5)';
     overlay.style.zIndex = '99999';
-    overlay.style.cursor = 'pointer';
+    overlay.style.cursor = 'not-allowed';
 
     insertBefore(overlay, document.body.firstChild);
   }
