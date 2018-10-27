@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.2.1.0
 - [feature] Advertise new features to users upon new version release
 - [fix] Properly recycle room searching tasks to avoid confusing task display in settings panel
+- [fix] Fix room book not working bug
 
 ## 0.2.0.0
 - [feature] Preserve the task queue and reload upon chrome window reopen

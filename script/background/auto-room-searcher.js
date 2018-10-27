@@ -76,6 +76,7 @@ function stopWorker() {
 // todo: (maybe) change the icon of the worker tab
 // todo: (maybe) replace the worker warning banner with a whole page mask (overlay)
 // todo: offer a venue for bug report
+// todo: set up key feature metrics and alerts
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
