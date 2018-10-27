@@ -11,7 +11,12 @@ getFromStorage({[LAST_VERSION]: null}, result => {
     return;
   }
 
-  if (lastVersion !== currVersion) {
+  if (lastVersion === currVersion) {
+    return;
+  }
+
+  const versionSettings = VERSIONS[currVersion];
+  if (versionSettings && versionSettings.notify) {
     chrome.tabs.create({url: `https://github.com/codemonkeycxy/gmate/blob/master/CHANGELOG.md#user-content-${currVersion.replace(/\./gi, "")}`});
   }
 });

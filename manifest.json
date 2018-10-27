@@ -14,6 +14,7 @@
   "background": {
     "scripts": [
       "script/common.js",
+      "script/versions.js",
       "script/background/index.js",
       "script/background/show-change-log.js",
       "script/background/edit-page-actions.js",
@@ -27,6 +28,7 @@
       ],
       "js": [
         "script/common.js",
+        "script/versions.js",
         "script/content/allow-guest-modify-event.js",
         "script/content/zero-invitee-reminder.js",
         "script/content/generate-zoom-id.js",

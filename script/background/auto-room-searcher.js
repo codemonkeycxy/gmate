@@ -155,6 +155,7 @@ function nextTask() {
   console.log(`current work: ${JSON.stringify(toBeFulfilled)}; task version: ${taskVersion}`);
   lastActiveTs = Date.now();
   taskVersion++;
+  currentTask = null;
 
   if (!workerTabId) {
     return console.log('worker not available. processing paused');
