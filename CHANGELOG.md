@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 0.2.3
 - [feature] Add bug report link
-- [enhancement] Integrate with mixpanel for user action analytics
+- [enhancement] Integrate with Mixpanel for user action analytics
 
 ## 0.2.2.0
 - [announcement] Apologize for the room searching feature outage
