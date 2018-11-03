@@ -1,3 +1,47 @@
+// ==================== global variable management ======================
+loadGlobalVariables();
+
+function saveGlobalVariables() {
+  const snapshot = {
+    toBeFulfilled: toBeFulfilled,
+    workerTabId: workerTabId,
+    currentTask: currentTask,
+    taskVersion: taskVersion,
+    lastActiveTs: lastActiveTs
+  };
+  console.log(`taking a snapshot of the current global variables`);
+  persist({
+    'background-global-variables': snapshot
+  });
+}
+
+function loadGlobalVariables() {
+  getFromStorage({'background-global-variables': {}}, result => {
+    const globalVars = result['background-global-variables'];
+    console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
+
+    toBeFulfilled = globalVars.toBeFulfilled || [];
+    workerTabId = globalVars.workerTabId || null;
+    currentTask = globalVars.currentTask || null;
+    taskVersion = globalVars.taskVersion || 0;
+    lastActiveTs = globalVars.lastActiveTs || Date.now();
+
+    // push the saved current task into the task queue to start afresh
+    enqueue(currentTask);
+    currentTask = null;
+
+    if (workerTabId) {
+      chrome.tabs.get(workerTabId, () => {
+        if (chrome.runtime.lastError) {
+          console.log(`worker ${workerTabId} is no longer available. resetting...`);
+          workerTabId = null;
+          startWorker();
+        }
+      });
+    }
+  });
+}
+
 // ==================== worker management ======================
 chrome.extension.onConnect.addListener(port =>
   port.onMessage.addListener(msg => {
@@ -74,9 +118,8 @@ function stopWorker() {
 // todo: show worker status in popup with appropriate controller button (status: paused <btn>start searching</btn>, status: active <btn>stop searching</btn>)
 // todo: cancel task when user clicks "cancel" instead "confirm"
 // todo: (maybe) change the icon of the worker tab
-// todo: (maybe) replace the worker warning banner with a whole page mask (overlay)
-// todo: offer a venue for bug report
 // todo: set up key feature metrics and alerts
+// todo: set up a user survey
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
@@ -89,6 +132,7 @@ onMessage((msg, sender, sendResponse) => {
     }
 
     enqueue(eventTask(eventId, eventName));
+    track(ROOM_TO_BE_FULFILLED);
     if (!workerTabId) {
       startWorker();
     }
@@ -309,6 +353,7 @@ function preparePostSave() {
 
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       console.log(`room saved for ${JSON.stringify(currentTask)}`);
+      track('room-saved');
 
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
