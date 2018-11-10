@@ -343,3 +343,23 @@ const nextId = (() => {
  * a function that does nothing. can be used as noop or noop(), both have the same effect
  */
 const noop = () => () => {};
+
+function refreshTab(tab) {
+  chrome.tabs.update(tab.id,{url: tab.url});
+}
+
+function refreshCalendarMainPage(options) {
+  options = options || {};
+  const excludeTabIds = options.excludeTabIds || [];
+
+  chrome.tabs.query({}, tabs =>
+    tabs.forEach(tab => {
+      const isCalendarPage = tab.url.startsWith(CALENDAR_PAGE_URL_PREFIX);
+      const isEventPage = tab.url.startsWith(EDIT_PAGE_URL_PREFIX);
+
+      if (isCalendarPage && !isEventPage && !excludeTabIds.includes(tab.id)) {
+        refreshTab(tab);
+      }
+    })
+  );
+}

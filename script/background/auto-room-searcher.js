@@ -354,6 +354,8 @@ function preparePostSave() {
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
       console.log(`room saved for ${JSON.stringify(currentTask)}`);
       track('room-saved');
+      // refresh calendar main page so that it reflects the newly booked room
+      refreshCalendarMainPage({excludeTabIds: [workerTabId]});
 
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();

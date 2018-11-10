@@ -4,6 +4,9 @@
 /* ==================== Global Variables ======================= */
 let toBeFulfilled, workerTabId, currentTask, taskVersion, lastActiveTs;
 
+// refresh calendar main page on app update so that the new code can take effect
+refreshCalendarMainPage();
+
 onMessage((msg, sender, cb) => {
   if (msg.type === NOTIFY) {
     notify(msg.data.title, msg.data.message);
