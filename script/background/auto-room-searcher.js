@@ -121,6 +121,7 @@ function stopWorker() {
 // todo: set up key feature metrics and alerts
 // todo: set up a user survey
 // todo: log last error to mixpanel
+// todo: (maybe) wrap background scripts with self-invoking function
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
