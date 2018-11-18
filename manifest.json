@@ -13,9 +13,9 @@
   },
   "background": {
     "scripts": [
+      "script/common.js",
       "script/settings/langley.js",
       "script/settings/room-booking-filters.js",
-      "script/common.js",
       "script/tracking.js",
       "script/versions.js",
       "script/background/index.js",

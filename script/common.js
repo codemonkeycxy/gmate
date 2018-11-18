@@ -47,6 +47,9 @@ const INFO = "info";
 const WARNING = "warning";
 const ERROR = "danger";
 
+const ANY = "any";
+const ALL = "all";
+
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;

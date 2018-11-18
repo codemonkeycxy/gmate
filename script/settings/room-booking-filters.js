@@ -1,5 +1,6 @@
 const SINGLE_OPTION = 'single-option';
 const MULTI_OPTION = 'multi-option';
+const RANGE = 'range';
 
 const COMPANY_SPECIFIC_FILTERS = {
   uber: [{
@@ -14,25 +15,35 @@ const COMPANY_SPECIFIC_FILTERS = {
       'PAO | 900 Arastradero B',
     ],
     validator: (roomStr, location) => roomStr.includes(location)
-  }, {
-    name: 'Floor',
-    type: MULTI_OPTION,
-    options: [
-      '1st',
-      '2nd',
-      '3rd',
-      '4th',
-      '5th',
-      '6th',
-      '7th',
-      '8th',
-      '9th',
-      '10th',
-      '11th',
-      '12th',
-      '13th',
-      '14th',
-    ],
-    validator: (roomStr, floors) => floors.any(floor => roomStr.includes(floor))
+  // }, {
+  //   name: 'Floor',
+  //   type: MULTI_OPTION,
+  //   options: [
+  //     '1st',
+  //     '2nd',
+  //     '3rd',
+  //     '4th',
+  //     '5th',
+  //     '6th',
+  //     '7th',
+  //     '8th',
+  //     '9th',
+  //     '10th',
+  //     '11th',
+  //     '12th',
+  //     '13th',
+  //     '14th',
+  //   ],
+  //   validator: (roomStr, floors) => floors.any(floor => roomStr.includes(floor))
+  // }, {
+  //   name: 'Has VC',
+  //   type: SINGLE_OPTION,
+  //   options: [
+  //     {yes: true},
+  //     {no: false}
+  //   ],
+  //   validator: (roomStr, hasVC) => {
+  //     // todo: fill me up
+  //   }
   }]
 };
