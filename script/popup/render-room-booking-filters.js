@@ -12,9 +12,7 @@
     const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
     const filterSettings = COMPANY_SPECIFIC_FILTERS.uber;
 
-    const filterWrapper = document.createElement('div');
-    filterSettings.forEach(filterSetting => filterWrapper.appendChild(renderFilter(filterSetting)));
-    insertBefore(filterWrapper, filterUIGroup.firstChild);
+    filterSettings.forEach(filterSetting => filterUIGroup.appendChild(renderFilter(filterSetting)));
   }
 
   function renderFilter(filterSetting) {
