@@ -1,3 +1,6 @@
+const START_WORKER_BTN_ID = 'start-worker';
+const STOP_WORKER_BTN_ID = 'stop-worker';
+
 const port = chrome.extension.connect({
   name: "long-lived pipe"
 });
@@ -15,5 +18,5 @@ function stopWorker() {
 }
 
 // add worker controller buttons
-document.getElementById(START_WORKER).onclick = startWorker;
-document.getElementById(STOP_WORKER).onclick = stopWorker;
+document.getElementById(START_WORKER_BTN_ID).onclick = startWorker;
+document.getElementById(STOP_WORKER_BTN_ID).onclick = stopWorker;
