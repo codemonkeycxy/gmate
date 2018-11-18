@@ -5,34 +5,53 @@
     [SINGLE_OPTION]: renderSingleOption
   };
 
+  // ----------------------- old style regex based filters --------------------------
   document.addEventListener("DOMContentLoaded", restoreOptions);
-  injectFilterUI();
+  // Restores feature toggle values using the preferences stored in chrome.storage
+  function restoreOptions() {
+    // fill out saved room booking filters. use default if nothing is found
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, settings =>
+      Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key => document.getElementById(key).value = settings[key])
+    );
+  }
 
+  // ----------------------- new style human readable filters -------------------------
+  injectFilterUI();
   // add filter input listener
   Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
     document.getElementById(key).addEventListener("input", e => persistPair(key, e.target.value))
   );
 
   function injectFilterUI() {
-    const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
-    const filterSettings = COMPANY_SPECIFIC_FILTERS.uber;
+    const companyName = 'uber';  // hard code for now
+    const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
+    const storageKeys = {};
+    filterSettings.forEach(setting => storageKeys[getStorageKey(setting.name)] = setting.default);
 
-    filterSettings.forEach(filterSetting => filterUIGroup.appendChild(renderFilter(filterSetting)));
+    getFromStorage(storageKeys, storedInput => {
+      const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
+      filterSettings.forEach(filterSetting => filterUIGroup.appendChild(renderFilter(filterSetting, storedInput)));
+    });
   }
 
-  function renderFilter(filterSetting) {
-    return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterSetting);
+  function getStorageKey(filterName) {
+    return `room-booking-filter-${'uber'}-${filterName}`;
   }
 
-  function renderSingleOption(filterSetting) {
-    return renderDropDownSelect(filterSetting.name, filterSetting.options);
+  function renderFilter(filterSetting, storedInput) {
+    return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterSetting, storedInput);
   }
 
-  // Restores feature toggle values using the preferences stored in chrome.storage
-  function restoreOptions() {
-    // fill out saved room booking filters. use default if nothing is found
-    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, settings =>
-      Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key => document.getElementById(key).value = settings[key])
+  function renderSingleOption(filterSetting, storedInput) {
+    const filterName = filterSetting.name;
+    const filterOptions = filterSetting.options;
+    const storageKey = getStorageKey(filterName);
+
+    return renderDropDownSelect(
+      filterName,
+      filterOptions,
+      storedInput[storageKey],
+      e => persistPair(storageKey, e.target.value)
     );
   }
 })();

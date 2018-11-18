@@ -7,6 +7,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     name: 'Location',
     type: SINGLE_OPTION,
     options: [
+      ANY,
       'SFO | 1455 Market',
       'SFO | 555 Market',
       'SFO | 685 Market',
@@ -14,11 +15,13 @@ const COMPANY_SPECIFIC_FILTERS = {
       'PAO | 900 Arastradero A',
       'PAO | 900 Arastradero B',
     ],
+    default: ANY,
     validator: (roomStr, location) => roomStr.includes(location)
   // }, {
   //   name: 'Floor',
   //   type: MULTI_OPTION,
   //   options: [
+  //     ANY,
   //     '1st',
   //     '2nd',
   //     '3rd',
@@ -34,14 +37,17 @@ const COMPANY_SPECIFIC_FILTERS = {
   //     '13th',
   //     '14th',
   //   ],
+  //   default: ANY,
   //   validator: (roomStr, floors) => floors.any(floor => roomStr.includes(floor))
   // }, {
   //   name: 'Has VC',
   //   type: SINGLE_OPTION,
   //   options: [
+  //     {[ANY]: ANY},
   //     {yes: true},
   //     {no: false}
   //   ],
+  //   default: ANY,
   //   validator: (roomStr, hasVC) => {
   //     // todo: fill me up
   //   }

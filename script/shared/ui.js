@@ -1,15 +1,9 @@
-function renderDropDownSelect(name, options) {
+function renderDropDownSelect(name, options, initialVal, onSelect) {
   const selectWrapper = document.createElement('div');
   const selectTitle = document.createElement('div');
   selectTitle.textContent = name;
 
   const selectList = document.createElement('select');
-  // set up a default option to allow ANY
-  const defaultOption = document.createElement('option');
-  defaultOption.value = ANY;
-  defaultOption.text = ANY;
-  selectList.appendChild(defaultOption);
-
   // populate the option list
   options.forEach(option => {
     const optionUI = document.createElement('option');
@@ -19,6 +13,11 @@ function renderDropDownSelect(name, options) {
     selectList.appendChild(optionUI);
   });
 
+  // set up initial value and change listener
+  selectList.value = initialVal;
+  selectList.addEventListener("change", e => onSelect(e));
+
+  // put everything together
   selectWrapper.appendChild(selectTitle);
   selectWrapper.appendChild(selectList);
   return selectWrapper;
