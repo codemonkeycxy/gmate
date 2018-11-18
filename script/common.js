@@ -274,6 +274,10 @@ function persist(items) {
   chrome.storage.sync.set(items);
 }
 
+function persistPair(key, val) {
+  persist({[key]: val});
+}
+
 function isMyMeeting() {
   // if I control what guests can do, that means this is a meeting I own
   return Boolean(getElementByText('legend', 'Guests can:'));

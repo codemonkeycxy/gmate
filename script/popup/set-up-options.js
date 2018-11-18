@@ -2,12 +2,6 @@
 
 // self-invoking function to avoid name collision
 (() => {
-  function setOption(settingName, value) {
-    const newSetting = {};
-    newSetting[settingName] = value;
-    persist(newSetting);
-  }
-
   // Restores feature toggle values using the preferences stored in chrome.storage
   function restoreOptions() {
     // fill out saved feature toggles. use default if nothing is found
@@ -25,11 +19,11 @@
 
   // add feature toggle click listener
   Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(key =>
-    document.getElementById(key).addEventListener("click", e => setOption(key, e.target.checked))
+    document.getElementById(key).addEventListener("click", e => persistPair(key, e.target.checked))
   );
 
   // add filter input listener
   Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
-    document.getElementById(key).addEventListener("input", e => setOption(key, e.target.value))
+    document.getElementById(key).addEventListener("input", e => persistPair(key, e.target.value))
   );
 })();
