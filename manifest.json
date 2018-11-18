@@ -13,7 +13,8 @@
   },
   "background": {
     "scripts": [
-      "script/langley.js",
+      "script/settings/langley.js",
+      "script/settings/room-booking-filters.js",
       "script/common.js",
       "script/tracking.js",
       "script/versions.js",
@@ -30,6 +31,7 @@
       ],
       "js": [
         "script/common.js",
+        "script/settings/room-booking-filters.js",
         "script/versions.js",
         "script/content/allow-guest-modify-event.js",
         "script/content/zero-invitee-reminder.js",
