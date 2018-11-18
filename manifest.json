@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "script/common.js",
+      "script/shared/common.js",
       "script/settings/langley.js",
       "script/settings/room-booking-filters.js",
       "script/tracking.js",
@@ -30,7 +30,7 @@
         "https://calendar.google.com/calendar/*"
       ],
       "js": [
-        "script/common.js",
+        "script/shared/common.js",
         "script/settings/room-booking-filters.js",
         "script/versions.js",
         "script/content/allow-guest-modify-event.js",
