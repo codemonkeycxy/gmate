@@ -36,19 +36,21 @@
     <input type="checkbox" id="auto-room-booking">
     (Beta) Automatically book meeting room
 </label>
-<br>
-Name include (<a href="https://regex101.com/" target="_blank">regex</a>): <input
+
+<div id="room-booking-filters">
+    <br>
+    Name include (<a href="https://regex101.com/" target="_blank">regex</a>): <input
         type="text"
         placeholder="1455.*0(4|5)th"
         id="room-booking-filter-positive-1"
 >
-<br>
-Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
+    <br>
+    Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
         type="text"
         placeholder="(Cart|Quiet Room)"
         id="room-booking-filter-negative"
 >
-<br>
+</div>
 
 <div id="task-queue-ui-group">
     <br>
@@ -74,5 +76,7 @@ Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
 <script src="script/common.js"></script>
 <script src="script/settings/room-booking-filters.js"></script>
 <script src="script/popup/options.js"></script>
+<script src="script/popup/render-task-queue.js"></script>
+<script src="script/popup/worker-controllers.js"></script>
 </body>
 </html>
