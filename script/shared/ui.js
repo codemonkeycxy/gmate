@@ -1,7 +1,7 @@
 function renderDropDownSelect(name, options, initialVal, onSelect) {
   const selectWrapper = document.createElement('div');
-  const selectTitle = document.createElement('div');
-  selectTitle.textContent = name;
+  const selectTitle = document.createElement('span');
+  selectTitle.textContent = name + ': ';
 
   const selectList = document.createElement('select');
   // populate the option list
