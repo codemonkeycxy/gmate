@@ -5,7 +5,13 @@
     [SINGLE_OPTION]: renderSingleOption
   };
 
+  document.addEventListener("DOMContentLoaded", restoreOptions);
   injectFilterUI();
+
+  // add filter input listener
+  Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
+    document.getElementById(key).addEventListener("input", e => persistPair(key, e.target.value))
+  );
 
   function injectFilterUI() {
     const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
@@ -42,5 +48,13 @@
     selectWrapper.appendChild(selectTitle);
     selectWrapper.appendChild(selectList);
     return selectWrapper;
+  }
+
+  // Restores feature toggle values using the preferences stored in chrome.storage
+  function restoreOptions() {
+    // fill out saved room booking filters. use default if nothing is found
+    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, settings =>
+      Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key => document.getElementById(key).value = settings[key])
+    );
   }
 })();
