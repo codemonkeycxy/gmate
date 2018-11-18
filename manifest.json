@@ -15,7 +15,7 @@
     "scripts": [
       "script/shared/common.js",
       "script/settings/langley.js",
-      "script/settings/room-booking-filters.js",
+      "script/settings/room-filters.js",
       "script/tracking.js",
       "script/versions.js",
       "script/background/index.js",
@@ -32,7 +32,7 @@
       "js": [
         "script/shared/common.js",
         "script/shared/ui.js",
-        "script/settings/room-booking-filters.js",
+        "script/settings/room-filters.js",
         "script/versions.js",
         "script/content/allow-guest-modify-event.js",
         "script/content/zero-invitee-reminder.js",
