@@ -1,7 +1,7 @@
-function renderDropDownSelect(filterSetting) {
+function renderDropDownSelect(name, options) {
   const selectWrapper = document.createElement('div');
   const selectTitle = document.createElement('div');
-  selectTitle.textContent = filterSetting.name;
+  selectTitle.textContent = name;
 
   const selectList = document.createElement('select');
   // set up a default option to allow ANY
@@ -11,7 +11,7 @@ function renderDropDownSelect(filterSetting) {
   selectList.appendChild(defaultOption);
 
   // populate the option list
-  filterSetting.options.forEach(option => {
+  options.forEach(option => {
     const optionUI = document.createElement('option');
     // todo: account for text:value case
     optionUI.text = option;

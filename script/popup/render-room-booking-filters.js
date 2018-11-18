@@ -2,7 +2,7 @@
 (() => {
   const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filters-ui-group';
   const FILTER_RENDER_FUNCTIONS = {
-    [SINGLE_OPTION]: renderDropDownSelect
+    [SINGLE_OPTION]: renderSingleOption
   };
 
   document.addEventListener("DOMContentLoaded", restoreOptions);
@@ -22,6 +22,10 @@
 
   function renderFilter(filterSetting) {
     return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterSetting);
+  }
+
+  function renderSingleOption(filterSetting) {
+    return renderDropDownSelect(filterSetting.name, filterSetting.options);
   }
 
   // Restores feature toggle values using the preferences stored in chrome.storage

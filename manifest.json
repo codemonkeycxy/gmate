@@ -14,7 +14,6 @@
   "background": {
     "scripts": [
       "script/shared/common.js",
-      "script/shared/ui.js",
       "script/settings/langley.js",
       "script/settings/room-booking-filters.js",
       "script/tracking.js",
