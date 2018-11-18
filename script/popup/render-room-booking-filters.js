@@ -22,9 +22,12 @@
   }
 
   function renderSingleOption(filterSetting) {
-    const selectList = document.createElement('select');
-    selectList.name = filterSetting.name;
+    const selectWrapper = document.createElement('div');
 
+    const selectTitle = document.createElement('div');
+    selectTitle.textContent = filterSetting.name;
+
+    const selectList = document.createElement('select');
     filterSetting.options.forEach(option => {
       const optionUI = document.createElement('option');
       optionUI.value = option;
@@ -32,7 +35,9 @@
       selectList.appendChild(optionUI);
     });
 
-    return selectList;
+    selectWrapper.appendChild(selectTitle);
+    selectWrapper.appendChild(selectList);
+    return selectWrapper;
   }
 
   function renderMultiOption(filterSetting) {
