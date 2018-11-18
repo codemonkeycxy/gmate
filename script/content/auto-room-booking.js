@@ -120,6 +120,18 @@
   }
 
   function filterRooms(rooms, cb) {
+    filterRoomByLegacyRegex(rooms, rooms =>
+      getRoomFilterUserInput(storedInput => {
+        rooms = rooms.filter(room => {
+          const roomName = room.getAttribute("data-name");
+          return checkRoomEligibility(roomName, storedInput);
+        });
+        cb(rooms);
+      })
+    );
+  }
+
+  function filterRoomByLegacyRegex(rooms, cb) {
     getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, result => {
       const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
       const negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
