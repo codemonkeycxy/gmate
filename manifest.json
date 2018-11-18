@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "script/setting.js",
+      "script/langley.js",
       "script/common.js",
       "script/tracking.js",
       "script/versions.js",

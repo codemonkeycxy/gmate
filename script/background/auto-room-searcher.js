@@ -120,6 +120,7 @@ function stopWorker() {
 // todo: (maybe) change the icon of the worker tab
 // todo: set up key feature metrics and alerts
 // todo: set up a user survey
+// todo: log last error to mixpanel
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
