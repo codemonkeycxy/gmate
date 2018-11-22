@@ -3,7 +3,7 @@ const NUM_RANGE = 'num-range';
 
 const COMPANY_SPECIFIC_FILTERS = {
   uber: [{
-    key: 'location',
+    key: 'location',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Location',
     type: SINGLE_OPTION,
     options: [
@@ -18,7 +18,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     default: ANY,
     validator: (roomStr, location) => roomStr.includes(location)
   }, {
-    key: 'floor',
+    key: 'floor',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Floor',
     type: NUM_RANGE,
     default: '',
@@ -35,7 +35,7 @@ const COMPANY_SPECIFIC_FILTERS = {
       });
     }
   }, {
-    key: 'room_size',
+    key: 'room_size',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Room size',
     type: NUM_RANGE,
     default: '',
@@ -71,7 +71,7 @@ function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }
 
-function getRoomFilterUserInput(cb) {
+function getRoomFilterUserInputs(cb) {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
   const storageKeys = {};

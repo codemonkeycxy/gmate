@@ -31,7 +31,7 @@
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
     const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
 
-    getRoomFilterUserInput(storedInput =>
+    getRoomFilterUserInputs(storedInput =>
       filterSettings.forEach(
         filterSetting => filterUIGroup.appendChild(
           renderFilter(filterSetting, storedInput)
@@ -41,11 +41,11 @@
   }
 
   function renderFilter(filterSetting, storedInput) {
-    const filterName = filterSetting.displayName;
+    const title = filterSetting.displayName;
     const storageKey = getRoomFilterStorageKey(filterSetting.key);
     const storedValue = storedInput[storageKey];
 
-    return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterName, storedValue, storageKey, filterSetting);
+    return FILTER_RENDER_FUNCTIONS[filterSetting.type](title, storedValue, storageKey, filterSetting);
   }
 
   function renderSingleOption(title, initialVal, storageKey, filterSetting) {

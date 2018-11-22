@@ -121,7 +121,7 @@
 
   function filterRooms(rooms, cb) {
     filterRoomByLegacyRegex(rooms, rooms =>
-      getRoomFilterUserInput(storedInput => {
+      getRoomFilterUserInputs(storedInput => {
         rooms = rooms.filter(room => {
           const roomName = room.getAttribute("data-name");
           return checkRoomEligibility(roomName, storedInput);
