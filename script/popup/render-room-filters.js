@@ -41,8 +41,8 @@
   }
 
   function renderFilter(filterSetting, storedInput) {
-    const filterName = filterSetting.name;
-    const storageKey = getRoomFilterStorageKey(filterName);
+    const filterName = filterSetting.displayName;
+    const storageKey = getRoomFilterStorageKey(filterSetting.key);
     const storedValue = storedInput[storageKey];
 
     return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterName, storedValue, storageKey, filterSetting);

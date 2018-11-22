@@ -3,7 +3,8 @@ const NUM_RANGE = 'num-range';
 
 const COMPANY_SPECIFIC_FILTERS = {
   uber: [{
-    name: 'Location',
+    key: 'location',
+    displayName: 'Location',
     type: SINGLE_OPTION,
     options: [
       ANY,
@@ -17,7 +18,8 @@ const COMPANY_SPECIFIC_FILTERS = {
     default: ANY,
     validator: (roomStr, location) => roomStr.includes(location)
   }, {
-    name: 'Floor',
+    key: 'floor',
+    displayName: 'Floor',
     type: NUM_RANGE,
     default: '',
     validator: (roomStr, floorRangeStr) => {
@@ -33,7 +35,8 @@ const COMPANY_SPECIFIC_FILTERS = {
       });
     }
   }, {
-    name: 'Room size',
+    key: 'room_size',
+    displayName: 'Room size',
     type: NUM_RANGE,
     default: '',
     validator: (roomStr, roomSizeRangeStr) => {
@@ -64,15 +67,15 @@ const COMPANY_SPECIFIC_FILTERS = {
   }]
 };
 
-function getRoomFilterStorageKey(filterName) {
-  return `room-booking-filter-${'uber'}-${filterName}`;
+function getRoomFilterStorageKey(filterKey) {
+  return `room-booking-filter-${'uber'}-${filterKey}`;
 }
 
 function getRoomFilterUserInput(cb) {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
   const storageKeys = {};
-  filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.name)] = setting.default);
+  filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.key)] = setting.default);
 
   getFromStorage(storageKeys, storedInput => cb(storedInput));
 }
@@ -87,7 +90,7 @@ function checkRoomEligibility(roomStr, userFilterInputs) {
 }
 
 function checkRoomEligibilityByFilter(roomStr, filterSetting, userFilterInput) {
-  const storageKey = getRoomFilterStorageKey(filterSetting.name);
+  const storageKey = getRoomFilterStorageKey(filterSetting.key);
   const storageVal = userFilterInput[storageKey];
   if (storageVal === ANY) {
     return true;
