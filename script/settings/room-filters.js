@@ -16,22 +16,37 @@ const COMPANY_SPECIFIC_FILTERS = {
     ],
     default: ANY,
     validator: (roomStr, location) => roomStr.includes(location)
-    }, {
-      name: 'Floor',
-      type: NUM_RANGE,
-      default: '',
-      validator: (roomStr, floorRangeStr) => {
-        const floors = parseNumbersFromString(floorRangeStr);
-        if (isEmpty(floors)) {
-          return true;
-        }
-
-        return floors.some(floor => {
-          const ordialNum = appendOrdinalSuffix(floor);
-          const re = new RegExp(`.*-.*${ordialNum}.*\\(.*`);
-          return !!roomStr.match(re);
-        });
+  }, {
+    name: 'Floor',
+    type: NUM_RANGE,
+    default: '',
+    validator: (roomStr, floorRangeStr) => {
+      const floors = parseNumbersFromString(floorRangeStr);
+      if (isEmpty(floors)) {
+        return true;
       }
+
+      return floors.some(floor => {
+        const ordinalNum = appendOrdinalSuffix(floor);
+        const re = new RegExp(`.*-.*[^\\d][0]?${ordinalNum}.*\\(.*`);
+        return !!roomStr.match(re);
+      });
+    }
+  }, {
+    name: 'Room size',
+    type: NUM_RANGE,
+    default: '',
+    validator: (roomStr, roomSizeRangeStr) => {
+      const roomSizes = parseNumbersFromString(roomSizeRangeStr);
+      if (isEmpty(roomSizes)) {
+        return true;
+      }
+
+      return roomSizes.some(roomSize => {
+        const re = new RegExp(`.*-.*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
+        return !!roomStr.match(re);
+      });
+    }
     // }, {
     //   name: 'Has VC',
     //   type: SINGLE_OPTION,
