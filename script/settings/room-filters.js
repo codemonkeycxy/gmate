@@ -31,7 +31,7 @@ const COMPANY_SPECIFIC_FILTERS = {
       return floors.some(floor => {
         const ordinalNum = appendOrdinalSuffix(floor);
         const re = new RegExp(`.*-.*[^\\d][0]?${ordinalNum}.*\\(.*`);
-        return !!roomStr.match(re);
+        return !!roomStr.match(re);  // convert to boolean
       });
     }
   }, {
@@ -47,23 +47,26 @@ const COMPANY_SPECIFIC_FILTERS = {
 
       return roomSizes.some(roomSize => {
         const re = new RegExp(`.*-.*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
-        return !!roomStr.match(re);
+        return !!roomStr.match(re);  // convert to boolean
       });
     }
-    // }, {
-    //   name: 'Has VC',
-    //   type: SINGLE_OPTION,
-    //   options: [
-    //     {[ANY]: ANY},
-    //     {yes: true},
-    //     {no: false}
-    //   ],
-    //   default: ANY,
-    //   validator: (roomStr, hasVC) => {
-    //     // todo: fill me up
-    //   }
-    // todo: add typeahead priming string to get fuller room searching results
-    // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
+  }, {
+    key: 'need_vc',
+    displayName: 'Need VC',
+    type: SINGLE_OPTION,
+    options: [
+      ANY,
+      YES,
+      NO
+    ],
+    default: ANY,
+    validator: (roomStr, needVcStr) => {
+      const re = new RegExp('.*-.*\\(.*VC.*\\)');
+      const hasVC = !!roomStr.match(re);  // convert to boolean
+      const needVC = needVcStr === YES;
+
+      return needVC === hasVC;
+    }
   }]
 };
 

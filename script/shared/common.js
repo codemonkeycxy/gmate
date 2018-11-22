@@ -49,6 +49,8 @@ const ERROR = "danger";
 
 const ANY = "any";
 const ALL = "all";
+const YES = 'yes';
+const NO = 'no';
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
