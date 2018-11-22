@@ -19,7 +19,6 @@ const COMPANY_SPECIFIC_FILTERS = {
     }, {
       name: 'Floor',
       type: NUM_RANGE,
-      // todo: add more thorough regex check. case: 'AUS | 201 E 3rd St - 01st Zilker (4 • VC)'
       default: '',
       validator: (roomStr, floorRangeStr) => {
         const floors = parseNumbersFromString(floorRangeStr);
@@ -27,9 +26,11 @@ const COMPANY_SPECIFIC_FILTERS = {
           return true;
         }
 
-        return floors.some(
-          floor => roomStr.includes(appendOrdinalSuffix(floor))
-        );
+        return floors.some(floor => {
+          const ordialNum = appendOrdinalSuffix(floor);
+          const re = new RegExp(`.*-.*${ordialNum}.*\\(.*`);
+          return !!roomStr.match(re);
+        });
       }
     // }, {
     //   name: 'Has VC',
