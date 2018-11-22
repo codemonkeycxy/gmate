@@ -89,7 +89,7 @@ function isEmpty(val) {
     return false;
 
   if (val == null || val.length === 0)
-    // null or 0 length array
+  // null or 0 length array
     return true;
 
   if (typeof val == "object") {
@@ -103,6 +103,12 @@ function isEmpty(val) {
   }
 
   return false;
+}
+
+function isNumber(n) {
+  //we check isFinite first since it will weed out most of the non-numbers
+  //like mixed numbers and strings, which parseFloat happily accepts
+  return isFinite(n) && !isNaN(parseFloat(n));
 }
 
 function isElementVisible(element) {
@@ -345,10 +351,11 @@ const nextId = (() => {
 /**
  * a function that does nothing. can be used as noop or noop(), both have the same effect
  */
-const noop = () => () => {};
+const noop = () => () => {
+};
 
 function refreshTab(tab) {
-  chrome.tabs.update(tab.id,{url: tab.url});
+  chrome.tabs.update(tab.id, {url: tab.url});
 }
 
 function refreshCalendarMainPage(options) {
@@ -365,4 +372,84 @@ function refreshCalendarMainPage(options) {
       }
     })
   );
+}
+
+// https://stackoverflow.com/questions/4833651/javascript-array-sort-and-unique
+function sortUnique(arr) {
+  if (arr.length === 0) return arr;
+  arr = arr.sort((a, b) => a * 1 - b * 1);
+  const ret = [arr[0]];
+  for (let i = 1; i < arr.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
+    if (arr[i - 1] !== arr[i]) {
+      ret.push(arr[i]);
+    }
+  }
+  return ret;
+}
+
+// https://codereview.stackexchange.com/questions/26125/getting-all-number-from-a-string-like-this-1-2-5-9
+function parseNumbersFromString(stringNumbers) {
+  //variable declaration format is personal preference
+  //but I prefer having declarations with assignments have individual vars
+  //while those that have no assignments as comma separated
+  let i, range, low, high, entry;
+
+  //an added bonus, " and ' are the same in JS, but order still applies
+  //I prefer to use ' since it's cleaner
+  const entries = stringNumbers.split(',');
+  const length = entries.length;
+  const nums = [];
+
+  for (i = 0; i < length; ++i) {
+    entry = entries[i];
+
+    if (isNumber(entry)) {
+      //we check if the entry itself is a number. If it is, then we push it directly.
+      //an additinal advantage is that negative numbers are valid
+      nums.push(+entry);
+    } else {
+
+      //if not a number, probably it had the - and not being a negative number
+      //only here do we split after we determined that the entry isn't a number
+      range = entry.split('-');
+
+      //check if what we split are both numbers, else skip
+      if (!isNumber(range[0]) || !isNumber(range[1])) continue;
+
+      //force both to be numbers
+      low = +range[0];
+      high = +range[1];
+
+      //since we are dealing with numbers, we could do an XOR swap
+      //which is a swap that doesn't need a third variable
+      //http://en.wikipedia.org/wiki/XOR_swap_algorithm
+      if (high < low) {
+        low = low ^ high;
+        high = low ^ high;
+        low = low ^ high;
+      }
+
+      //from low, we push up to high
+      while (low <= high) {
+        nums.push(low++);
+      }
+    }
+  }
+  return sortUnique(nums);
+}
+
+// https://stackoverflow.com/questions/13627308/add-st-nd-rd-and-th-ordinal-suffix-to-a-number
+function appendOrdinalSuffix(i) {
+  var j = i % 10,
+    k = i % 100;
+  if (j == 1 && k != 11) {
+    return i + "st";
+  }
+  if (j == 2 && k != 12) {
+    return i + "nd";
+  }
+  if (j == 3 && k != 13) {
+    return i + "rd";
+  }
+  return i + "th";
 }

@@ -1,6 +1,5 @@
 const SINGLE_OPTION = 'single-option';
-const MULTI_OPTION = 'multi-option';
-const RANGE = 'range';
+const NUM_RANGE = 'num-range';
 
 const COMPANY_SPECIFIC_FILTERS = {
   uber: [{
@@ -17,28 +16,21 @@ const COMPANY_SPECIFIC_FILTERS = {
     ],
     default: ANY,
     validator: (roomStr, location) => roomStr.includes(location)
-    // }, {
-    //   name: 'Floor',
-    //   type: MULTI_OPTION,
-    //   options: [
-    //     ANY,
-    //     '1st',
-    //     '2nd',
-    //     '3rd',
-    //     '4th',
-    //     '5th',
-    //     '6th',
-    //     '7th',
-    //     '8th',
-    //     '9th',
-    //     '10th',
-    //     '11th',
-    //     '12th',
-    //     '13th',
-    //     '14th',
-    //   ],
-    //   default: ANY,
-    //   validator: (roomStr, floors) => floors.any(floor => roomStr.includes(floor))
+    }, {
+      name: 'Floor',
+      type: NUM_RANGE,
+      // todo: add more thorough regex check. case: 'AUS | 201 E 3rd St - 01st Zilker (4 • VC)'
+      default: '',
+      validator: (roomStr, floorRangeStr) => {
+        const floors = parseNumbersFromString(floorRangeStr);
+        if (isEmpty(floors)) {
+          return true;
+        }
+
+        return floors.some(
+          floor => roomStr.includes(appendOrdinalSuffix(floor))
+        );
+      }
     // }, {
     //   name: 'Has VC',
     //   type: SINGLE_OPTION,
@@ -51,6 +43,8 @@ const COMPANY_SPECIFIC_FILTERS = {
     //   validator: (roomStr, hasVC) => {
     //     // todo: fill me up
     //   }
+    // todo: add typeahead priming string to get fuller room searching results
+    // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
   }]
 };
 

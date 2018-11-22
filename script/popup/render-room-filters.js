@@ -2,7 +2,8 @@
 (() => {
   const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filters-ui-group';
   const FILTER_RENDER_FUNCTIONS = {
-    [SINGLE_OPTION]: renderSingleOption
+    [SINGLE_OPTION]: renderSingleOption,
+    [NUM_RANGE]: renderNumRange
   };
 
   // ----------------------- old style regex based filters --------------------------
@@ -40,19 +41,29 @@
   }
 
   function renderFilter(filterSetting, storedInput) {
-    return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterSetting, storedInput);
+    const filterName = filterSetting.name;
+    const storageKey = getRoomFilterStorageKey(filterName);
+    const storedValue = storedInput[storageKey];
+
+    return FILTER_RENDER_FUNCTIONS[filterSetting.type](filterName, storedValue, storageKey, filterSetting);
   }
 
-  function renderSingleOption(filterSetting, storedInput) {
-    const filterName = filterSetting.name;
+  function renderSingleOption(title, initialVal, storageKey, filterSetting) {
     const filterOptions = filterSetting.options;
-    const storageKey = getRoomFilterStorageKey(filterName);
 
     return renderDropDownSelect(
-      filterName,
+      title,
       filterOptions,
-      storedInput[storageKey],
-      e => persistPair(storageKey, e.target.value)
+      initialVal,
+      selected => persistPair(storageKey, selected)
+    );
+  }
+
+  function renderNumRange(title, initialVal, storageKey) {
+    return renderStringNumberRange(
+      title,
+      initialVal,
+      selected => persistPair(storageKey, selected)
     );
   }
 })();
