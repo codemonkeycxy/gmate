@@ -125,6 +125,8 @@ function stopWorker() {
 // todo: add typeahead priming string to get fuller room searching results
 // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: add prioritization function, allow room size preference and VC preference
+// todo: bulma styling and create elements with html
+// https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
