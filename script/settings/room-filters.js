@@ -1,5 +1,6 @@
 const SINGLE_OPTION = 'single-option';
 const NUM_RANGE = 'num-range';
+const CHECKBOX = 'checkbox';
 
 const COMPANY_SPECIFIC_FILTERS = {
   uber: [{
@@ -52,20 +53,16 @@ const COMPANY_SPECIFIC_FILTERS = {
     }
   }, {
     key: 'need_vc',
-    displayName: 'Need VC',
-    type: SINGLE_OPTION,
-    options: [
-      ANY,
-      YES,
-      NO
-    ],
-    default: ANY,
-    validator: (roomStr, needVcStr) => {
-      const re = new RegExp('.*-.*\\(.*VC.*\\)');
-      const hasVC = !!roomStr.match(re);  // convert to boolean
-      const needVC = needVcStr === YES;
+    displayName: 'Must have VC',
+    type: CHECKBOX,
+    default: false,
+    validator: (roomStr, mustHaveVC) => {
+      if (!mustHaveVC) {
+        return true;
+      }
 
-      return needVC === hasVC;
+      const re = new RegExp('.*-.*\\(.*VC.*\\)');
+      return !!roomStr.match(re);  // convert to boolean
     }
   }]
 };
