@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.0
+- [feature] Add user-friendly room booking filters
+
 ## 0.2.4
 - [enhancement] Refresh calendar page on app update to ensure the delivery of the newest code
 - [enhancement] Refresh calendar page on room saving to ensure the saved room to show up

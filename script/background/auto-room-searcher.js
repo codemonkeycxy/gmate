@@ -127,6 +127,7 @@ function stopWorker() {
 // todo: add prioritization function, allow room size preference and VC preference
 // todo: bulma styling and create elements with html
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+// todo: inject an identifier to the worker page and use that to either reuse/recycle worker upon app restart
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
