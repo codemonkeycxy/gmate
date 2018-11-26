@@ -17,13 +17,13 @@ const COMPANY_SPECIFIC_FILTERS = {
       'PAO | 900 Arastradero B',
     ],
     default: ANY,
-    validator: (roomStr, location) => roomStr.includes(location)
+    validate: (roomStr, location) => roomStr.includes(location)
   }, {
     key: 'floor',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Floor',
     type: NUM_RANGE,
     default: '',
-    validator: (roomStr, floorRangeStr) => {
+    validate: (roomStr, floorRangeStr) => {
       const floors = parseNumbersFromString(floorRangeStr);
       if (isEmpty(floors)) {
         return true;
@@ -40,7 +40,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     displayName: 'Room size',
     type: NUM_RANGE,
     default: '',
-    validator: (roomStr, roomSizeRangeStr) => {
+    validate: (roomStr, roomSizeRangeStr) => {
       const roomSizes = parseNumbersFromString(roomSizeRangeStr);
       if (isEmpty(roomSizes)) {
         return true;
@@ -56,7 +56,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     displayName: 'Must have VC',
     type: CHECKBOX,
     default: false,
-    validator: (roomStr, mustHaveVC) => {
+    validate: (roomStr, mustHaveVC) => {
       if (!mustHaveVC) {
         return true;
       }
@@ -96,5 +96,5 @@ function checkRoomEligibilityByFilter(roomStr, filterSetting, userFilterInput) {
     return true;
   }
 
-  return filterSetting.validator(roomStr, storageVal);
+  return filterSetting.validate(roomStr, storageVal);
 }

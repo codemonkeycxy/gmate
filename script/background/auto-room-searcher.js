@@ -125,6 +125,7 @@ function stopWorker() {
 // todo: add typeahead priming string to get fuller room searching results
 // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: add prioritization function, allow room size preference and VC preference
+// prioritization paper: https://pubsonline.informs.org/doi/pdf/10.1287/ited.2013.0124
 // todo: bulma styling and create elements with html
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 // todo: inject an identifier to the worker page and use that to either reuse/recycle worker upon app restart
