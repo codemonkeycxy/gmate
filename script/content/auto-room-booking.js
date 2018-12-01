@@ -13,8 +13,8 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    getSettings((posFilter, negFilter, flexFilter, favRooms) => {
-      // todo: check against flexFilter too
+    getSettings((posFilter, negFilter, flexFilters, favRooms) => {
+      // todo: check against negFilter and flexFilters too
       if (posFilter && hasMatchingRoom(posFilter)) {
         return sendFinishMessage(NO_NEED_TO_BOOK);
       }
@@ -23,7 +23,7 @@
       // wait for room tab to activate
       tryUntilPass(
         () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
-        () => selectFromSuggestion(posFilter, negFilter, flexFilter, favRooms)
+        () => selectFromSuggestion(posFilter, negFilter, flexFilters, favRooms)
       );
     });
   }
@@ -86,13 +86,13 @@
     });
   }
 
-  function selectFromSuggestion(posFilter, negFilter, flexFilter, favRooms) {
+  function selectFromSuggestion(posFilter, negFilter, flexFilters, favRooms) {
     if (noRoomFound()) {
       return false;
     }
 
     const suggestedRooms = getSuggestedRooms();
-    const filteredRooms = filterRooms(suggestedRooms, posFilter, negFilter, flexFilter);
+    const filteredRooms = filterRooms(suggestedRooms, posFilter, negFilter, flexFilters);
     const selectedRoom = pickFavoriteRoom(filteredRooms, favRooms);
 
     if (selectedRoom) {
@@ -117,7 +117,7 @@
     return roomList;
   }
 
-  function filterRooms(rooms, posFilter, negFilter, flexFilter) {
+  function filterRooms(rooms, posFilter, negFilter, flexFilters) {
     if (posFilter) {
       const posRe = new RegExp(posFilter);
       rooms = rooms.filter(room => {
@@ -136,10 +136,10 @@
       });
     }
 
-    if (flexFilter) {
+    if (flexFilters) {
       rooms = rooms.filter(room => {
         const roomName = room.getAttribute("data-name");
-        return checkRoomEligibility(roomName, flexFilter);
+        return checkRoomEligibility(roomName, flexFilters);
       });
     }
 
