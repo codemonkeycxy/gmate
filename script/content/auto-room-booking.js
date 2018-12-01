@@ -91,12 +91,12 @@
       return false;
     }
 
-    const suggestedRooms = getSuggestedRooms();
-    const filteredRooms = filterRooms(suggestedRooms, posFilter, negFilter, flexFilters);
+    const {roomList, roomIdToElement} = getSuggestedRooms();
+    const filteredRooms = filterRooms(roomList, posFilter, negFilter, flexFilters);
     const selectedRoom = pickFavoriteRoom(filteredRooms, favRooms);
 
     if (selectedRoom) {
-      dispatchMouseEvent(selectedRoom, "click", true, true);
+      dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
       sendFinishMessage(ROOM_SELECTED);
     } else {
       sendFinishMessage(NO_ROOM_FOUND);
@@ -105,42 +105,43 @@
   }
 
   function getSuggestedRooms() {
-    const roomElements = getElementByText("div", "Updating room suggestions")
-      .parentElement.nextSibling.children[0].children;
+    const roomElements = getElementByText(
+      "div", "Updating room suggestions"
+    ).parentElement.nextSibling.children[0].children;
 
     // convert html element collection to standard array
     const roomList = [];
+    const roomIdToElement = {};
     for (let i = 0; i < roomElements.length; i++) {
-      roomList.push(roomElements[i]);
+      const roomElement = roomElements[i];
+      const roomId = roomElement.getAttribute("data-email");
+      const roomName = roomElement.getAttribute("data-name");
+
+      roomList.push(buildRoom(roomId, roomName));
+      roomIdToElement[roomId] = roomElement;
     }
 
-    return roomList;
+    return {
+      roomList: roomList,
+      roomIdToElement: roomIdToElement
+    };
   }
 
   function filterRooms(rooms, posFilter, negFilter, flexFilters) {
     if (posFilter) {
       const posRe = new RegExp(posFilter);
-      rooms = rooms.filter(room => {
-        const roomName = room.getAttribute("data-name");
-        // return if name matches with positive filter
-        return roomName && roomName.match(posRe);
-      });
+      // return if name matches with positive filter
+      rooms = rooms.filter(room => room.name && room.name.match(posRe));
     }
 
     if (negFilter) {
       const negRe = new RegExp(negFilter);
-      rooms = rooms.filter(room => {
-        const roomName = room.getAttribute("data-name");
-        // DON'T return if name matches with negative filter
-        return roomName && !roomName.match(negRe);
-      });
+      // DON'T return if name matches with negative filter
+      rooms = rooms.filter(room => room.name && !room.name.match(negRe));
     }
 
     if (flexFilters) {
-      rooms = rooms.filter(room => {
-        const roomName = room.getAttribute("data-name");
-        return checkRoomEligibility(roomName, flexFilters);
-      });
+      rooms = rooms.filter(room => checkRoomEligibility(room.name, flexFilters));
     }
 
     return rooms;
@@ -151,13 +152,12 @@
     let favorability = -1;
 
     rooms.forEach(candidate => {
-      const candidateId = candidate.getAttribute("data-email");
-      if (!favRooms[candidateId]) {
+      if (!favRooms[candidate.id]) {
         return;
       }
 
-      const currFav = favRooms[candidateId].count;
-      if (candidateId in favRooms && currFav > favorability) {
+      const currFav = favRooms[candidate.id].count;
+      if (candidate.id in favRooms && currFav > favorability) {
         favoriteRoom = candidate;
         favorability = currFav;
       }
@@ -196,11 +196,11 @@
       const roomId = selectedRoom.getAttribute("data-id");
       const roomName = selectedRoom.getAttribute("aria-label");
 
-      selectedRooms[roomId] = {
-        id: roomId,
-        name: roomName.trim().replace(', Attending', '').replace(', Declined', ''),
-        status: getRoomStatus(roomName)
-      };
+      selectedRooms[roomId] = buildRoom(
+        roomId,
+        roomName.trim().replace(', Attending', '').replace(', Declined', ''),
+        getRoomStatus(roomName)
+      );
     }
 
     return selectedRooms;
@@ -278,6 +278,14 @@
 
   function isRoomTabLoaded() {
     return !!getElementByText('span', 'Rooms');
+  }
+
+  function buildRoom(id, name, status) {
+    return {
+      id: id,
+      name: name,
+      status: status ? status : UNKNOWN
+    }
   }
 
   function getSettings(cb) {
