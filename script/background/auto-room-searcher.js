@@ -129,6 +129,10 @@ function stopWorker() {
 // todo: bulma styling and create elements with html
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 // todo: inject an identifier to the worker page and use that to either reuse/recycle worker upon app restart
+// todo: turn on room booking by default
+// todo: make announcement to retire auto edit feature
+// todo: check unblock youku's styling
+// todo: record request to fulfillment time
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {

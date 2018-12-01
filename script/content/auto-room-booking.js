@@ -13,15 +13,18 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, result => {
-      const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-      if (positiveFilter && hasMatchingRoom(positiveFilter)) {
+    getSettings((posFilter, negFilter, flexFilter, favRooms) => {
+      // todo: check against flexFilter too
+      if (posFilter && hasMatchingRoom(posFilter)) {
         return sendFinishMessage(NO_NEED_TO_BOOK);
       }
 
       tryUntilPass(getRoomsTab, clickRoomsTab);
       // wait for room tab to activate
-      tryUntilPass(() => isRoomSuggestionLoaded() && hasNoRoomFlag(), selectFromSuggestion);
+      tryUntilPass(
+        () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
+        () => selectFromSuggestion(posFilter, negFilter, flexFilter, favRooms)
+      );
     });
   }
 
@@ -83,21 +86,22 @@
     });
   }
 
-  function selectFromSuggestion() {
+  function selectFromSuggestion(posFilter, negFilter, flexFilter, favRooms) {
     if (noRoomFound()) {
       return false;
     }
 
     const suggestedRooms = getSuggestedRooms();
-    selectRoom(suggestedRooms, favRoom => {
-      if (favRoom) {
-        dispatchMouseEvent(favRoom, "click", true, true);
-        sendFinishMessage(ROOM_SELECTED);
-      } else {
-        sendFinishMessage(NO_ROOM_FOUND);
-      }
-      tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
-    });
+    const filteredRooms = filterRooms(suggestedRooms, posFilter, negFilter, flexFilter);
+    const selectedRoom = pickFavoriteRoom(filteredRooms, favRooms);
+
+    if (selectedRoom) {
+      dispatchMouseEvent(selectedRoom, "click", true, true);
+      sendFinishMessage(ROOM_SELECTED);
+    } else {
+      sendFinishMessage(NO_ROOM_FOUND);
+    }
+    tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
   }
 
   function getSuggestedRooms() {
@@ -113,76 +117,56 @@
     return roomList;
   }
 
-  function selectRoom(rooms, cb) {
-    filterRooms(rooms, filteredRooms => {
-      pickFavoriteRoom(filteredRooms, cb);
+  function filterRooms(rooms, posFilter, negFilter, flexFilter) {
+    if (posFilter) {
+      const posRe = new RegExp(posFilter);
+      rooms = rooms.filter(room => {
+        const roomName = room.getAttribute("data-name");
+        // return if name matches with positive filter
+        return roomName && roomName.match(posRe);
+      });
+    }
+
+    if (negFilter) {
+      const negRe = new RegExp(negFilter);
+      rooms = rooms.filter(room => {
+        const roomName = room.getAttribute("data-name");
+        // DON'T return if name matches with negative filter
+        return roomName && !roomName.match(negRe);
+      });
+    }
+
+    rooms = rooms.filter(room => {
+      const roomName = room.getAttribute("data-name");
+      return checkRoomEligibility(roomName, flexFilter);
     });
+
+    return rooms;
   }
 
-  function filterRooms(rooms, cb) {
-    filterRoomByLegacyRegex(rooms, rooms =>
-      getRoomFilterUserInputs(storedInput => {
-        rooms = rooms.filter(room => {
-          const roomName = room.getAttribute("data-name");
-          return checkRoomEligibility(roomName, storedInput);
-        });
-        cb(rooms);
-      })
-    );
-  }
-
-  function filterRoomByLegacyRegex(rooms, cb) {
-    getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS, result => {
-      const positiveFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-      const negativeFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-
-      if (positiveFilter) {
-        const posRe = new RegExp(positiveFilter);
-        rooms = rooms.filter(room => {
-          const roomName = room.getAttribute("data-name");
-          // return if name matches with positive filter
-          return roomName && roomName.match(posRe);
-        });
-      }
-
-      if (negativeFilter) {
-        const negRe = new RegExp(negativeFilter);
-        rooms = rooms.filter(room => {
-          const roomName = room.getAttribute("data-name");
-          // DON'T return if name matches with negative filter
-          return roomName && !roomName.match(negRe);
-        });
-      }
-
-      cb(rooms);
-    });
-  }
-
-  function pickFavoriteRoom(rooms, cb) {
+  function pickFavoriteRoom(rooms, favRooms) {
     let favoriteRoom;
     let favorability = -1;
 
-    getFromStorage({"favorite-rooms": {}}, result => {
-      const favRooms = result["favorite-rooms"];
-      rooms.forEach(candidate => {
-        const candidateId = candidate.getAttribute("data-email");
-        if (!favRooms[candidateId]) {
-          return;
-        }
-
-        const currFav = favRooms[candidateId].count;
-        if (candidateId in favRooms && currFav > favorability) {
-          favoriteRoom = candidate;
-          favorability = currFav;
-        }
-      });
-
-      if (!favoriteRoom && rooms.length > 0) {
-        // if can't find a favorite room based on historical data, randomly pick one from the list
-        favoriteRoom = rooms[0];
+    rooms.forEach(candidate => {
+      const candidateId = candidate.getAttribute("data-email");
+      if (!favRooms[candidateId]) {
+        return;
       }
-      cb(favoriteRoom);
+
+      const currFav = favRooms[candidateId].count;
+      if (candidateId in favRooms && currFav > favorability) {
+        favoriteRoom = candidate;
+        favorability = currFav;
+      }
     });
+
+    if (!favoriteRoom && rooms.length > 0) {
+      // if can't find a favorite room based on historical data, randomly pick one from the list
+      favoriteRoom = rooms[0];
+    }
+
+    return favoriteRoom;
   }
 
   function isRoomSuggestionLoaded() {
@@ -292,6 +276,18 @@
 
   function isRoomTabLoaded() {
     return !!getElementByText('span', 'Rooms');
+  }
+
+  function getSettings(cb) {
+    const settingsKeys = Object.assign({}, DEFAULT_ROOM_BOOKING_FILTERS, {"favorite-rooms": {}});
+
+    getFromStorage(settingsKeys, result => {
+      const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+      const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
+      const favRooms = result["favorite-rooms"];
+
+      getRoomFilterUserInputs(flexFilters => cb(posFilter, negFilter, flexFilters, favRooms));
+    });
   }
 
   onMessage((msg, sender, sendResponse) => {
