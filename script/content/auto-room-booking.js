@@ -136,10 +136,12 @@
       });
     }
 
-    rooms = rooms.filter(room => {
-      const roomName = room.getAttribute("data-name");
-      return checkRoomEligibility(roomName, flexFilter);
-    });
+    if (flexFilter) {
+      rooms = rooms.filter(room => {
+        const roomName = room.getAttribute("data-name");
+        return checkRoomEligibility(roomName, flexFilter);
+      });
+    }
 
     return rooms;
   }
