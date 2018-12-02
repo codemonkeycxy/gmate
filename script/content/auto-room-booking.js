@@ -20,11 +20,13 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    await tryUntilPass(getRoomsTab, clickRoomsTab);
+    await tryUntilPass(getRoomsTab, clickRoomTab);
+    await tryUntilPass(isRoomsTabActive, expandAllRoomTrees);
+    await sleep(10000);
     // wait for room tab to activate
     await tryUntilPass(
-      () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
-      async () => await selectFromSuggestion()
+      () => isRoomSuggestionLoaded() && hasNoRoomFlag() && isAllRoomTreeExpanded(),
+      async () => await selectFromOptions()
     );
   }
 
@@ -32,9 +34,42 @@
     return document.querySelectorAll('[aria-label="Rooms"]')[0];
   }
 
-  function clickRoomsTab() {
+  function getAllLocationTree() {
+    return document.querySelectorAll('[aria-label="All locations"]')[0];
+  }
+
+  function clickRoomTab() {
     const roomsTab = getRoomsTab();
     dispatchMouseEvent(roomsTab, "click", true, true);
+  }
+
+  function isRoomTabLoaded() {
+    return !!getElementByText('span', 'Rooms');
+  }
+
+  function isRoomsTabActive() {
+    const roomsTab = getRoomsTab();
+    return roomsTab && roomsTab.getAttribute('aria-selected') === 'true'
+  }
+
+  function expandAllRoomTrees() {
+    const allLocations = getAllLocationTree();
+    for (let i = 0; i < allLocations.children.length; i++) {
+      const location = allLocations.children[i];
+      dispatchMouseEvent(location, "click", true, true);
+    }
+  }
+
+  function isAllRoomTreeExpanded() {
+    const allLocations = getAllLocationTree();
+    for (let i = 0; i < allLocations.children.length; i++) {
+      const location = allLocations.children[i];
+      if (location.getAttribute('aria-expanded') === 'false') {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   function getNoRoomFlag() {
@@ -71,12 +106,12 @@
     });
   }
 
-  async function selectFromSuggestion() {
+  async function selectFromOptions() {
     if (noRoomFound()) {
       return false;
     }
 
-    const {roomList, roomIdToElement} = getSuggestedRooms();
+    const {roomList, roomIdToElement} = getRoomOptions();
     const filteredRooms = await filterRooms(roomList);
     const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
@@ -89,27 +124,57 @@
     await tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
   }
 
-  function getSuggestedRooms() {
-    const roomElements = getElementByText(
-      "div", "Updating room suggestions"
-    ).parentElement.nextSibling.children[0].children;
+  function getRoomOptions() {
+    const suggestedRooms = getSuggestedRooms();
+    const allLocationRooms = getAllLocationRooms();
+    const roomElements = suggestedRooms.concat(allLocationRooms);
 
     // convert html element collection to standard array
     const roomList = [];
     const roomIdToElement = {};
-    for (let i = 0; i < roomElements.length; i++) {
-      const roomElement = roomElements[i];
+    roomElements.forEach(roomElement => {
       const roomId = roomElement.getAttribute("data-email");
       const roomName = roomElement.getAttribute("data-name");
 
       roomList.push(buildRoom(roomId, roomName));
       roomIdToElement[roomId] = roomElement;
-    }
+    });
 
     return {
       roomList: roomList,
       roomIdToElement: roomIdToElement
     };
+  }
+
+  function getSuggestedRooms() {
+    const rooms = getElementByText("div", "Updating room suggestions").parentElement.nextSibling.children[0].children;
+    const result = [];
+
+    // convert nodelist, htmlcollection, etc into generic array
+    // https://stackoverflow.com/questions/15763358/difference-between-htmlcollection-nodelists-and-arrays-of-objects
+    for (let i = 0; i < rooms.length; i++) {
+      result.push(rooms[i]);
+    }
+
+    return result;
+  }
+
+  function getAllLocationRooms() {
+    const allLocations = document.querySelectorAll('[aria-label="All locations"]')[0];
+    if (!allLocations) {
+      return [];
+    }
+
+    const rooms = allLocations.querySelectorAll('[data-email]');
+    const result = [];
+
+    // convert nodelist, htmlcollection, etc into generic array
+    // https://stackoverflow.com/questions/15763358/difference-between-htmlcollection-nodelists-and-arrays-of-objects
+    for (let i = 0; i < rooms.length; i++) {
+      result.push(rooms[i]);
+    }
+
+    return result;
   }
 
   async function filterRooms(rooms) {
@@ -267,10 +332,6 @@
         delete favoriteRooms[LRUKey];
       }
     }
-  }
-
-  function isRoomTabLoaded() {
-    return !!getElementByText('span', 'Rooms');
   }
 
   function buildRoom(id, name, status) {
