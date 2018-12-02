@@ -16,7 +16,7 @@ function saveGlobalVariables() {
 }
 
 async function loadGlobalVariables() {
-  const result = await getFromStorageAsync({'background-global-variables': {}});
+  const result = await getFromStorage({'background-global-variables': {}});
   const globalVars = result['background-global-variables'];
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
 

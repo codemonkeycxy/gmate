@@ -13,7 +13,7 @@
   // Restores feature toggle values using the preferences stored in chrome.storage
   async function restoreOptions() {
     // fill out saved room booking filters. use default if nothing is found
-    const settings = await getFromStorageAsync(DEFAULT_ROOM_BOOKING_FILTERS);
+    const settings = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
     Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(
       key => document.getElementById(key).value = settings[key]
     );

@@ -281,11 +281,7 @@ function onTabUpdated(callback, recycleTtl) {
   }
 }
 
-function getFromStorage(keys, callback) {
-  chrome.storage.sync.get(keys, callback);
-}
-
-async function getFromStorageAsync(keys) {
+async function getFromStorage(keys) {
   return await new Promise(resolve => chrome.storage.sync.get(keys, result => resolve(result)));
 }
 

@@ -41,7 +41,7 @@ onTabUpdated(async (tabId, changeInfo, tab) => {
     emit(tabId, {type: REGISTER_MEETING_TO_BOOK});
 
     // actions controlled by feature toggles
-    const settings = await getFromStorageAsync(DEFAULT_FEATURE_TOGGLES);
+    const settings = await getFromStorage(DEFAULT_FEATURE_TOGGLES);
     Object.keys(settings).forEach(eventType => {
       if (settings[eventType]) {
         // trigger action if the feature is turned on

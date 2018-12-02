@@ -241,7 +241,7 @@
   }
 
   async function updateFavorability(selectedRooms) {
-    const result = await getFromStorageAsync({"favorite-rooms": {}});
+    const result = await getFromStorage({"favorite-rooms": {}});
     const favoriteRooms = result["favorite-rooms"];
     selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 
@@ -289,7 +289,7 @@
   async function getSettings(cb) {
     const settingsKeys = Object.assign({}, DEFAULT_ROOM_BOOKING_FILTERS, {"favorite-rooms": {}});
 
-    const result = await getFromStorageAsync(settingsKeys);
+    const result = await getFromStorage(settingsKeys);
     const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
     const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
     const favRooms = result["favorite-rooms"];

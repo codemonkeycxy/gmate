@@ -77,7 +77,7 @@ async function getRoomFilterUserInputs() {
   const storageKeys = {};
   filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.key)] = setting.default);
 
-  return await getFromStorageAsync(storageKeys);
+  return await getFromStorage(storageKeys);
 }
 
 function checkRoomEligibility(roomStr, userFilterInputs) {
