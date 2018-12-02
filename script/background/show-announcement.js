@@ -1,7 +1,8 @@
 const LAST_VERSION = "last-version";
 const currVersion = chrome.runtime.getManifest().version;
 
-getFromStorage({[LAST_VERSION]: null}, result => {
+(async () => {
+  const result = await getFromStorageAsync({[LAST_VERSION]: null});
   const lastVersion = result[LAST_VERSION];
   persist({[LAST_VERSION]: currVersion});
 
@@ -19,4 +20,4 @@ getFromStorage({[LAST_VERSION]: null}, result => {
   if (versionSettings && versionSettings.notify && versionSettings.notify.url) {
     chrome.tabs.create({url: versionSettings.notify.url});
   }
-});
+})();
