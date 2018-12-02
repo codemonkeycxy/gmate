@@ -13,22 +13,20 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    await getSettings((posFilter, negFilter, flexFilters) => {
-      const selectedRooms = Object.values(getSelectedRooms());
-      const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
+    const selectedRooms = Object.values(getSelectedRooms());
+    const matchingRooms = await filterRooms(selectedRooms);
 
-      if (!isEmpty(matchingRooms)) {
-        return sendFinishMessage(NO_NEED_TO_BOOK);
-      }
+    if (!isEmpty(matchingRooms)) {
+      return sendFinishMessage(NO_NEED_TO_BOOK);
+    }
 
-      tryUntilPass(getRoomsTab, clickRoomsTab);
-      // tryUntilPass(getSearchInput, enterPrimingString);
-      // wait for room tab to activate
-      tryUntilPass(
-        () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
-        () => selectFromSuggestion(posFilter, negFilter, flexFilters)
-      );
-    });
+    tryUntilPass(getRoomsTab, clickRoomsTab);
+    // tryUntilPass(getSearchInput, enterPrimingString);
+    // wait for room tab to activate
+    tryUntilPass(
+      () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
+      () => selectFromSuggestion()
+    );
   }
 
   function getRoomsTab() {
@@ -83,13 +81,13 @@
     });
   }
 
-  async function selectFromSuggestion(posFilter, negFilter, flexFilters) {
+  async function selectFromSuggestion() {
     if (noRoomFound()) {
       return false;
     }
 
     const {roomList, roomIdToElement} = getSuggestedRooms();
-    const filteredRooms = filterRooms(roomList, posFilter, negFilter, flexFilters);
+    const filteredRooms = await filterRooms(roomList);
     const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
     if (selectedRoom) {
@@ -124,7 +122,12 @@
     };
   }
 
-  function filterRooms(rooms, posFilter, negFilter, flexFilters) {
+  async function filterRooms(rooms) {
+    const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
+    const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+    const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
+    const flexFilters = await getRoomFilterUserInputs();
+
     rooms = rooms.filter(room => room.status !== DECLINED);
 
     if (posFilter) {
@@ -286,15 +289,6 @@
       name: name,
       status: status ? status : UNKNOWN
     }
-  }
-
-  async function getSettings(cb) {
-    const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
-    const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-    const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-
-    const flexFilters = await getRoomFilterUserInputs();
-    cb(posFilter, negFilter, flexFilters);
   }
 
   onMessage((msg, sender, sendResponse) => {
