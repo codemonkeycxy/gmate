@@ -227,6 +227,13 @@ function dispatchMouseEvent(target, var_args) {
   target.dispatchEvent(e);
 }
 
+// https://github.com/facebook/react/issues/11488
+// function dispatchInputEvent(target, input) {
+//   const e = new Event('input', { bubbles: true});
+//   target.value = input;
+//   target.dispatchEvent(e);
+// }
+
 function insertBefore(newNode, referenceNode) {
   referenceNode.parentNode.insertBefore(newNode, referenceNode);
 }
