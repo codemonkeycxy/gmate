@@ -14,8 +14,10 @@
     }
 
     getSettings((posFilter, negFilter, flexFilters, favRooms) => {
-      // todo: check against negFilter and flexFilters too
-      if (posFilter && hasMatchingRoom(posFilter)) {
+      const selectedRooms = getSelectedRooms();
+      const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
+
+      if (!isEmpty(matchingRooms)) {
         return sendFinishMessage(NO_NEED_TO_BOOK);
       }
 
@@ -26,21 +28,6 @@
         () => selectFromSuggestion(posFilter, negFilter, flexFilters, favRooms)
       );
     });
-  }
-
-  function hasMatchingRoom(positiveFilter) {
-    const filter = new RegExp(positiveFilter);
-    const selectedRooms = getSelectedRooms();
-
-    for (let id in selectedRooms) {
-      const room = selectedRooms[id];
-
-      if (room.status !== DECLINED && room.name.match(filter)) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   function getRoomsTab() {
@@ -128,6 +115,8 @@
   }
 
   function filterRooms(rooms, posFilter, negFilter, flexFilters) {
+    rooms = rooms.filter(room => room.status !== DECLINED);
+
     if (posFilter) {
       const posRe = new RegExp(posFilter);
       // return if name matches with positive filter
