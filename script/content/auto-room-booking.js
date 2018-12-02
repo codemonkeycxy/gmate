@@ -223,7 +223,7 @@
       return;
     }
 
-    saveBtn.addEventListener("click", e => {
+    saveBtn.addEventListener("click", async e => {
       const finalRooms = getSelectedRooms();
       const selectedRooms = [];
 
@@ -235,18 +235,17 @@
       }
 
       if (selectedRooms.length > 0) {
-        updateFavorability(selectedRooms);
+        await updateFavorability(selectedRooms);
       }
     });
   }
 
-  function updateFavorability(selectedRooms) {
-    getFromStorage({"favorite-rooms": {}}, result => {
-      const favoriteRooms = result["favorite-rooms"];
-      selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
+  async function updateFavorability(selectedRooms) {
+    const result = await getFromStorageAsync({"favorite-rooms": {}});
+    const favoriteRooms = result["favorite-rooms"];
+    selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 
-      persist({"favorite-rooms": favoriteRooms});
-    });
+    persist({"favorite-rooms": favoriteRooms});
   }
 
   function updateFavorabilityForOne(newRoom, favoriteRooms) {
