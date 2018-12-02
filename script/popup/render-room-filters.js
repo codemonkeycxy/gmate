@@ -1,5 +1,5 @@
 // self-invoking function to avoid name collision
-(() => {
+(async () => {
   const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filters-ui-group';
   const FILTER_RENDER_FUNCTIONS = {
     [SINGLE_OPTION]: renderSingleOptionFilter,
@@ -21,24 +21,23 @@
   }
 
   // ----------------------- new style human readable filters -------------------------
-  injectFilterUI();
+  await injectFilterUI();
   // add filter input listener
   Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
     document.getElementById(key).addEventListener("input", e => persistPair(key, e.target.value))
   );
 
-  function injectFilterUI() {
+  async function injectFilterUI() {
     const companyName = 'uber';  // hard code for now
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
     const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
 
-    getRoomFilterUserInputs(storedInput =>
-      filterSettings.forEach(
-        filterSetting => filterUIGroup.appendChild(
-          renderFilter(filterSetting, storedInput)
-        )
+    const storedInput = await getRoomFilterUserInputs();
+    filterSettings.forEach(
+      filterSetting => filterUIGroup.appendChild(
+        renderFilter(filterSetting, storedInput)
       )
-    );
+    )
   }
 
   function renderFilter(filterSetting, storedInput) {

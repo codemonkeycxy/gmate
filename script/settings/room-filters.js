@@ -71,13 +71,13 @@ function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }
 
-function getRoomFilterUserInputs(cb) {
+async function getRoomFilterUserInputs() {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
   const storageKeys = {};
   filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.key)] = setting.default);
 
-  getFromStorage(storageKeys, storedInput => cb(storedInput));
+  return await getFromStorageAsync(storageKeys);
 }
 
 function checkRoomEligibility(roomStr, userFilterInputs) {

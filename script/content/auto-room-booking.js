@@ -22,7 +22,7 @@
       }
 
       tryUntilPass(getRoomsTab, clickRoomsTab);
-      tryUntilPass(getSearchInput, enterPrimingString);
+      // tryUntilPass(getSearchInput, enterPrimingString);
       // wait for room tab to activate
       tryUntilPass(
         () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
@@ -290,12 +290,13 @@
   function getSettings(cb) {
     const settingsKeys = Object.assign({}, DEFAULT_ROOM_BOOKING_FILTERS, {"favorite-rooms": {}});
 
-    getFromStorage(settingsKeys, result => {
+    getFromStorage(settingsKeys, async result => {
       const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
       const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
       const favRooms = result["favorite-rooms"];
 
-      getRoomFilterUserInputs(flexFilters => cb(posFilter, negFilter, flexFilters, favRooms));
+      const flexFilters = await getRoomFilterUserInputs();
+      cb(posFilter, negFilter, flexFilters, favRooms)
     });
   }
 

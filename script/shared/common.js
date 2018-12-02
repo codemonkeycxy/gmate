@@ -285,6 +285,10 @@ function getFromStorage(keys, callback) {
   chrome.storage.sync.get(keys, callback);
 }
 
+async function getFromStorageAsync(keys) {
+  return await new Promise(resolve => chrome.storage.sync.get(keys, result => resolve(result)));
+}
+
 function persist(items) {
   chrome.storage.sync.set(items);
 }
