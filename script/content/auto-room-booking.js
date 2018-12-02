@@ -21,12 +21,14 @@
     }
 
     await tryUntilPass(getRoomsTab, clickRoomTab);
-    await tryUntilPass(isRoomsTabActive, expandAllRoomTrees);
-    await sleep(10000);
+    // todo: handle load more
+    await tryUntilPass(() => !isEmpty(getLocationTree()), expandLocationTree);
     // wait for room tab to activate
     await tryUntilPass(
-      () => isRoomSuggestionLoaded() && hasNoRoomFlag() && isAllRoomTreeExpanded(),
-      async () => await selectFromOptions()
+      // todo: all location rooms could be legitimately empty
+      () => isRoomSuggestionLoaded() && hasNoRoomFlag() && !isEmpty(getAllLocationRooms()),
+      async () => await selectFromOptions(),
+      {sleepMs: 1000}
     );
   }
 
@@ -34,8 +36,33 @@
     return document.querySelectorAll('[aria-label="Rooms"]')[0];
   }
 
-  function getAllLocationTree() {
-    return document.querySelectorAll('[aria-label="All locations"]')[0];
+  function getLocationTree() {
+    let allTrees = document.querySelectorAll('[aria-label="All locations"]')[0];
+    allTrees = allTrees.querySelectorAll('[aria-label]');
+    const results = [];
+    // todo: generalize
+    const targetLocations = [
+      'SFO | 1455 Market',
+      'SFO | 555 Market',
+      'SFO | 685 Market',
+      'SEA | 1191 2nd Ave',
+      'PAO | 900 Arastradero A',
+      'PAO | 900 Arastradero B',
+    ];
+
+    for (let i = 0; i < allTrees.length; i++) {
+      const tree = allTrees[i];
+      const locationName = tree.getAttribute('aria-label');
+      const shouldSelect = targetLocations.some(
+        targetLocation => locationName.toLowerCase().trim().includes(targetLocation.toLowerCase().trim())
+      );
+
+      if (shouldSelect) {
+        results.push(tree);
+      }
+    }
+
+    return results;
   }
 
   function clickRoomTab() {
@@ -47,29 +74,9 @@
     return !!getElementByText('span', 'Rooms');
   }
 
-  function isRoomsTabActive() {
-    const roomsTab = getRoomsTab();
-    return roomsTab && roomsTab.getAttribute('aria-selected') === 'true'
-  }
-
-  function expandAllRoomTrees() {
-    const allLocations = getAllLocationTree();
-    for (let i = 0; i < allLocations.children.length; i++) {
-      const location = allLocations.children[i];
-      dispatchMouseEvent(location, "click", true, true);
-    }
-  }
-
-  function isAllRoomTreeExpanded() {
-    const allLocations = getAllLocationTree();
-    for (let i = 0; i < allLocations.children.length; i++) {
-      const location = allLocations.children[i];
-      if (location.getAttribute('aria-expanded') === 'false') {
-        return false;
-      }
-    }
-
-    return true;
+  function expandLocationTree() {
+    const trees = getLocationTree();
+    trees.forEach(tree => dispatchMouseEvent(tree, "click", true, true));
   }
 
   function getNoRoomFlag() {

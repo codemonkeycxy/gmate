@@ -328,7 +328,7 @@ async function tryUntilPass(predicate, callback, options) {
   const onError = options.onError;
 
   while (countdown > 0) {
-    if (!predicate()) {
+    if (!await predicate()) {
       // if predicates returns not true, sleep for a while and try again
       await sleep(sleepMs);
     } else {
