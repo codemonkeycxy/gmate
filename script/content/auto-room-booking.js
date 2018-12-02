@@ -21,7 +21,6 @@
     }
 
     await tryUntilPass(getRoomsTab, clickRoomsTab);
-    // tryUntilPass(getSearchInput, enterPrimingString);
     // wait for room tab to activate
     await tryUntilPass(
       () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
@@ -36,15 +35,6 @@
   function clickRoomsTab() {
     const roomsTab = getRoomsTab();
     dispatchMouseEvent(roomsTab, "click", true, true);
-  }
-
-  function getSearchInput() {
-    return document.querySelectorAll('[aria-label="Filter rooms and resources by name"]')[0];
-  }
-
-  function enterPrimingString() {
-    const input = getSearchInput();
-    dispatchTextEvent(input, '1455');
   }
 
   function getNoRoomFlag() {
