@@ -1,5 +1,5 @@
 // ==================== global variable management ======================
-loadGlobalVariables();
+(async () => await loadGlobalVariables())();
 
 function saveGlobalVariables() {
   const snapshot = {
@@ -15,31 +15,30 @@ function saveGlobalVariables() {
   });
 }
 
-function loadGlobalVariables() {
-  getFromStorage({'background-global-variables': {}}, result => {
-    const globalVars = result['background-global-variables'];
-    console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
+async function loadGlobalVariables() {
+  const result = await getFromStorageAsync({'background-global-variables': {}});
+  const globalVars = result['background-global-variables'];
+  console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
 
-    toBeFulfilled = globalVars.toBeFulfilled || [];
-    workerTabId = globalVars.workerTabId || null;
-    currentTask = globalVars.currentTask || null;
-    taskVersion = globalVars.taskVersion || 0;
-    lastActiveTs = globalVars.lastActiveTs || Date.now();
+  toBeFulfilled = globalVars.toBeFulfilled || [];
+  workerTabId = globalVars.workerTabId || null;
+  currentTask = globalVars.currentTask || null;
+  taskVersion = globalVars.taskVersion || 0;
+  lastActiveTs = globalVars.lastActiveTs || Date.now();
 
-    // push the saved current task into the task queue to start afresh
-    enqueue(currentTask);
-    currentTask = null;
+  // push the saved current task into the task queue to start afresh
+  enqueue(currentTask);
+  currentTask = null;
 
-    if (workerTabId) {
-      chrome.tabs.get(workerTabId, () => {
-        if (chrome.runtime.lastError) {
-          console.log(`worker ${workerTabId} is no longer available. resetting...`);
-          workerTabId = null;
-          startWorker();
-        }
-      });
-    }
-  });
+  if (workerTabId) {
+    chrome.tabs.get(workerTabId, () => {
+      if (chrome.runtime.lastError) {
+        console.log(`worker ${workerTabId} is no longer available. resetting...`);
+        workerTabId = null;
+        startWorker();
+      }
+    });
+  }
 }
 
 // ==================== worker management ======================

@@ -7,13 +7,13 @@
     addSaveListener(initialRooms);
   }
 
-  function bookFavoriteRoom(forceBookOnEdit) {
+  async function bookFavoriteRoom(forceBookOnEdit) {
     if (!forceBookOnEdit && isEdit()) {
       // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    getSettings((posFilter, negFilter, flexFilters, favRooms) => {
+    await getSettings((posFilter, negFilter, flexFilters, favRooms) => {
       const selectedRooms = Object.values(getSelectedRooms());
       const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
 
@@ -287,17 +287,16 @@
     }
   }
 
-  function getSettings(cb) {
+  async function getSettings(cb) {
     const settingsKeys = Object.assign({}, DEFAULT_ROOM_BOOKING_FILTERS, {"favorite-rooms": {}});
 
-    getFromStorage(settingsKeys, async result => {
-      const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-      const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-      const favRooms = result["favorite-rooms"];
+    const result = await getFromStorageAsync(settingsKeys);
+    const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
+    const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
+    const favRooms = result["favorite-rooms"];
 
-      const flexFilters = await getRoomFilterUserInputs();
-      cb(posFilter, negFilter, flexFilters, favRooms)
-    });
+    const flexFilters = await getRoomFilterUserInputs();
+    cb(posFilter, negFilter, flexFilters, favRooms);
   }
 
   onMessage((msg, sender, sendResponse) => {
