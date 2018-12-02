@@ -227,13 +227,6 @@ function dispatchMouseEvent(target, var_args) {
   target.dispatchEvent(e);
 }
 
-// https://github.com/facebook/react/issues/11488
-// function dispatchInputEvent(target, input) {
-//   const e = new Event('input', { bubbles: true});
-//   target.value = input;
-//   target.dispatchEvent(e);
-// }
-
 function insertBefore(newNode, referenceNode) {
   referenceNode.parentNode.insertBefore(newNode, referenceNode);
 }
@@ -321,6 +314,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+// TODO: consider converting this function into blocking by using await
 function tryUntilPass(predicate, callback, options) {
   options = options || {};
   const sleepMs = options.sleepMs || 500;

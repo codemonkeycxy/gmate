@@ -22,7 +22,6 @@
       }
 
       tryUntilPass(getRoomsTab, clickRoomsTab);
-      // tryUntilPass(getRoomSearchInput, enterRoomPrimingString);
       // wait for room tab to activate
       tryUntilPass(
         () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
@@ -39,15 +38,6 @@
     const roomsTab = getRoomsTab();
     dispatchMouseEvent(roomsTab, "click", true, true);
   }
-
-  // function getRoomSearchInput() {
-  //   return getElementByText("input", "Filter rooms and resources by name");
-  // }
-  //
-  // function enterRoomPrimingString() {
-  //   const searchInput = getRoomSearchInput();
-  //   dispatchInputEvent(searchInput, '1455');
-  // }
 
   function getNoRoomFlag() {
     return getElementByText("div", "No rooms found.");
