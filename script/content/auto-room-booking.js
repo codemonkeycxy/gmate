@@ -13,7 +13,7 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    await getSettings((posFilter, negFilter, flexFilters, favRooms) => {
+    await getSettings((posFilter, negFilter, flexFilters) => {
       const selectedRooms = Object.values(getSelectedRooms());
       const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
 
@@ -26,7 +26,7 @@
       // wait for room tab to activate
       tryUntilPass(
         () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
-        () => selectFromSuggestion(posFilter, negFilter, flexFilters, favRooms)
+        () => selectFromSuggestion(posFilter, negFilter, flexFilters)
       );
     });
   }
@@ -83,14 +83,14 @@
     });
   }
 
-  function selectFromSuggestion(posFilter, negFilter, flexFilters, favRooms) {
+  async function selectFromSuggestion(posFilter, negFilter, flexFilters) {
     if (noRoomFound()) {
       return false;
     }
 
     const {roomList, roomIdToElement} = getSuggestedRooms();
     const filteredRooms = filterRooms(roomList, posFilter, negFilter, flexFilters);
-    const selectedRoom = pickFavoriteRoom(filteredRooms, favRooms);
+    const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
     if (selectedRoom) {
       dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
@@ -146,7 +146,9 @@
     return rooms;
   }
 
-  function pickFavoriteRoom(rooms, favRooms) {
+  async function pickFavoriteRoom(rooms) {
+    const result = await getFromStorage({"favorite-rooms": {}});
+    const favRooms = result["favorite-rooms"];
     let favoriteRoom;
     let favorability = -1;
 
@@ -287,15 +289,12 @@
   }
 
   async function getSettings(cb) {
-    const settingsKeys = Object.assign({}, DEFAULT_ROOM_BOOKING_FILTERS, {"favorite-rooms": {}});
-
-    const result = await getFromStorage(settingsKeys);
+    const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
     const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
     const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-    const favRooms = result["favorite-rooms"];
 
     const flexFilters = await getRoomFilterUserInputs();
-    cb(posFilter, negFilter, flexFilters, favRooms);
+    cb(posFilter, negFilter, flexFilters);
   }
 
   onMessage((msg, sender, sendResponse) => {
