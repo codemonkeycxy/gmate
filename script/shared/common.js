@@ -227,6 +227,13 @@ function dispatchMouseEvent(target, var_args) {
   target.dispatchEvent(e);
 }
 
+// had to use this hack to get around Chrome disallowing "untrusted" input event
+// https://stackoverflow.com/questions/39947875/as-of-chrome-53-how-to-add-text-as-if-a-trusted-textinput-event-was-dispatched
+function dispatchTextEvent(target, text) {
+  input.focus();
+  document.execCommand('insertText', false, text);
+}
+
 function insertBefore(newNode, referenceNode) {
   referenceNode.parentNode.insertBefore(newNode, referenceNode);
 }
