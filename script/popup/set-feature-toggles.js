@@ -3,11 +3,10 @@
 // self-invoking function to avoid name collision
 (() => {
   // Restores feature toggle values using the preferences stored in chrome.storage
-  function restoreOptions() {
+  async function restoreOptions() {
     // fill out saved feature toggles. use default if nothing is found
-    getFromStorage(DEFAULT_FEATURE_TOGGLES, settings =>
-      Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(key => document.getElementById(key).checked = settings[key])
-    );
+    const settings = await getFromStorageAsync(DEFAULT_FEATURE_TOGGLES);
+    Object.keys(DEFAULT_FEATURE_TOGGLES).forEach(key => document.getElementById(key).checked = settings[key])
   }
 
   document.addEventListener("DOMContentLoaded", restoreOptions);
