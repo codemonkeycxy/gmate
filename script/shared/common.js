@@ -321,35 +321,33 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-// TODO: consider converting this function into blocking by using await
-function tryUntilPass(predicate, callback, options) {
+async function tryUntilPass(predicate, callback, options) {
   options = options || {};
   const sleepMs = options.sleepMs || 500;
-  const countdown = options.countdown || 10;
+  let countdown = options.countdown || 10;
   const onError = options.onError;
 
-  _tryUntilPassRecursive(predicate, callback, sleepMs, countdown, onError);
+  while (countdown > 0) {
+    if (!predicate()) {
+      // if predicates returns not true, sleep for a while and try again
+      await sleep(sleepMs);
+    } else {
+      return await callback();
+    }
+    countdown--;
+  }
+
+  if (onError) {
+    return onError();
+  }
+
+  throw new Error(
+    `tryUntilPass(${predicate.name}, ${callback.name}) ran into infinite loop. force break...`
+  );
 }
 
-function _tryUntilPassRecursive(predicate, callback, sleepMs, countdown, onError) {
-  if (countdown === 0) {
-    if (onError) {
-      return onError();
-    }
-
-    throw new Error(
-      `tryUntilPass(${predicate.name}, ${callback.name}) ran into infinite loop. force break...`
-    );
-  }
-
-  if (!predicate()) {
-    setTimeout(
-      () => _tryUntilPassRecursive(predicate, callback, sleepMs, countdown - 1, onError),
-      sleepMs
-    );
-  } else {
-    callback();
-  }
+async function sleep(ms) {
+  return await new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const nextId = (() => {

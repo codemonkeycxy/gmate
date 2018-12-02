@@ -1,6 +1,6 @@
 // self-invoking function to avoid name collision
 (() => {
-  function saveEdit() {
+  async function saveEdit() {
     const eventId = getEventId();
     const eventName = getEventName();
 
@@ -11,7 +11,7 @@
     // 1) no confirmation page (in case of no invitees)
     // 2) confirmation to notify invitees
     // 3) confirmation for recurring meetings + confirmation to notify invitees
-    tryUntilPass(
+    await tryUntilPass(
       () => confirmSaving() && isMainCalendarPage(),
       () => sendFinishMessage(EDIT_SAVED, eventId, eventName),
       { // wait up to 30 sec
@@ -46,9 +46,9 @@
     });
   }
 
-  onMessage((msg, sender, sendResponse) => {
+  onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === SAVE_EDIT) {
-      tryUntilPass(getSaveButton, saveEdit);
+      await tryUntilPass(getSaveButton, saveEdit);
     }
   });
 })();

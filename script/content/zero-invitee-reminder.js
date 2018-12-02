@@ -12,9 +12,9 @@
     }
   }
 
-  onMessage((msg, sender, sendResponse) => {
+  onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === ZERO_INVITEE_REMINDER) {
-      tryUntilPass(getSaveButton, addSaveListener)
+      await tryUntilPass(getSaveButton, addSaveListener)
     }
   });
 })();

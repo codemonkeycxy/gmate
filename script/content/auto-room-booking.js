@@ -20,12 +20,12 @@
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    tryUntilPass(getRoomsTab, clickRoomsTab);
+    await tryUntilPass(getRoomsTab, clickRoomsTab);
     // tryUntilPass(getSearchInput, enterPrimingString);
     // wait for room tab to activate
-    tryUntilPass(
+    await tryUntilPass(
       () => isRoomSuggestionLoaded() && hasNoRoomFlag(),
-      () => selectFromSuggestion()
+      async () => await selectFromSuggestion()
     );
   }
 
@@ -96,7 +96,7 @@
     } else {
       sendFinishMessage(NO_ROOM_FOUND);
     }
-    tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
+    await tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
   }
 
   function getSuggestedRooms() {
@@ -291,14 +291,14 @@
     }
   }
 
-  onMessage((msg, sender, sendResponse) => {
+  onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
       const forceBookOnEdit = msg.options && msg.options.forceBookOnEdit;
-      tryUntilPass(isRoomTabLoaded, () => bookFavoriteRoom(forceBookOnEdit));
+      await tryUntilPass(isRoomTabLoaded, async () => await bookFavoriteRoom(forceBookOnEdit));
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
-      tryUntilPass(isRoomTabLoaded, registerFavoriteRooms);
+      await tryUntilPass(isRoomTabLoaded, registerFavoriteRooms);
     }
   });
 })();

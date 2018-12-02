@@ -27,7 +27,7 @@
     saveBtn.addEventListener("click", onSave);
   }
 
-  function onSave() {
+  async function onSave() {
     if (!eventIdToFulfill) {
       // no op if there's no event to fulfill
       return;
@@ -38,7 +38,7 @@
       return registerRoomToBeFulfilled(eventIdToFulfill, eventName);
     }
 
-    tryUntilPass(isMainCalendarPage, sendFinishMessage);
+    await tryUntilPass(isMainCalendarPage, sendFinishMessage);
   }
 
   function sendFinishMessage() {
@@ -82,11 +82,11 @@
     eventName = '';
   }
 
-  onMessage((msg, sender, sendResponse) => {
+  onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: (maybe) bug: button disappears on page refresh (due to leavingEventPage logic)
       resetGlobal();
-      tryUntilPass(
+      await tryUntilPass(
         () => getLocationInput() && getSaveButton(),
         addNeedRoomListener
       )
