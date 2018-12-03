@@ -132,6 +132,7 @@ function stopWorker() {
 // todo: check unblock youku's styling
 // todo: record request to fulfillment time
 // todo: log room booking stats by location
+// todo: task removal is buggy
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {

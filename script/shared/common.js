@@ -476,3 +476,7 @@ function appendOrdinalSuffix(i) {
   }
   return i + "th";
 }
+
+function isPageActive() {
+  return !document.hidden;
+}

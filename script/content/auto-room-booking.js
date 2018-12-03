@@ -20,6 +20,7 @@
     }
 
     let countdown = 20;
+    const blacklistedRoomIds = [];
     while (countdown > 0) {
       if (noRoomFound()) {
         return sendFinishMessage(NO_ROOM_FOUND);  // no room to select, early return
@@ -29,13 +30,25 @@
       expandLocationTree();
       clickLoadMore();
 
-      const {roomList, roomIdToElement} = getRoomOptions();
+      let {roomList, roomIdToElement} = getRoomOptions();
+      roomList = roomList.filter(room => !blacklistedRoomIds.includes(room.id));
       const filteredRooms = await filterRooms(roomList);
       const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
       if (selectedRoom) {
         dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        return sendFinishMessage(ROOM_SELECTED, selectedRoom);  // room selected, early return
+        // I've noticed an obscure bug that sometimes a selected room doesn't show up in the worker UI when the page is not active
+        // the following logic makes sure the selected room actually shows up in the UI
+        try {
+          return await tryUntilPass(
+            () => (selectedRoom.id in getSelectedRooms()),
+            () => sendFinishMessage(ROOM_SELECTED, selectedRoom)
+          );  // room selected, early return
+        } catch (e) {
+          // if the room somehow doesn't show up in the UI, blacklist it and try to look again
+          console.log(`blacklist ${selectedRoom.name}`);
+          blacklistedRoomIds.push(selectedRoom.id);
+        }
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
