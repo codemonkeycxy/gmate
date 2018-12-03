@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.1
+- [enhancement] Load up more rooms to ensure better room booking results
+- [enhancement] Reduce simulated tab clicks to avoid user confusion
+- [maintenance] Switch ugly callbacks to cleaner async/await style (bumped min Chrome version to 56)
+
 ## 0.3.0
 - [feature] Add user-friendly room booking filters
 
