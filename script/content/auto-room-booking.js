@@ -134,7 +134,7 @@
 
   function getRoomOptions() {
     // these are the rooms intelligently recommended by Google Calendar and they load quickly
-    const suggestedRooms = isRoomSuggestionLoaded() && getSuggestedRooms() || [];
+    const suggestedRooms = getSuggestedRooms();
     // then we also click around the Calendar UI to get more relevant rooms for selection, these rooms load more slowly
     const allLocationRooms = getAllLocationRooms();
     const roomElements = suggestedRooms.concat(allLocationRooms);
@@ -157,8 +157,15 @@
   }
 
   function getSuggestedRooms() {
-    const rooms = getElementByText("div", "Updating room suggestions").parentElement.nextSibling.children[0].children;
+    let rooms = [];
     const result = [];
+
+    // in case room suggestion UI is not loaded
+    try {
+      rooms = getElementByText("div", "Updating room suggestions").parentElement.nextSibling.children[0].children;
+    } catch (e) {
+      return result;
+    }
 
     // convert nodelist, htmlcollection, etc into generic array
     // https://stackoverflow.com/questions/15763358/difference-between-htmlcollection-nodelists-and-arrays-of-objects
@@ -238,17 +245,6 @@
     }
 
     return favoriteRoom;
-  }
-
-  function isRoomSuggestionLoaded() {
-    try {
-      const loading = getElementByText("div", "Finding rooms").parentElement;
-      const updating = getElementByText("div", "Updating room suggestions").parentElement;
-      return !isElementVisible(loading) && !isElementVisible(updating);
-    } catch (e) {
-      // in case elements are not found
-      return false;
-    }
   }
 
   function getSelectedRooms() {
