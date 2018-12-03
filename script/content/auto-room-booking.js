@@ -127,7 +127,7 @@
     chrome.runtime.sendMessage({
       type: eventType,
       data: {
-        roomName: room.name,
+        roomName: room && room.name,
         eventId: getEventId()
       }
     });
