@@ -22,7 +22,7 @@
     let countdown = 20;
     while (countdown > 0) {
       if (noRoomFound()) {
-        sendFinishMessage(NO_ROOM_FOUND);
+        return sendFinishMessage(NO_ROOM_FOUND);  // no room to select, early return
       }
 
       // load up more potential room candidates for selection
@@ -35,7 +35,7 @@
 
       if (selectedRoom) {
         dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        sendFinishMessage(ROOM_SELECTED);
+        return sendFinishMessage(ROOM_SELECTED);  // room selected, early return
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
