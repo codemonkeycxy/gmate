@@ -35,7 +35,7 @@
 
       if (selectedRoom) {
         dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        return sendFinishMessage(ROOM_SELECTED);  // room selected, early return
+        return sendFinishMessage(ROOM_SELECTED, selectedRoom);  // room selected, early return
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
@@ -123,10 +123,11 @@
     return hasNoRoomFlag() && isElementVisible(noRoom);
   }
 
-  function sendFinishMessage(eventType) {
+  function sendFinishMessage(eventType, room) {
     chrome.runtime.sendMessage({
       type: eventType,
       data: {
+        roomName: room.name,
         eventId: getEventId()
       }
     });

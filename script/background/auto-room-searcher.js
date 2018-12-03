@@ -301,7 +301,7 @@ function preparePostTrigger() {
     const eventName = currentTask.data.eventName;
 
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
-      console.log(`room selected for ${JSON.stringify(currentTask)}`);
+      console.log(`room ${msg.data.roomName} selected for ${JSON.stringify(currentTask)}`);
 
       chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
         iconUrl: "icon.png",
