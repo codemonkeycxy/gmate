@@ -132,6 +132,21 @@ function getElementByText(tagName, innerText, parentNode) {
   }
 }
 
+// return all matches
+function getAllElementsByText(tagName, innerText, parentNode) {
+  parentNode = parentNode || document;
+  const tags = parentNode.getElementsByTagName(tagName);
+  const result = [];
+
+  for (let i = 0; i < tags.length; i++) {
+    if (tags[i].textContent == innerText) {
+      result.push(tags[i]);
+    }
+  }
+
+  return result;
+}
+
 // return the first match
 function getElementByAttr(tagName, attrName, expectedVal) {
   const tags = document.getElementsByTagName(tagName);

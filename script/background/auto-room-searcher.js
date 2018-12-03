@@ -121,7 +121,6 @@ function stopWorker() {
 // todo: (maybe) wrap background scripts with self-invoking function
 // todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
 // todo: after ^, maybe start simulate typing the must have strings in room searching box to get fuller results
-// todo: add typeahead priming string to get fuller room searching results
 // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: add prioritization function, allow room size preference and VC preference
 // prioritization paper: https://pubsonline.informs.org/doi/pdf/10.1287/ited.2013.0124
@@ -132,6 +131,7 @@ function stopWorker() {
 // todo: make announcement to retire auto edit feature
 // todo: check unblock youku's styling
 // todo: record request to fulfillment time
+// todo: log room booking stats by location
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {

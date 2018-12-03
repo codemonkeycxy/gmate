@@ -15,30 +15,46 @@
 
     const selectedRooms = Object.values(getSelectedRooms());
     const matchingRooms = await filterRooms(selectedRooms);
-
     if (!isEmpty(matchingRooms)) {
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
-    await tryUntilPass(getRoomsTab, clickRoomTab);
-    // todo: handle load more
-    await tryUntilPass(() => !isEmpty(getLocationTree()), expandLocationTree);
-    // wait for room tab to activate
-    await tryUntilPass(
-      // todo: all location rooms could be legitimately empty
-      () => isRoomSuggestionLoaded() && hasNoRoomFlag() && !isEmpty(getAllLocationRooms()),
-      async () => await selectFromOptions(),
-      {sleepMs: 1000}
-    );
+    let countdown = 20;
+    while (countdown > 0) {
+      if (noRoomFound()) {
+        sendFinishMessage(NO_ROOM_FOUND);
+      }
+
+      // load up more potential room candidates for selection
+      expandLocationTree();
+      clickLoadMore();
+
+      const {roomList, roomIdToElement} = getRoomOptions();
+      const filteredRooms = await filterRooms(roomList);
+      const selectedRoom = await pickFavoriteRoom(filteredRooms);
+
+      if (selectedRoom) {
+        dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
+        sendFinishMessage(ROOM_SELECTED);
+      }
+
+      // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
+      await sleep(500);
+      countdown--;
+    }
+
+    // can't find a room after 20 tries so we give up
+    sendFinishMessage(NO_ROOM_FOUND);
   }
 
-  function getRoomsTab() {
-    return document.querySelectorAll('[aria-label="Rooms"]')[0];
-  }
-
-  function getLocationTree() {
+  // rooms are organized as an expandable list by each location
+  function getLocationTrees() {
     let allTrees = document.querySelectorAll('[aria-label="All locations"]')[0];
-    allTrees = allTrees.querySelectorAll('[aria-label]');
+    if (!allTrees) {
+      return [];
+    }
+
+    allTrees = allTrees.querySelectorAll('[aria-expanded]');
     const results = [];
     // todo: generalize
     const targetLocations = [
@@ -65,18 +81,30 @@
     return results;
   }
 
-  function clickRoomTab() {
-    const roomsTab = getRoomsTab();
-    dispatchMouseEvent(roomsTab, "click", true, true);
+  function expandLocationTree() {
+    const trees = getLocationTrees();
+    trees.forEach(tree => {
+      if (tree.getAttribute('aria-expanded') === 'true') {
+        return;
+      }
+
+      dispatchMouseEvent(tree, "click", true, true)
+    });
+  }
+
+  // click the "Load more" UI to load more rooms
+  function clickLoadMore() {
+    const allTrees = document.querySelectorAll('[aria-label="All locations"]')[0];
+    if (!allTrees) {
+      return;
+    }
+
+    const loadMoreDivs = getAllElementsByText('div', 'Load more', allTrees);
+    loadMoreDivs.forEach(loadMore => dispatchMouseEvent(loadMore, "click", true, true));
   }
 
   function isRoomTabLoaded() {
     return !!getElementByText('span', 'Rooms');
-  }
-
-  function expandLocationTree() {
-    const trees = getLocationTree();
-    trees.forEach(tree => dispatchMouseEvent(tree, "click", true, true));
   }
 
   function getNoRoomFlag() {
@@ -92,16 +120,7 @@
 
   function noRoomFound() {
     const noRoom = getNoRoomFlag();
-    return isElementVisible(noRoom);
-  }
-
-  function isGuestTabLoaded() {
-    return !!document.querySelectorAll('[aria-label="Guests"]')[0];
-  }
-
-  function clickGuestsTab() {
-    const guestTab = document.querySelectorAll('[aria-label="Guests"]')[0];
-    dispatchMouseEvent(guestTab, "click", true, true);
+    return hasNoRoomFlag() && isElementVisible(noRoom);
   }
 
   function sendFinishMessage(eventType) {
@@ -113,26 +132,10 @@
     });
   }
 
-  async function selectFromOptions() {
-    if (noRoomFound()) {
-      return false;
-    }
-
-    const {roomList, roomIdToElement} = getRoomOptions();
-    const filteredRooms = await filterRooms(roomList);
-    const selectedRoom = await pickFavoriteRoom(filteredRooms);
-
-    if (selectedRoom) {
-      dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-      sendFinishMessage(ROOM_SELECTED);
-    } else {
-      sendFinishMessage(NO_ROOM_FOUND);
-    }
-    await tryUntilPass(isGuestTabLoaded, clickGuestsTab); // switch back to guests tab after room booking
-  }
-
   function getRoomOptions() {
-    const suggestedRooms = getSuggestedRooms();
+    // these are the rooms intelligently recommended by Google Calendar and they load quickly
+    const suggestedRooms = isRoomSuggestionLoaded() && getSuggestedRooms() || [];
+    // then we also click around the Calendar UI to get more relevant rooms for selection, these rooms load more slowly
     const allLocationRooms = getAllLocationRooms();
     const roomElements = suggestedRooms.concat(allLocationRooms);
 
