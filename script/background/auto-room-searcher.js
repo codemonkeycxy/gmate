@@ -104,7 +104,6 @@ function stopWorker() {
 // todo: add daily quota and anti-greedy mechanism
 // todo: add google analytics on queue size and other user behaviors
 // todo: allow per "i need a room" regex setting, and save past configurations for quick select
-// todo: ask users for room name examples and find commonality among them
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page
 // todo: (in the future) donation
@@ -112,27 +111,24 @@ function stopWorker() {
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: show worker status in popup with appropriate controller button (status: paused <btn>start searching</btn>, status: active <btn>stop searching</btn>)
 // todo: cancel task when user clicks "cancel" instead "confirm"
-// todo: (maybe) change the icon of the worker tab
 // todo: set up key feature metrics and alerts
 // todo: set up a user survey
 // todo: log last error to mixpanel
 // todo: (maybe) wrap background scripts with self-invoking function
-// todo: convert regex to more user-friendly settings (use google sheet condition as a reference), with !important
-// todo: after ^, maybe start simulate typing the must have strings in room searching box to get fuller results
 // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: add prioritization function, allow room size preference and VC preference
 // prioritization paper: https://pubsonline.informs.org/doi/pdf/10.1287/ited.2013.0124
 // todo: bulma styling and create elements with html
+// todo: check unblock youku's styling
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 // todo: inject an identifier to the worker page and use that to either reuse/recycle worker upon app restart
 // todo: turn on room booking by default
 // todo: make announcement to retire auto edit feature
-// todo: check unblock youku's styling
 // todo: record request to fulfillment time
 // todo: log room booking stats by location
 // todo: task removal is buggy
+// todo: set room booking feature toggle to true by default
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
