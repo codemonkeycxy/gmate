@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.3.2
 - [maintenance] Announce the replacement of "allow invitee to edit event" feature with the one that Google Calendar natively supports
 - [maintenance] Turn on room booking feature by default
+- [fix] Safe guard against null pointer exceptions caused by empty room names
 
 ## 0.3.1
 - [enhancement] Load up more rooms to ensure better room booking results

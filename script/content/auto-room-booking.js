@@ -159,6 +159,9 @@
     roomElements.forEach(roomElement => {
       const roomId = roomElement.getAttribute("data-email");
       const roomName = roomElement.getAttribute("data-name");
+      if (!roomId || !roomName) {
+        return;
+      }
 
       roomList.push(buildRoom(roomId, roomName));
       roomIdToElement[roomId] = roomElement;
@@ -219,13 +222,13 @@
     if (posFilter) {
       const posRe = new RegExp(posFilter);
       // return if name matches with positive filter
-      rooms = rooms.filter(room => room.name && room.name.match(posRe));
+      rooms = rooms.filter(room => room.name.match(posRe));
     }
 
     if (negFilter) {
       const negRe = new RegExp(negFilter);
       // DON'T return if name matches with negative filter
-      rooms = rooms.filter(room => room.name && !room.name.match(negRe));
+      rooms = rooms.filter(room => !room.name.match(negRe));
     }
 
     if (flexFilters) {
@@ -274,6 +277,9 @@
       const selectedRoom = selectedRoomListUI.children[i];
       const roomId = selectedRoom.getAttribute("data-id");
       const roomName = selectedRoom.getAttribute("aria-label");
+      if (!roomId || !roomName) {
+        continue;
+      }
 
       selectedRooms[roomId] = buildRoom(
         roomId,
