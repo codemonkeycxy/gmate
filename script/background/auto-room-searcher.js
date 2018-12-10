@@ -123,7 +123,6 @@ function stopWorker() {
 // todo: check unblock youku's styling
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 // todo: inject an identifier to the worker page and use that to either reuse/recycle worker upon app restart
-// todo: make announcement to retire auto edit feature
 // todo: record request to fulfillment time
 // todo: log room booking stats by location
 // todo: task removal is buggy

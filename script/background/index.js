@@ -4,6 +4,7 @@
 /* ==================== Global Variables ======================= */
 let toBeFulfilled, workerTabId, currentTask, taskVersion, lastActiveTs;
 
+chrome.runtime.setUninstallURL('https://goo.gl/forms/Yz4Rtt7fqmgMsHLd2');
 // refresh calendar main page on app update so that the new code can take effect
 refreshCalendarMainPage();
 
