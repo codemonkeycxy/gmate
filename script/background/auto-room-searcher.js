@@ -1,5 +1,5 @@
 // ==================== global variable management ======================
-(async () => await loadGlobalVariables())();
+(async () => await bootstrap())();
 
 function saveGlobalVariables() {
   const snapshot = {
@@ -15,7 +15,7 @@ function saveGlobalVariables() {
   });
 }
 
-async function loadGlobalVariables() {
+async function bootstrap() {
   const result = await getFromStorage({'background-global-variables': {}});
   const globalVars = result['background-global-variables'];
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);

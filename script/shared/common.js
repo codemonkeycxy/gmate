@@ -6,10 +6,12 @@ const ONE_MIN_MS = 60 * 1000;
 const FIVE_MIN_MS = 5 * ONE_MIN_MS;
 const ONE_HOUR_MS = 60 * ONE_MIN_MS;
 
+// feature toggles
 const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
 const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
+// room booking related actions
 const ROOM_SELECTED = "room-selected";
 const NO_ROOM_FOUND = "no-room-found";
 const NO_NEED_TO_BOOK = "no-need-to-book";
@@ -22,22 +24,28 @@ const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
 const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
+// UI modification actions
 const SHOW_BANNER = "show-banner";
 const ADD_OVERLAY = "add-overlay";
 
+// event edit actions
 const SAVE_EDIT = "save-edit";
 const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NOTIFY = "notify";
 
+// task types
 const NAP = "nap";
 const EVENT = "event";
+
+// settings panel actions
 const GET_QUEUE = "get-queue";
 const REMOVE_TASK = "remove-task";
 const START_WORKER = "start-worker";
 const STOP_WORKER = "stop-worker";
 
+// room status
 const ACCEPTED = "accepted";
 const DECLINED = "declined";
 const UNKNOWN = "unknown";
