@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.2
+- [maintenance] Announce the replacement of "allow invitee to edit event" feature with the one that Google Calendar natively supports
+- [maintenance] Turn on room booking feature by default
+
 ## 0.3.1
 - [enhancement] Load up more rooms to ensure better room booking results
 - [enhancement] Reduce simulated tab clicks to avoid user confusion
