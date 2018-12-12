@@ -7,7 +7,6 @@ const FIVE_MIN_MS = 5 * ONE_MIN_MS;
 const ONE_HOUR_MS = 60 * ONE_MIN_MS;
 
 // feature toggles
-const ALLOW_GUEST_MODIFY_EVENT = "allow-guest-modify-event";
 const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
@@ -61,7 +60,6 @@ const YES = 'yes';
 const NO = 'no';
 
 const DEFAULT_FEATURE_TOGGLES = {};
-DEFAULT_FEATURE_TOGGLES[ALLOW_GUEST_MODIFY_EVENT] = true;
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;
 DEFAULT_FEATURE_TOGGLES[GENERATE_ZOOM_ID] = false;
 DEFAULT_FEATURE_TOGGLES[AUTO_ROOM_BOOKING] = true;
