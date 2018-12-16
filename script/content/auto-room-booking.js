@@ -365,8 +365,9 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      const forceBookOnEdit = msg.options && msg.options.forceBookOnEdit;
-      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+      const forceBookOnEdit = msg.data && msg.data.forceBookOnEdit;
+      const filters = msg.data && msg.data.eventFilters || await getRoomFilters();
+      const {posFilter, negFilter, flexFilters} = filters;
 
       await tryUntilPass(
         isRoomTabLoaded,

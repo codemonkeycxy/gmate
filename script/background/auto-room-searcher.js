@@ -282,7 +282,8 @@ function triggerRoomBooking() {
   console.log('trigger room booking');
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
-    options: {
+    data: {
+      eventFilters: currentTask.data.eventFilters,
       forceBookOnEdit: true
     }
   });
