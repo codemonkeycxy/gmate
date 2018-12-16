@@ -267,6 +267,7 @@ function preparePostLoad(urlToLoad) {
 
     if (isWorker && isTargetUrl && isLoaded) {
       console.log(`${urlToLoad} loaded.`);
+      // remove listener after handling the expected event to avoid double trigger
       chrome.tabs.onUpdated.removeListener(pageLoadListener);
       triggerRoomBooking();
     }
@@ -310,12 +311,14 @@ function preparePostTrigger() {
         setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
       });
 
+      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       save();
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
       console.log(`no need to book for ${JSON.stringify(currentTask)}`);
+      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
@@ -325,6 +328,7 @@ function preparePostTrigger() {
       console.log(`no room found for ${JSON.stringify(currentTask)}`);
 
       enqueue(currentTask);
+      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       nextTask();
     }
@@ -363,7 +367,7 @@ function preparePostSave() {
       track('room-saved');
       // refresh calendar main page so that it reflects the newly booked room
       refreshCalendarMainPage({excludeTabIds: [workerTabId]});
-
+      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
@@ -372,6 +376,7 @@ function preparePostSave() {
       console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
 
       enqueue(currentTask);
+      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(editSavedListener);
       nextTask();
     }
