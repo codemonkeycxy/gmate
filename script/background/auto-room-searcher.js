@@ -463,12 +463,14 @@ function estimateTimeToCompletion() {
 }
 
 function isEventInQueue(eventTask) {
+  // we purposefully NOT dedup against the currentTask here
+  // since we have use cases that we need to push the current task back into the queue
   return toBeFulfilled.filter(task => {
     if (task.type !== EVENT) {
       return false;
     }
 
-    return task.data.eventId === eventTask.data.eventId;
+    return task.data.eventId === eventTask.data.eventId && deepEqual(task.data.eventFilters, eventTask.data.eventFilters);
   }).length > 0;
 }
 
