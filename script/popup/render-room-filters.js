@@ -19,12 +19,13 @@
     );
   }
 
-  // ----------------------- new style human readable filters -------------------------
-  await injectFilterUI();
   // add filter input listener
   Object.keys(DEFAULT_ROOM_BOOKING_FILTERS).forEach(key =>
     document.getElementById(key).addEventListener("input", e => persistPair(key, e.target.value))
   );
+
+  // ----------------------- new style human readable filters -------------------------
+  await injectFilterUI();
 
   async function injectFilterUI() {
     const companyName = 'uber';  // hard code for now
