@@ -31,10 +31,10 @@
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
     const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
 
-    const storedInput = await getRoomFilterUserInputs();
+    const flexFilters = await getFlexRoomFilters();
     filterSettings.forEach(
       filterSetting => filterUIGroup.appendChild(
-        renderFilter(filterSetting, storedInput)
+        renderFilter(filterSetting, flexFilters)
       )
     )
   }

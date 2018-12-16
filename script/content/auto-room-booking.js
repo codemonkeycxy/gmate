@@ -215,7 +215,7 @@
     const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
     const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
     const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-    const flexFilters = await getRoomFilterUserInputs();
+    const flexFilters = await getFlexRoomFilters();
 
     rooms = rooms.filter(room => room.status !== DECLINED);
 

@@ -71,7 +71,11 @@ function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }
 
-async function getRoomFilterUserInputs() {
+/**
+ * Flex filters are room filters that are flexibly defined on a per company basis.
+ * See examples from the COMPANY_SPECIFIC_FILTERS on the above
+ */
+async function getFlexRoomFilters() {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
   const storageKeys = {};
