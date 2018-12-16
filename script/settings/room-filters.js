@@ -84,6 +84,20 @@ async function getFlexRoomFilters() {
   return await getFromStorage(storageKeys);
 }
 
+/**
+ * Returns both the old style regex based filters and the new style company specific flex filters
+ * @returns {Promise<{posFilter: *, negFilter: *, flexFilters: *}>}
+ */
+async function getRoomFilters() {
+  const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
+
+  return {
+    posFilter: result[ROOM_BOOKING_FILTER_POSITIVE],
+    negFilter: result[ROOM_BOOKING_FILTER_NEGATIVE],
+    flexFilters: await getFlexRoomFilters()
+  }
+}
+
 function checkRoomEligibility(roomStr, userFilterInputs) {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];

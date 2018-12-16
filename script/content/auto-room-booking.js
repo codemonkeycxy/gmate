@@ -212,11 +212,7 @@
   }
 
   async function filterRooms(rooms) {
-    const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
-    const posFilter = result[ROOM_BOOKING_FILTER_POSITIVE];
-    const negFilter = result[ROOM_BOOKING_FILTER_NEGATIVE];
-    const flexFilters = await getFlexRoomFilters();
-
+    const {posFilter, negFilter, flexFilters} = await getRoomFilters();
     rooms = rooms.filter(room => room.status !== DECLINED);
 
     if (posFilter) {
