@@ -7,14 +7,14 @@
     addSaveListener(initialRooms);
   }
 
-  async function bookFavoriteRoom(forceBookOnEdit) {
+  async function bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit) {
     if (!forceBookOnEdit && isEdit()) {
       // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
-    const matchingRooms = await filterRooms(selectedRooms);
+    const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
     if (!isEmpty(matchingRooms)) {
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
@@ -32,7 +32,7 @@
 
       let {roomList, roomIdToElement} = getRoomOptions();
       roomList = roomList.filter(room => !blacklistedRoomIds.includes(room.id));
-      const filteredRooms = await filterRooms(roomList);
+      const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
       const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
       if (selectedRoom) {
@@ -211,8 +211,7 @@
     return result;
   }
 
-  async function filterRooms(rooms) {
-    const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+  async function filterRooms(rooms, posFilter, negFilter, flexFilters) {
     rooms = rooms.filter(room => room.status !== DECLINED);
 
     if (posFilter) {
@@ -367,7 +366,12 @@
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
       const forceBookOnEdit = msg.options && msg.options.forceBookOnEdit;
-      await tryUntilPass(isRoomTabLoaded, async () => await bookFavoriteRoom(forceBookOnEdit));
+      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+
+      await tryUntilPass(
+        isRoomTabLoaded,
+        async () => await bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit)
+      );
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
