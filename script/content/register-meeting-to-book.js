@@ -35,13 +35,13 @@
 
     if (eventIdToFulfill !== NO_ID_YET) {
       // the page already carries a valid event id, we are done
-      return registerRoomToBeFulfilled(eventIdToFulfill, eventName);
+      return await registerRoomToBeFulfilled(eventIdToFulfill, eventName);
     }
 
     await tryUntilPass(isMainCalendarPage, sendFinishMessage);
   }
 
-  function sendFinishMessage() {
+  async function sendFinishMessage() {
     // todo: use meeting time as a second differentiator
     const eventIds = getEventIdByName(eventName);
     if (eventIds.length !== 1) {
@@ -54,25 +54,20 @@
       });
     }
 
-    return chrome.runtime.sendMessage({
-      type: ROOM_TO_BE_FULFILLED,
-      data: {
-        eventId: eventIds[0],
-        eventName: eventName
-      }
-    });
+    return await registerRoomToBeFulfilled(eventIds[0], eventName);
   }
 
   function getLocationInput() {
     return document.querySelectorAll('[aria-label="Location"]')[0];
   }
 
-  function registerRoomToBeFulfilled(eventId, eventName) {
+  async function registerRoomToBeFulfilled(eventId, eventName) {
     chrome.runtime.sendMessage({
       type: ROOM_TO_BE_FULFILLED,
       data: {
         eventId: eventId,
-        eventName: eventName
+        eventName: eventName,
+        eventFilters: await getRoomFilters()
       }
     });
   }

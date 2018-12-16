@@ -133,12 +133,13 @@ onMessage((msg, sender, sendResponse) => {
   if (msg.type === ROOM_TO_BE_FULFILLED) {
     const eventId = msg.data.eventId;
     const eventName = msg.data.eventName;
+    const eventFilters = msg.data.eventFilters;
     if (!eventId) {
       // if this happens there's a bug
       throw new Error(`received empty event id. event name: ${eventName}`);
     }
 
-    enqueue(eventTask(eventId, eventName));
+    enqueue(eventTask(eventId, eventName, eventFilters));
     track(ROOM_TO_BE_FULFILLED);
     if (!workerTabId) {
       startWorker();
@@ -433,13 +434,14 @@ function removeTask(taskId) {
   console.error(`an error occurred during task removal. old task count ${oldLength}, new task count ${newLength}`);
 }
 
-function eventTask(eventId, eventName) {
+function eventTask(eventId, eventName, eventFilters) {
   return {
     id: nextId(),
     type: EVENT,
     data: {
       eventId: eventId,
-      eventName: eventName
+      eventName: eventName,
+      eventFilters: eventFilters
     }
   };
 }
