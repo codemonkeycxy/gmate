@@ -47,6 +47,7 @@
     return FILTER_RENDER_FUNCTIONS[filterSetting.type](title, storedValue, storageKey, filterSetting);
   }
 
+  // user can pick one option from a list of dropdown values
   function renderSingleOptionFilter(title, initialVal, storageKey, filterSetting) {
     const filterOptions = filterSetting.options;
 
@@ -58,6 +59,7 @@
     );
   }
 
+  // user can enter a numerical range in the form of a string, such as "1, 3, 5-12"
   function renderNumRangeFilter(title, initialVal, storageKey) {
     return renderStringNumberRange(
       title,
@@ -66,6 +68,7 @@
     );
   }
 
+  // user can toggle the value of a checkbox
   function renderCheckboxFilter(title, initialVal, storageKey) {
     return renderCheckbox(
       title,
