@@ -23,7 +23,7 @@ function renderModal() {
 
   const closeBtn = document.createElement('span');
   closeBtn.className = 'modal-close';
-  closeBtn.textContent = '&times;';
+  closeBtn.textContent = 'x';
   closeBtn.onclick = () => modal.style.display = "none";
 
   const modalText = document.createElement('p');
