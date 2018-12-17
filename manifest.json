@@ -29,6 +29,9 @@
       "matches": [
         "https://calendar.google.com/calendar/*"
       ],
+      "css": [
+        "styling/main.css"
+      ],
       "js": [
         "script/shared/common.js",
         "script/shared/ui.js",
