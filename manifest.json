@@ -34,7 +34,7 @@
       ],
       "js": [
         "script/shared/common.js",
-        "script/shared/ui.js",
+        "script/shared/ui/index.js",
         "script/settings/room-filters.js",
         "script/versions.js",
         "script/content/zero-invitee-reminder.js",
