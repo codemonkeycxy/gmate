@@ -1,5 +1,5 @@
 # gmate
-Google Calendar UI Enhancement ([Install from Chrome Extension Store](https://chrome.google.com/webstore/search/gmate))
+Google Calendar Feature Enhancement ([Install from Chrome Extension Store](https://chrome.google.com/webstore/search/gmate))
 
 Feature 1: Allow guests to modify event by default
 ![auto-select](https://user-images.githubusercontent.com/32557706/37877940-ad6ee578-3016-11e8-9dc4-f1dd5cc5aea0.jpg)
