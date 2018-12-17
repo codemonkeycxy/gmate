@@ -30,11 +30,13 @@
         "https://calendar.google.com/calendar/*"
       ],
       "css": [
-        "styling/main.css"
+        "styling/main.css",
+        "styling/modal.css"
       ],
       "js": [
         "script/shared/common.js",
         "script/shared/ui/index.js",
+        "script/shared/ui/modal.js",
         "script/settings/room-filters.js",
         "script/versions.js",
         "script/content/zero-invitee-reminder.js",
