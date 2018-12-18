@@ -27,12 +27,13 @@
 function renderRoomBookingFilters() {
   const filtersWrapper = document.createElement('div');
 
-  // <div id="room-booking-filters-ui-group"></div>
-  const flexFiltersWrapper = document.createElement('div');
-  // todo: replace magical string with constant
-  flexFiltersWrapper.id = 'room-booking-flex-filters';
-  filtersWrapper.appendChild(flexFiltersWrapper);
+  _injectFlexFilterUI(filtersWrapper);
+  _injectRegexFilterUI(filtersWrapper);
 
+  return filtersWrapper;
+}
+
+function _injectRegexFilterUI() {
   // <span>Name include (</span>
   const textSpan1 = document.createElement('span');
   textSpan1.innerText = 'Name include (';
@@ -83,6 +84,12 @@ function renderRoomBookingFilters() {
   negFilterInput.placeholder = '(Cart|Quiet Room)';
   negFilterInput.id = ROOM_BOOKING_FILTER_NEGATIVE;
   filtersWrapper.appendChild(negFilterInput);
+}
 
-  return filtersWrapper;
+function _injectFlexFilterUI(filtersWrapper) {
+  // <div id="room-booking-filters-ui-group"></div>
+  const flexFiltersWrapper = document.createElement('div');
+  // todo: replace magical string with constant
+  flexFiltersWrapper.id = 'room-booking-flex-filters';
+  filtersWrapper.appendChild(flexFiltersWrapper);
 }
