@@ -24,25 +24,23 @@
  </div>
 
  */
-const renderRoomBookingFilters = (() => {
-  function renderRoomBookingFilters() {
+const asyncRenderRoomBookingFilters = (() => {
+  const FILTER_RENDER_FUNCTIONS = {
+    [SINGLE_OPTION]: renderSingleOptionFilter,
+    [NUM_RANGE]: renderNumRangeFilter,
+    [CHECKBOX]: renderCheckboxFilter,
+  };
+
+  async function renderRoomBookingFilters() {
     const filtersWrapper = document.createElement('div');
 
-    _injectFlexFilterUI(filtersWrapper);
-    _injectRegexFilterUI(filtersWrapper);
+    await injectFlexFilterUI(filtersWrapper);
+    injectRegexFilterUI(filtersWrapper);
 
     return filtersWrapper;
   }
 
-  function _injectFlexFilterUI(filtersWrapper) {
-    // <div id="room-booking-filters-ui-group"></div>
-    const flexFiltersWrapper = document.createElement('div');
-    // todo: replace magical string with constant
-    flexFiltersWrapper.id = 'room-booking-flex-filters';
-    filtersWrapper.appendChild(flexFiltersWrapper);
-  }
-
-  function _injectRegexFilterUI(filtersWrapper) {
+  function injectRegexFilterUI(filtersWrapper) {
     // <span>Name include (</span>
     const textSpan1 = document.createElement('span');
     textSpan1.innerText = 'Name include (';
@@ -93,6 +91,56 @@ const renderRoomBookingFilters = (() => {
     negFilterInput.placeholder = '(Cart|Quiet Room)';
     negFilterInput.id = ROOM_BOOKING_FILTER_NEGATIVE;
     filtersWrapper.appendChild(negFilterInput);
+  }
+
+  async function injectFlexFilterUI(filtersWrapper) {
+    const companyName = 'uber';  // hard code for now
+    const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
+
+    const flexFilters = await getFlexRoomFilters();
+    filterSettings.forEach(
+      filterSetting => filtersWrapper.appendChild(
+        renderFlexFilter(filterSetting, flexFilters)
+      )
+    );
+  }
+
+  function renderFlexFilter(filterSetting, storedInput) {
+    const title = filterSetting.displayName;
+    const storageKey = getRoomFilterStorageKey(filterSetting.key);
+    const storedValue = storedInput[storageKey];
+
+    return FILTER_RENDER_FUNCTIONS[filterSetting.type](title, storedValue, storageKey, filterSetting);
+  }
+
+  // user can pick one option from a list of dropdown values
+  function renderSingleOptionFilter(title, initialVal, storageKey, filterSetting) {
+    const filterOptions = filterSetting.options;
+
+    return renderDropDownSelect(
+      title,
+      filterOptions,
+      initialVal,
+      selected => persistPair(storageKey, selected)
+    );
+  }
+
+  // user can enter a numerical range in the form of a string, such as "1, 3, 5-12"
+  function renderNumRangeFilter(title, initialVal, storageKey) {
+    return renderStringNumberRange(
+      title,
+      initialVal,
+      selected => persistPair(storageKey, selected)
+    );
+  }
+
+  // user can toggle the value of a checkbox
+  function renderCheckboxFilter(title, initialVal, storageKey) {
+    return renderCheckbox(
+      title,
+      initialVal,
+      checked => persistPair(storageKey, checked)
+    );
   }
 
   return renderRoomBookingFilters;
