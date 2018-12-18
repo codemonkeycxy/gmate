@@ -1,11 +1,14 @@
 // self-invoking function to avoid name collision
 (async () => {
-  const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filters-ui-group';
+  const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filter-ui-group';
   const FILTER_RENDER_FUNCTIONS = {
     [SINGLE_OPTION]: renderSingleOptionFilter,
     [NUM_RANGE]: renderNumRangeFilter,
     [CHECKBOX]: renderCheckboxFilter,
   };
+
+  const uiGroupWrapper = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
+  uiGroupWrapper.appendChild(renderRoomBookingFilters());
 
   // ----------------------- old style regex based filters --------------------------
   document.addEventListener("DOMContentLoaded", restoreOptions);
@@ -25,12 +28,12 @@
   );
 
   // ----------------------- new style human readable filters -------------------------
-  await injectFilterUI();
+  document.addEventListener("DOMContentLoaded", injectFilterUI);
 
   async function injectFilterUI() {
     const companyName = 'uber';  // hard code for now
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
-    const filterUIGroup = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
+    const filterUIGroup = document.getElementById('room-booking-flex-filters');
 
     const flexFilters = await getFlexRoomFilters();
     filterSettings.forEach(

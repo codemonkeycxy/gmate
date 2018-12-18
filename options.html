@@ -31,22 +31,9 @@
     Automatically book meeting room
 </label>
 
-<div id="room-booking-filters-ui-group">
+<div id="room-booking-filter-ui-group">
+    <!--to be injected dynamically via code-->
 </div>
-
-<!--old style filters to be deprecated-->
-Name include (<a href="https://regex101.com/" target="_blank">regex</a>): <input
-        type="text"
-        placeholder="1455.*0(4|5)th"
-        id="room-booking-filter-positive-1"
->
-<br>
-Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
-        type="text"
-        placeholder="(Cart|Quiet Room)"
-        id="room-booking-filter-negative"
->
-<!--old style filters to be deprecated-->
 
 <div id="task-queue-ui-group">
     <br>
@@ -73,6 +60,7 @@ Name exclude (<a href="https://regex101.com/" target="_blank">regex</a>): <input
 <script src="script/shared/common.js"></script>
 <script src="script/shared/ui/index.js"></script>
 <script src="script/shared/ui/modal.js"></script>
+<script src="script/shared/ui/room-booking-filters.js"></script>
 <script src="script/settings/room-filters.js"></script>
 <script src="script/popup/render-room-filters.js"></script>
 <script src="script/popup/render-task-queue.js"></script>

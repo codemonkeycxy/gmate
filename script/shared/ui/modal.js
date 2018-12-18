@@ -3,7 +3,7 @@
  * (see a hacky way in here: https://stackoverflow.com/questions/19103183/how-to-insert-html-with-a-chrome-extension)
  *
  * the best way i can see now is to manually assembles the necessary component via code.
- * the following function returns something like the following html
+ * this function returns the following html
  * (html and styling reference: https://www.w3schools.com/howto/howto_css_modals.asp)
 
  <div class="modal">
