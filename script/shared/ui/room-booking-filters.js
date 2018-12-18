@@ -23,21 +23,12 @@
  </div>
 
  */
-const asyncRenderRoomBookingFilters = (() => {
+async function asyncRenderRoomBookingFilters(onChange) {
   const FILTER_RENDER_FUNCTIONS = {
     [SINGLE_OPTION]: renderSingleOptionFilter,
     [NUM_RANGE]: renderNumRangeFilter,
     [CHECKBOX]: renderCheckboxFilter,
   };
-
-  async function renderRoomBookingFilters() {
-    const filtersWrapper = document.createElement('div');
-
-    await injectFlexFiltersUI(filtersWrapper);
-    await injectRegexFiltersUI(filtersWrapper);
-
-    return filtersWrapper;
-  }
 
   /**
    * generates the following html
@@ -81,7 +72,7 @@ const asyncRenderRoomBookingFilters = (() => {
     posFilterInput.placeholder = '1455.*0(4|5)th';
     posFilterInput.id = ROOM_BOOKING_FILTER_POSITIVE;
     posFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_POSITIVE];
-    posFilterInput.addEventListener("input", e => persistPair(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
+    posFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
     filtersWrapper.appendChild(posFilterInput);
 
     // <br>
@@ -110,7 +101,7 @@ const asyncRenderRoomBookingFilters = (() => {
     negFilterInput.placeholder = '(Cart|Quiet Room)';
     negFilterInput.id = ROOM_BOOKING_FILTER_NEGATIVE;
     negFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_NEGATIVE];
-    negFilterInput.addEventListener("input", e => persistPair(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
+    negFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
     filtersWrapper.appendChild(negFilterInput);
   }
 
@@ -142,7 +133,7 @@ const asyncRenderRoomBookingFilters = (() => {
       title,
       filterOptions,
       initialVal,
-      selected => persistPair(storageKey, selected)
+      selected => onChange(storageKey, selected)
     );
   }
 
@@ -151,7 +142,7 @@ const asyncRenderRoomBookingFilters = (() => {
     return renderStringNumberRange(
       title,
       initialVal,
-      selected => persistPair(storageKey, selected)
+      selected => onChange(storageKey, selected)
     );
   }
 
@@ -160,9 +151,14 @@ const asyncRenderRoomBookingFilters = (() => {
     return renderCheckbox(
       title,
       initialVal,
-      checked => persistPair(storageKey, checked)
+      checked => onChange(storageKey, checked)
     );
   }
 
-  return renderRoomBookingFilters;
-})();
+  const filtersWrapper = document.createElement('div');
+
+  await injectFlexFiltersUI(filtersWrapper);
+  await injectRegexFiltersUI(filtersWrapper);
+
+  return filtersWrapper;
+}
