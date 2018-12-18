@@ -6,6 +6,7 @@
 
   function addNeedRoomListener() {
     renderINeedARoomBtn();
+    renderRoomFilterModal();
     listenToEventNameChange();
     listenToEventSave();
   }
@@ -24,6 +25,12 @@
       needRoomButton.style.color = '#FFFFFF';
       notify('The magic shall be made!', 'Save this meeting and we will work on booking a room for you in the background');
     });
+  }
+
+  function renderRoomFilterModal() {
+    const modal = renderModal();
+    modal.style.display = "block";
+    insertBefore(modal, document.body.firstChild);
   }
 
   function listenToEventNameChange() {
