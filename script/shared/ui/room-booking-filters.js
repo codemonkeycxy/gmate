@@ -6,21 +6,20 @@
  * this function returns the following html
 
  <div>
- <div id="room-booking-flex-filters"></div>
+     <!--new style flex filters to be dynamically generated via code-->
 
- <!--old style filters to be deprecated-->
- <span>Name include (</span>
- <a href="https://regex101.com/" target="_blank">regex</a>
- <span>): </span>
- <input type="text" placeholder="1455.*0(4|5)th" id="room-booking-filter-positive-1">
+     <!--old style regex filters-->
+     <span>Name include (</span>
+     <a href="https://regex101.com/" target="_blank">regex</a>
+     <span>): </span>
+     <input type="text" placeholder="1455.*0(4|5)th" room-booking-filter-positive-1">
 
- <br>
+     <br>
 
- <span>Name exclude (</span>
- <a href="https://regex101.com/" target="_blank">regex</a>
- <span>): </span>
- <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
- <!--old style filters to be deprecated-->
+     <span>Name exclude (</span>
+     <a href="https://regex101.com/" target="_blank">regex</a>
+     <span>): </span>
+     <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
  </div>
 
  */
@@ -34,13 +33,31 @@ const asyncRenderRoomBookingFilters = (() => {
   async function renderRoomBookingFilters() {
     const filtersWrapper = document.createElement('div');
 
-    await injectFlexFilterUI(filtersWrapper);
-    injectRegexFilterUI(filtersWrapper);
+    await injectFlexFiltersUI(filtersWrapper);
+    await injectRegexFiltersUI(filtersWrapper);
 
     return filtersWrapper;
   }
 
-  function injectRegexFilterUI(filtersWrapper) {
+  /**
+   * generates the following html
+
+   <span>Name include (</span>
+   <a href="https://regex101.com/" target="_blank">regex</a>
+   <span>): </span>
+   <input type="text" placeholder="1455.*0(4|5)th" room-booking-filter-positive-1">
+
+   <br>
+
+   <span>Name exclude (</span>
+   <a href="https://regex101.com/" target="_blank">regex</a>
+   <span>): </span>
+   <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
+
+   */
+  async function injectRegexFiltersUI(filtersWrapper) {
+    const storedRegex = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
+
     // <span>Name include (</span>
     const textSpan1 = document.createElement('span');
     textSpan1.innerText = 'Name include (';
@@ -63,6 +80,8 @@ const asyncRenderRoomBookingFilters = (() => {
     posFilterInput.type = 'text';
     posFilterInput.placeholder = '1455.*0(4|5)th';
     posFilterInput.id = ROOM_BOOKING_FILTER_POSITIVE;
+    posFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_POSITIVE];
+    posFilterInput.addEventListener("input", e => persistPair(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
     filtersWrapper.appendChild(posFilterInput);
 
     // <br>
@@ -90,10 +109,12 @@ const asyncRenderRoomBookingFilters = (() => {
     negFilterInput.type = 'text';
     negFilterInput.placeholder = '(Cart|Quiet Room)';
     negFilterInput.id = ROOM_BOOKING_FILTER_NEGATIVE;
+    negFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_NEGATIVE];
+    negFilterInput.addEventListener("input", e => persistPair(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
     filtersWrapper.appendChild(negFilterInput);
   }
 
-  async function injectFlexFilterUI(filtersWrapper) {
+  async function injectFlexFiltersUI(filtersWrapper) {
     const companyName = 'uber';  // hard code for now
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
 
