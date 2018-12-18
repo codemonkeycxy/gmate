@@ -4,9 +4,9 @@
   let eventIdToFulfill = null;
   let eventName = '';
 
-  function addNeedRoomListener() {
+  async function addNeedRoomListener() {
     renderINeedARoomBtn();
-    renderRoomFilterModal();
+    await renderRoomFilterModal();
     listenToEventNameChange();
     listenToEventSave();
   }
@@ -27,8 +27,8 @@
     });
   }
 
-  function renderRoomFilterModal() {
-    const modal = renderModal();
+  async function renderRoomFilterModal() {
+    const modal = renderModal(await asyncRenderRoomBookingFilters(noop()));
     modal.style.display = "block";
     insertBefore(modal, document.body.firstChild);
   }

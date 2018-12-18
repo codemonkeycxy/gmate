@@ -9,12 +9,12 @@
  <div class="modal">
      <div class="modal-content">
          <span class="modal-close">&times;</span>
-         <p>Some text in the Modal..</p>
+         <!--modal body to be injected according to the passed in parameter-->
      </div>
  </div>
 
  */
-function renderModal() {
+function renderModal(body) {
   const modal = document.createElement('div');
   modal.className = 'modal';
 
@@ -26,11 +26,8 @@ function renderModal() {
   closeBtn.textContent = 'x';
   closeBtn.onclick = () => modal.style.display = "none";
 
-  const modalText = document.createElement('p');
-  modalText.textContent = 'Some text in the Modal..';
-
   modalContent.appendChild(closeBtn);
-  modalContent.appendChild(modalText);
+  modalContent.appendChild(body);
   modal.appendChild(modalContent);
 
   // When the user clicks anywhere outside of the modal, close it
