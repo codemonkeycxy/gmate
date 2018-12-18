@@ -5,6 +5,12 @@
   let eventName = '';
 
   function addNeedRoomListener() {
+    renderINeedARoomBtn();
+    listenToEventNameChange();
+    listenToEventSave();
+  }
+
+  function renderINeedARoomBtn() {
     const locationInput = getLocationInput();
     const needRoomButton = document.createElement('button');
     needRoomButton.textContent = "I need a room";
@@ -18,11 +24,15 @@
       needRoomButton.style.color = '#FFFFFF';
       notify('The magic shall be made!', 'Save this meeting and we will work on booking a room for you in the background');
     });
+  }
 
+  function listenToEventNameChange() {
     const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
     eventName = titleInput.value;  // record initial title value
     titleInput.addEventListener('input', e => eventName = e.target.value);
+  }
 
+  function listenToEventSave() {
     const saveBtn = getSaveButton();
     saveBtn.addEventListener("click", onSave);
   }
