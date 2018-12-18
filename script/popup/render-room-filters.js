@@ -38,12 +38,12 @@
     const flexFilters = await getFlexRoomFilters();
     filterSettings.forEach(
       filterSetting => filterUIGroup.appendChild(
-        renderFilter(filterSetting, flexFilters)
+        renderFlexFilter(filterSetting, flexFilters)
       )
     )
   }
 
-  function renderFilter(filterSetting, storedInput) {
+  function renderFlexFilter(filterSetting, storedInput) {
     const title = filterSetting.displayName;
     const storageKey = getRoomFilterStorageKey(filterSetting.key);
     const storedValue = storedInput[storageKey];
