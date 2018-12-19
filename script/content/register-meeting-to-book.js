@@ -28,7 +28,7 @@
   }
 
   async function renderRoomFilterModal() {
-    const modal = renderModal(await asyncRenderRoomBookingFilters(noop()));
+    const modal = renderModal(await asyncRenderRoomBookingFilters(noop()), 'header');
     modal.style.display = "block";
     insertBefore(modal, document.body.firstChild);
   }

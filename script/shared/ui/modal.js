@@ -8,31 +8,59 @@
 
  <div class="modal">
      <div class="modal-content">
-         <span class="modal-close">&times;</span>
-         <!--modal body to be injected according to the passed in parameter-->
+         <div class="modal-header">
+             <span class="close">&times;</span>
+             <h3>Modal Header</h3>
+         </div>
+         <div class="modal-body">
+             <!--modal body to be injected according to the passed in parameter-->
+         </div>
      </div>
  </div>
 
  */
-function renderModal(body) {
+function renderModal(body, headerText) {
   const modal = document.createElement('div');
   modal.className = 'modal';
 
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
+  modal.appendChild(modalContent);
+
+  // ======================= construct modal header ========================
+  const headerWrapper = document.createElement('div');
+  headerWrapper.className = 'modal-header';
 
   const closeBtn = document.createElement('span');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = 'x';
   closeBtn.onclick = () => modal.style.display = "none";
+  headerWrapper.appendChild(closeBtn);
 
-  modalContent.appendChild(closeBtn);
-  modalContent.appendChild(body);
-  modal.appendChild(modalContent);
+  const header = document.createElement('h3');
+  header.innerText = headerText || '';
+  headerWrapper.appendChild(header);
+
+  modalContent.appendChild(headerWrapper);
+
+  // ======================= construct modal body ========================
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+  modalBody.appendChild(body);
+
+  modalContent.appendChild(modalBody);
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = event => {
-    if (event.target == modal) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  // When the user presses escape, close the modal
+  document.onkeydown = evt => {
+    evt = evt || window.event;
+    if (evt.keyCode === 27) {
       modal.style.display = "none";
     }
   };
