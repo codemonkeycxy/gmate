@@ -27,29 +27,19 @@ function renderModal(body, headerText) {
   modalContent.className = 'modal-content';
   modal.appendChild(modalContent);
 
-  // ======================= construct modal close button ========================
+  _injectModalCloseButton(modal, modalContent);
+  _injectModalHeader(modalContent, headerText);
+  _injectModalBody(modalContent, body);
+
+  return modal;
+}
+
+function _injectModalCloseButton(modal, modalContent) {
   const closeBtn = document.createElement('span');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = 'x';
   closeBtn.onclick = () => modal.style.display = "none";
   modalContent.appendChild(closeBtn);
-
-  // ======================= construct modal header ========================
-  const headerWrapper = document.createElement('div');
-  headerWrapper.className = 'modal-header';
-
-  const header = document.createElement('h3');
-  header.innerText = headerText || '';
-  headerWrapper.appendChild(header);
-
-  modalContent.appendChild(headerWrapper);
-
-  // ======================= construct modal body ========================
-  const modalBody = document.createElement('div');
-  modalBody.className = 'modal-body';
-  modalBody.appendChild(body);
-
-  modalContent.appendChild(modalBody);
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = event => {
@@ -65,6 +55,27 @@ function renderModal(body, headerText) {
       modal.style.display = "none";
     }
   };
+}
 
-  return modal;
+function _injectModalHeader(modalContent, headerText) {
+  if (!headerText) {
+    return;
+  }
+
+  const headerWrapper = document.createElement('div');
+  headerWrapper.className = 'modal-header';
+
+  const header = document.createElement('h3');
+  header.innerText = headerText || '';
+  headerWrapper.appendChild(header);
+
+  modalContent.appendChild(headerWrapper);
+}
+
+function _injectModalBody(modalContent, body) {
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+  modalBody.appendChild(body);
+
+  modalContent.appendChild(modalBody);
 }
