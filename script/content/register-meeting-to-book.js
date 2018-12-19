@@ -29,7 +29,7 @@
 
   async function renderRoomFilterModal() {
     const modal = renderModal(await asyncRenderRoomBookingFilters(noop()), 'Select the filters you want to apply');
-    modal.style.display = "block";
+    show(modal);
     insertBefore(modal, document.body.firstChild);
   }
 

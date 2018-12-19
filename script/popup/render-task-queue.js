@@ -35,10 +35,10 @@
     const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
 
     if (eventTasks.length === 0) {
-      return taskQueueUIGroup.style.display = 'none';
+      return hide(taskQueueUIGroup);
     }
 
-    taskQueueUIGroup.style.display = 'block';
+    show(taskQueueUIGroup);
     populateTasks(eventTasks);
     displayWorkerController(workerTabId);
   }
@@ -59,7 +59,12 @@
     const workerActiveUIGroup = document.getElementById(WORKER_ACTIVE_UI_GROUP);
     const workerStoppedUIGroup = document.getElementById(WORKER_STOPPED_UI_GROUP);
 
-    workerActiveUIGroup.style.display = workerTabId ? 'block' : 'none';
-    workerStoppedUIGroup.style.display = !workerTabId ? 'block' : 'none';
+    if (workerTabId) {
+      show(workerActiveUIGroup);
+      hide(workerStoppedUIGroup);
+    } else {
+      hide(workerActiveUIGroup);
+      show(workerStoppedUIGroup);
+    }
   }
 })();

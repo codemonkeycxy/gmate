@@ -70,15 +70,15 @@ function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
   cancelBtn.textContent = 'Cancel';
   cancelBtn.onclick = () => {
     onCancel && onCancel();
-    modal.style.display = "none";
+    hide(modal);
   };
   footerWrapper.appendChild(cancelBtn);
 
   const confirmBtn = document.createElement('button');
   confirmBtn.textContent = 'OK';
-  cancelBtn.onclick = () => {
+  confirmBtn.onclick = () => {
     onConfirm && onConfirm();
-    modal.style.display = "none";
+    hide(modal);
   };
   footerWrapper.appendChild(confirmBtn);
 }
@@ -87,7 +87,7 @@ function _handleCloseModalUX(modal) {
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = event => {
     if (event.target === modal) {
-      modal.style.display = "none";
+      hide(modal);
     }
   };
 
@@ -95,7 +95,7 @@ function _handleCloseModalUX(modal) {
   document.onkeydown = evt => {
     evt = evt || window.event;
     if (evt.keyCode === 27) {
-      modal.style.display = "none";
+      hide(modal);
     }
   };
 }
