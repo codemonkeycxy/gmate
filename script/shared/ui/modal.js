@@ -8,8 +8,8 @@
 
  <div class="modal">
      <div class="modal-content">
+         <span class="close">&times;</span>
          <div class="modal-header">
-             <span class="close">&times;</span>
              <h3>Modal Header</h3>
          </div>
          <div class="modal-body">
@@ -27,15 +27,16 @@ function renderModal(body, headerText) {
   modalContent.className = 'modal-content';
   modal.appendChild(modalContent);
 
-  // ======================= construct modal header ========================
-  const headerWrapper = document.createElement('div');
-  headerWrapper.className = 'modal-header';
-
+  // ======================= construct modal close button ========================
   const closeBtn = document.createElement('span');
   closeBtn.className = 'modal-close';
   closeBtn.textContent = 'x';
   closeBtn.onclick = () => modal.style.display = "none";
-  headerWrapper.appendChild(closeBtn);
+  modalContent.appendChild(closeBtn);
+
+  // ======================= construct modal header ========================
+  const headerWrapper = document.createElement('div');
+  headerWrapper.className = 'modal-header';
 
   const header = document.createElement('h3');
   header.innerText = headerText || '';
