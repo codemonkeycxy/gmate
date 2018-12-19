@@ -22,32 +22,18 @@
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
+    border-radius: 8px;
     width: 40%; /* Could be more or less, depending on screen size */
+    font-family: 'Google Sans',Roboto,Arial,sans-serif;
     -webkit-animation-name: slideIn;
     -webkit-animation-duration: 0.4s;
     animation-name: slideIn;
     animation-duration: 0.4s
 }
 
-/* The Close Button */
-.modal-close {
-    color: black;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.modal-close:hover,
-.modal-close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
 .modal-header {
     padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+    color: black;
 }
 
 .modal-body {padding: 2px 16px;}

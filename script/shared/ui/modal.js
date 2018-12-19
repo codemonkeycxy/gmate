@@ -8,7 +8,6 @@
 
  <div class="modal">
      <div class="modal-content">
-         <span class="close">&times;</span>
          <div class="modal-header">
              <h3>Modal Header</h3>
          </div>
@@ -27,19 +26,8 @@ function renderModal(body, headerText) {
   modalContent.className = 'modal-content';
   modal.appendChild(modalContent);
 
-  _injectModalCloseButton(modal, modalContent);
   _injectModalHeader(modalContent, headerText);
   _injectModalBody(modalContent, body);
-
-  return modal;
-}
-
-function _injectModalCloseButton(modal, modalContent) {
-  const closeBtn = document.createElement('span');
-  closeBtn.className = 'modal-close';
-  closeBtn.textContent = 'x';
-  closeBtn.onclick = () => modal.style.display = "none";
-  modalContent.appendChild(closeBtn);
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = event => {
@@ -55,6 +43,8 @@ function _injectModalCloseButton(modal, modalContent) {
       modal.style.display = "none";
     }
   };
+
+  return modal;
 }
 
 function _injectModalHeader(modalContent, headerText) {
