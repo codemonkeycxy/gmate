@@ -46,9 +46,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
    <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
 
    */
-  async function injectRegexFiltersUI(filtersWrapper) {
-    const storedRegex = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
-
+  function injectRegexFiltersUI(filtersWrapper, posFilter, negFilter) {
     // <span>Name include (</span>
     const textSpan1 = document.createElement('span');
     textSpan1.innerText = 'Name include (';
@@ -71,7 +69,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
     posFilterInput.type = 'text';
     posFilterInput.placeholder = '1455.*0(4|5)th';
     posFilterInput.id = ROOM_BOOKING_FILTER_POSITIVE;
-    posFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_POSITIVE];
+    posFilterInput.value = posFilter;
     posFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
     filtersWrapper.appendChild(posFilterInput);
 
@@ -100,16 +98,15 @@ async function asyncRenderRoomBookingFilters(onChange) {
     negFilterInput.type = 'text';
     negFilterInput.placeholder = '(Cart|Quiet Room)';
     negFilterInput.id = ROOM_BOOKING_FILTER_NEGATIVE;
-    negFilterInput.value = storedRegex[ROOM_BOOKING_FILTER_NEGATIVE];
+    negFilterInput.value = negFilter;
     negFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
     filtersWrapper.appendChild(negFilterInput);
   }
 
-  async function injectFlexFiltersUI(filtersWrapper) {
+  function injectFlexFiltersUI(filtersWrapper, flexFilters) {
     const companyName = 'uber';  // hard code for now
     const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
 
-    const flexFilters = await getFlexRoomFilters();
     filterSettings.forEach(
       filterSetting => filtersWrapper.appendChild(
         renderFlexFilter(filterSetting, flexFilters)
@@ -157,8 +154,9 @@ async function asyncRenderRoomBookingFilters(onChange) {
 
   const filtersWrapper = document.createElement('div');
 
-  await injectFlexFiltersUI(filtersWrapper);
-  await injectRegexFiltersUI(filtersWrapper);
+  const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+  injectFlexFiltersUI(filtersWrapper, flexFilters);
+  injectRegexFiltersUI(filtersWrapper, posFilter, negFilter);
 
   return filtersWrapper;
 }

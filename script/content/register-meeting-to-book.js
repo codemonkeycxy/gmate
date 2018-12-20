@@ -2,6 +2,7 @@
 (() => {
   const NO_ID_YET = 'no-id-yet';
   let eventIdToFulfill = null;
+  let eventFilters = {};
   let eventName = '';
 
   function addNeedRoomListener() {
@@ -91,6 +92,7 @@
 
   function resetGlobal() {
     eventIdToFulfill = null;
+    eventFilters = {};
     eventName = '';
   }
 
