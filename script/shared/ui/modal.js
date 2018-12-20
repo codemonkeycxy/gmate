@@ -66,7 +66,8 @@ function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
   footerWrapper.className = 'modal-footer';
   modalContent.appendChild(footerWrapper);
 
-  const cancelBtn = document.createElement('button');
+  const cancelBtn = document.createElement('span');
+  cancelBtn.className = 'modal-cancel';
   cancelBtn.textContent = 'Cancel';
   cancelBtn.onclick = () => {
     onCancel && onCancel();
@@ -74,7 +75,8 @@ function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
   };
   footerWrapper.appendChild(cancelBtn);
 
-  const confirmBtn = document.createElement('button');
+  const confirmBtn = document.createElement('span');
+  confirmBtn.className = 'modal-confirm';
   confirmBtn.textContent = 'OK';
   confirmBtn.onclick = () => {
     onConfirm && onConfirm();
