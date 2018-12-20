@@ -4,9 +4,8 @@
   let eventIdToFulfill = null;
   let eventName = '';
 
-  async function addNeedRoomListener() {
+  function addNeedRoomListener() {
     renderINeedARoomBtn();
-    await renderRoomFilterModal();
     listenToEventNameChange();
     listenToEventSave();
   }
@@ -19,18 +18,19 @@
     needRoomButton.style.color = '#fff';
 
     insertAfter(needRoomButton, locationInput);
-    needRoomButton.addEventListener("click", () => {
-      eventIdToFulfill = getEventId() || NO_ID_YET;
-      needRoomButton.style.background = '#7CB342';
-      needRoomButton.style.color = '#FFFFFF';
-      notify('The magic shall be made!', 'Save this meeting and we will work on booking a room for you in the background');
+    needRoomButton.addEventListener("click", async () => {
+      const modal = renderModal(
+        await asyncRenderRoomBookingFilters(noop()),
+        'Select the filters you want to apply',
+        () => {
+          eventIdToFulfill = getEventId() || NO_ID_YET;
+          needRoomButton.style.background = '#7CB342';
+          needRoomButton.style.color = '#FFFFFF';
+        }
+      );
+      insertBefore(modal, document.body.firstChild);
+      show(modal);
     });
-  }
-
-  async function renderRoomFilterModal() {
-    const modal = renderModal(await asyncRenderRoomBookingFilters(noop()), 'Select the filters you want to apply');
-    show(modal);
-    insertBefore(modal, document.body.firstChild);
   }
 
   function listenToEventNameChange() {
