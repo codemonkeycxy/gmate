@@ -17,11 +17,18 @@
     needRoomButton.textContent = "I need a room";
     needRoomButton.style.background = '#4285f4';
     needRoomButton.style.color = '#fff';
-
     insertAfter(needRoomButton, locationInput);
+
     needRoomButton.addEventListener("click", async () => {
+      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+      eventFilters = {
+        [ROOM_BOOKING_FILTER_POSITIVE]: posFilter,
+        [ROOM_BOOKING_FILTER_NEGATIVE]: negFilter,
+        ...flexFilters
+      };
+
       const modal = renderModal(
-        await asyncRenderRoomBookingFilters(noop()),
+        await asyncRenderRoomBookingFilters((key, val) => (eventFilters[key] = val)),
         'Select the filters you want to apply',
         () => {
           eventIdToFulfill = getEventId() || NO_ID_YET;
@@ -59,7 +66,7 @@
     await tryUntilPass(isMainCalendarPage, sendFinishMessage);
   }
 
-  async function sendFinishMessage() {
+  function sendFinishMessage() {
     // todo: use meeting time as a second differentiator
     const eventIds = getEventIdByName(eventName);
     if (eventIds.length !== 1) {
@@ -72,20 +79,20 @@
       });
     }
 
-    return await registerRoomToBeFulfilled(eventIds[0], eventName);
+    return registerRoomToBeFulfilled(eventIds[0], eventName);
   }
 
   function getLocationInput() {
     return document.querySelectorAll('[aria-label="Location"]')[0];
   }
 
-  async function registerRoomToBeFulfilled(eventId, eventName) {
+  function registerRoomToBeFulfilled(eventId, eventName) {
     chrome.runtime.sendMessage({
       type: ROOM_TO_BE_FULFILLED,
       data: {
         eventId: eventId,
         eventName: eventName,
-        eventFilters: await getRoomFilters()
+        eventFilters: eventFilters
       }
     });
   }
