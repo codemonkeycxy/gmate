@@ -127,6 +127,8 @@ function stopWorker() {
 // todo: log room booking stats by location
 // todo: task removal is buggy
 // todo: allow user to be opted out of tracking
+// todo: log user version
+// todo: if an event no longer exists, remove it from the toBeFulfilled list
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {

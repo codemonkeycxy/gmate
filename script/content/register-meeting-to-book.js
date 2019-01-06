@@ -92,7 +92,11 @@
       data: {
         eventId: eventId,
         eventName: eventName,
-        eventFilters: eventFilters
+        eventFilters: {
+          posFilter: eventFilters[ROOM_BOOKING_FILTER_POSITIVE],
+          negFilter: eventFilters[ROOM_BOOKING_FILTER_NEGATIVE],
+          flexFilters: eventFilters
+        }
       }
     });
   }
