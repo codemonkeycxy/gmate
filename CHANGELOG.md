@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.0
+- [feature] Support per-event room filters
+
 ## 0.3.3
 - [feature] Add post-uninstall user survey
 - [maintenance] Deprecate "allow invitee to edit event" feature, which has been natively supported by Google Calendar

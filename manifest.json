@@ -1,6 +1,6 @@
 {
   "name": "gmate",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "manifest_version": 2,
   "minimum_chrome_version": "56",
   "description": "google calendar feature enhancement",
