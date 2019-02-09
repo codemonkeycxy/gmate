@@ -129,6 +129,13 @@ function stopWorker() {
 // todo: allow user to be opted out of tracking
 // todo: log user version
 // todo: if an event no longer exists, remove it from the toBeFulfilled list
+// todo: list recently fulfilled events
+// todo: add faq/welcome page to tell people to upgrade chrome
+// todo: no guest reminder still shows for existing meeting that already has the organizer, a invitee and several rooms
+// todo: maybe add "I need a room" button to the main calendar page
+// todo: people get confused about whether need to click save after clicking "i need a room"
+// todo: educate people about advanced features - provide a guide by the "i need a room" button
+// todo: worker page kept on showing pop ups: https://calendar.google.com/calendar/r/eventedit/NnI3bnVzaGgyYXZ0NXRqdGwzOGUxdXV0Z3NfMjAxOTAyMDhUMjIzMDAwWiBhbmt1c2hAdWJlci5jb20
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
