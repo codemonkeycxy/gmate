@@ -131,7 +131,6 @@ function stopWorker() {
 // todo: if an event no longer exists, remove it from the toBeFulfilled list
 // todo: list recently fulfilled events
 // todo: add faq/welcome page to tell people to upgrade chrome
-// todo: no guest reminder still shows for existing meeting that already has the organizer, a invitee and several rooms
 // todo: maybe add "I need a room" button to the main calendar page
 // todo: people get confused about whether need to click save after clicking "i need a room"
 // todo: educate people about advanced features - provide a guide by the "i need a room" button

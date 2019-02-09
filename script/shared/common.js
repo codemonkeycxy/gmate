@@ -221,12 +221,11 @@ function hasInvitee() {
   const divTags = guestList.getElementsByTagName("div");
 
   for (let i = 0; i < divTags.length; i++) {
-    const key = divTags[i].getAttribute("key");
+    const key = divTags[i].getAttribute("data-id");
     const dataEmail = divTags[i].getAttribute("data-email");
     const ariaLabel = divTags[i].getAttribute("aria-label");
     const isInvitee = key && dataEmail && key === dataEmail;
-    const isSelf =
-      ariaLabel && ariaLabel.toLocaleLowerCase().includes("organizer");
+    const isSelf = ariaLabel && ariaLabel.toLocaleLowerCase().includes("organizer");
 
     if (isInvitee && !isSelf) {
       return true;
