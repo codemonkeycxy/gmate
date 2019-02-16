@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 0.4.2
 - [enhancement] Automatically retire tasks for deleted events
+- [enhancement] Allow user to cancel the current task from the "room-found" notification
 
 ## 0.4.1
 - [maintenance] Bump minimum Chrome version requirement

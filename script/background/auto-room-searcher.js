@@ -132,7 +132,7 @@ function stopWorker() {
 // todo: maybe add "I need a room" button to the main calendar page
 // todo: people get confused about whether need to click save after clicking "i need a room"
 // todo: educate people about advanced features - provide a guide by the "i need a room" button
-// todo: cancel task when user clicks "cancel" instead "confirm"
+// todo: detect "too many failures" and add guide 1. check internet connection 2. restart computer 3. restart worker 4. disable chrome://flags/#enable-offline-auto-reload-visible-only
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
@@ -322,7 +322,7 @@ function preparePostTrigger() {
         buttons: [{title: 'confirm'}],
         requireInteraction: true
       }, notificationId => {
-        // withdraw notification if the user doesn't take an action in 30 sec, otherwise the room hold will become stale
+        // withdraw notification if the user hasn't take an action for 30 sec, otherwise the room hold will become stale
         setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
       });
 
@@ -359,6 +359,27 @@ function preparePostTrigger() {
     }
 
     chrome.tabs.update(workerTabId, {active: true});
+  });
+})();
+
+(function handleRoomBookingCancellation() {
+  chrome.notifications.onClosed.addListener((notificationId, byUser) => {
+    if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
+      return;
+    }
+
+    if (!byUser) {
+      // only react to user actions
+      return;
+    }
+
+    const eventId = notificationId.replace(CONFIRM_ROOM_BOOKING_PREFIX, '');
+    if (!currentTask || currentTask.type !== EVENT || currentTask.data.eventId !== eventId) {
+      return;
+    }
+
+    console.log(`user cancelled task: ${JSON.stringify(currentTask)}. Moving on to the next...`);
+    nextTask();
   });
 })();
 
