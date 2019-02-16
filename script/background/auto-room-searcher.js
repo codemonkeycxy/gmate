@@ -111,7 +111,6 @@ function stopWorker() {
 // todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: cancel task when user clicks "cancel" instead "confirm"
 // todo: set up key feature metrics and alerts
 // todo: set up a user survey
 // todo: log last error to mixpanel
@@ -128,13 +127,12 @@ function stopWorker() {
 // todo: task removal is buggy
 // todo: allow user to be opted out of tracking
 // todo: log user version
-// todo: if an event no longer exists, remove it from the toBeFulfilled list
 // todo: list recently fulfilled events
 // todo: add faq/welcome page to tell people to upgrade chrome
 // todo: maybe add "I need a room" button to the main calendar page
 // todo: people get confused about whether need to click save after clicking "i need a room"
 // todo: educate people about advanced features - provide a guide by the "i need a room" button
-// todo: worker page kept on showing pop ups: https://calendar.google.com/calendar/r/eventedit/NnI3bnVzaGgyYXZ0NXRqdGwzOGUxdXV0Z3NfMjAxOTAyMDhUMjIzMDAwWiBhbmt1c2hAdWJlci5jb20
+// todo: cancel task when user clicks "cancel" instead "confirm"
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
@@ -194,9 +192,20 @@ onMessage((msg, sender, cb) => {
 });
 
 // ==================== heartbeat ======================
-function heartbeat() {
+async function heartbeat() {
   console.log('heartbeat check. still alive...');
   saveGlobalVariables();
+
+  if (workerTabId && currentTask && currentTask.type === EVENT) {
+    const worker = await getTabById(workerTabId);
+    // if an event no longer exists, remove on to the next task
+    if (worker.url.includes('removed')) {
+      console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
+      // replace the dead url with the calendar main page url
+      loadUrlOnWorker(CALENDAR_PAGE_URL_PREFIX);
+      return nextTask();
+    }
+  }
 
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
@@ -261,11 +270,7 @@ function loadEventPage() {
 
   preparePostLoad(urlToLoad);
   console.log(`load new url ${urlToLoad}`);
-  chrome.tabs.update(workerTabId, {
-    url: urlToLoad,
-    active: false,
-    pinned: true
-  });
+  loadUrlOnWorker(urlToLoad);
 }
 
 function preparePostLoad(urlToLoad) {
@@ -512,4 +517,12 @@ function getNapFillers(napMinutes) {
   }
 
   return fillers;
+}
+
+function loadUrlOnWorker(urlToLoad) {
+  chrome.tabs.update(workerTabId, {
+    url: urlToLoad,
+    active: false,
+    pinned: true
+  });
 }

@@ -301,6 +301,10 @@ function onTabUpdated(callback, recycleTtl) {
   }
 }
 
+async function getTabById(id) {
+  return await new Promise(resolve => chrome.tabs.get(id, tab => resolve(tab)));
+}
+
 async function getFromStorage(keys) {
   return await new Promise(resolve => chrome.storage.sync.get(keys, result => resolve(result)));
 }
