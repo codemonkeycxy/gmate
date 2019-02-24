@@ -7,9 +7,8 @@ const currVersion = chrome.runtime.getManifest().version;
   persist({[LAST_VERSION]: currVersion});
 
   if (lastVersion === null) {
-    // first time install, don't show change log
-    // todo: show a different welcome page with all features
-    return;
+    // first time install, show the welcome page
+    return chrome.tabs.create({url: 'https://www.gmate.us/'});
   }
 
   if (lastVersion === currVersion) {

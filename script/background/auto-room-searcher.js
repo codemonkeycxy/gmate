@@ -133,6 +133,14 @@ function stopWorker() {
 // todo: people get confused about whether need to click save after clicking "i need a room"
 // todo: educate people about advanced features - provide a guide by the "i need a room" button
 // todo: detect "too many failures" and add guide 1. check internet connection 2. restart computer 3. restart worker 4. disable chrome://flags/#enable-offline-auto-reload-visible-only
+// todo: change logo color when the worker is paused
+// https://etc.usf.edu/presentations/extras/letters/varsity_letters/36/19/index.html
+// https://stackoverflow.com/questions/8894461/updating-an-extension-button-dynamically-inspiration-required
+// todo: set up a step by step tutorial for newbies (like a tour of go) and post on lifehack
+// todo: ^"I can't find a location filter i want"
+// todo: ^"do i have to be with my laptop to confirm?"
+// todo: ^reminder for there's already a room selected that matches searching filters
+// todo: randomly ask user for rating
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
