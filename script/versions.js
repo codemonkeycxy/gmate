@@ -1,4 +1,5 @@
 const VERSIONS = {
+  '1.0.0': {notify: {url: 'https://www.gmate.us/announcement/v1-0-0'}},
   '0.4.1': {notify: {url: 'https://www.gmate.us/announcement/v0-4-1'}},
   '0.4.0': {notify: {url: 'https://www.gmate.us/announcement/v0-4-0'}},
   '0.3.3': {notify: {url: 'https://www.gmate.us/announcement/v0-3-3'}},
