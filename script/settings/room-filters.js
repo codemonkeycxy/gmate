@@ -13,6 +13,7 @@ const COMPANY_SPECIFIC_FILTERS = {
       'SFO | 555 Market',
       'SFO | 685 Market',
       'SEA | 1191 2nd Ave',
+      'NYC | 1400 Broadway',
       'PAO | 900 Arastradero A',
       'PAO | 900 Arastradero B',
     ],
