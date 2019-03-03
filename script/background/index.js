@@ -4,7 +4,7 @@
 /* ==================== Global Variables ======================= */
 let toBeFulfilled, workerTabId, currentTask, taskVersion, lastActiveTs;
 
-chrome.runtime.setUninstallURL('https://goo.gl/forms/Yz4Rtt7fqmgMsHLd2');
+chrome.runtime.setUninstallURL('https://www.gmate.us/faq/common-problems#h.p_9n8u0cEo6KHr');
 
 // refresh calendar main page on app update so that the new code can take effect
 refreshCalendarMainPage();

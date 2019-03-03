@@ -134,7 +134,6 @@ function stopWorker() {
 // https://stackoverflow.com/questions/8894461/updating-an-extension-button-dynamically-inspiration-required
 // todo: share gmate in lifehack uchat room
 // todo: randomly ask user for rating
-// todo: replace exit survey with FAQ ang guide
 // todo: consider auto open control panel upon installation
 // todo: allow setting multiple room searching filters in one hit
 
