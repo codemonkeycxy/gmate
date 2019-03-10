@@ -72,12 +72,16 @@
     // todo: generalize
     const targetLocations = [
       'SFO | 1455 Market',
-      'SFO | 555 Market',
-      'SFO | 685 Market',
-      'SEA | 1191 2nd Ave',
+      'ATL | 1201 Peachtree',
+      'MEX | Río Lerma 232',
+      'MEX | Torre Mayor',
+      'NYC | 636 W. 28th',
       'NYC | 1400 Broadway',
       'PAO | 900 Arastradero A',
       'PAO | 900 Arastradero B',
+      'SEA | 1191 2nd Ave',
+      'SFO | 555 Market',
+      'SFO | 685 Market',
     ];
 
     for (let i = 0; i < allTrees.length; i++) {

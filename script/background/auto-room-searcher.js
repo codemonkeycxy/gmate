@@ -140,9 +140,9 @@ function stopWorker() {
 // "NYC | 636 W. 28th" Swaroop Rajanna
 // "MEX | Torre Mayor" and "MEX | Río Lerma 232" Christoph Hofer
 // add test instructions for adding new location filters
-// tag gmate home page so that it shows up in google search first page
-// add support for more advanced filters such as "3+", ">5", "<15" OR more properly support number range
-// update github and chrome store description
+// todo: tag gmate home page so that it shows up in google search first page
+// todo: add support for more advanced filters such as "3+", ">5", "<15" OR more properly support number range
+// todo: update github and chrome store description
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
