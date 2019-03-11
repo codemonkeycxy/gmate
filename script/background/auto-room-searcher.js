@@ -136,13 +136,9 @@ function stopWorker() {
 // todo: randomly ask user for rating
 // todo: consider auto open control panel upon installation
 // todo: allow setting multiple room searching filters in one hit
-// "ATL | 1201 Peachtree" William Davis
-// "NYC | 636 W. 28th" Swaroop Rajanna
-// "MEX | Torre Mayor" and "MEX | Río Lerma 232" Christoph Hofer
-// add test instructions for adding new location filters
 // todo: tag gmate home page so that it shows up in google search first page
 // todo: add support for more advanced filters such as "3+", ">5", "<15" OR more properly support number range
-// todo: update github and chrome store description
+// todo: update github and chrome store description https://search.google.com/search-console?resource_id=sc-domain:gmate.us
 
 // ==================== Task Queue Management ======================
 onMessage((msg, sender, sendResponse) => {
