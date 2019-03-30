@@ -7,7 +7,7 @@
  * (html and styling reference: https://www.w3schools.com/howto/howto_css_modals.asp)
 
  <button class="buttonload">
-     <span class="fa fa-spinner fa-spin"></span><span>text content</span>
+     <span>text content</span><span class="fa fa-spinner fa-spin"></span>
  </button>
 
  */
@@ -17,13 +17,13 @@ function newButton() {
   btn.style.borderRadius = '3px';
   btn.style.fontFamily = "'Google Sans',Roboto,Arial,sans-serif";
 
+  const btnText = document.createElement('span');
+  btn.appendChild(btnText);
+
   const spinner = document.createElement('span');
   spinner.className = 'fa fa-spinner fa-spin';
   hide(spinner);
   btn.appendChild(spinner);
-
-  const btnText = document.createElement('span');
-  btn.appendChild(btnText);
 
   // inject convenient helper functions
   btn.setText = text => btnText.textContent = text;
