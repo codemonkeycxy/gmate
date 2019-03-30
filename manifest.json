@@ -46,6 +46,7 @@
         "script/settings/room-filters.js",
         "script/shared/ui/index.js",
         "script/shared/ui/modal.js",
+        "script/shared/ui/icon.js",
         "script/shared/ui/button.js",
         "script/shared/ui/room-booking-filters.js",
         "script/versions.js",

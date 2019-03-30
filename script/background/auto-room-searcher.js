@@ -147,7 +147,6 @@ function stopWorker() {
 // todo: flag for "don't always ask for filters"
 // todo: book consistent rooms for recurring meetings
 // todo: maybe add "I need a room" button to the main calendar page for quicker action
-// todo: move "i need a room" to a more obvious location and make it bigger
 // todo: automatically/ask manually to send console log crash report
 // todo: enable open meeting url from room booked notification
 // todo: scenario, room booked via api but network went out after that so was not able to confirm

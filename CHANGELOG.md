@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 2.0.1
 - [maintenance] Deprecate code related with the old style room confirmation mechanism
+- [enhancement] Redesign the room searching button UI for better visibility
 
 ## 2.0.0
 - [enhancement] Add Calendar API auth prompt to "I need a room" button

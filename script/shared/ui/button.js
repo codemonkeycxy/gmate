@@ -14,6 +14,8 @@
 function newButton() {
   injectCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
   const btn = document.createElement('button');
+  btn.style.borderRadius = '3px';
+  btn.style.fontFamily = "'Google Sans',Roboto,Arial,sans-serif";
 
   const spinner = document.createElement('span');
   spinner.className = 'fa fa-spinner fa-spin';
@@ -25,8 +27,6 @@ function newButton() {
 
   // inject convenient helper functions
   btn.setText = text => btnText.textContent = text;
-  btn.setBackgroundColor = color => btn.style.background = color;
-  btn.setTextColor = color => btn.style.color = color;
   btn.showSpinner = () => show(spinner);
   btn.hideSpinner = () => hide(spinner);
 

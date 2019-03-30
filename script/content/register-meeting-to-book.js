@@ -12,12 +12,33 @@
   }
 
   function renderINeedARoomBtn() {
-    const locationInput = getLocationInput();
+    const eventDetails = getEventDetails();
+
+    // insert gmate row after the location row
+    const locationRow = eventDetails.children[0];
+    // to keep the style consistent, copy the location row as a template for the gmate row
+    const gmateRow = locationRow.cloneNode(true);
+    insertAfter(gmateRow, locationRow);
+
+    // reset the row icon
+    const oldIcon = gmateRow.children[0].getElementsByTagName('span')[0];
+    const icon = newIcon("fa fa-group");
+    icon.style.webkitTextFillColor = 'slategray';
+    icon.style.paddingLeft = '2px';
+    oldIcon.parentElement.replaceChild(icon, oldIcon);
+
+    // reset the row content
     const needRoomButton = newButton();
-    needRoomButton.setText("I need a room");
-    needRoomButton.setBackgroundColor('#4285f4');
-    needRoomButton.setTextColor('#fff');
-    insertAfter(needRoomButton, locationInput);
+    needRoomButton.setText("Find me a room");
+    needRoomButton.style.backgroundColor = 'rgb(45, 140, 255)';
+    needRoomButton.style.color = '#fff';
+    needRoomButton.style.height = '32px';
+    needRoomButton.style.fontSize = '12px';
+    needRoomButton.style.marginTop = '7px';
+    needRoomButton.style.marginBottom = '4px';
+    needRoomButton.style.paddingLeft = '12px';
+    needRoomButton.style.paddingRight = '12px';
+    gmateRow.replaceChild(needRoomButton, gmateRow.children[1]);
 
     needRoomButton.addEventListener("click", async () => {
       needRoomButton.showSpinner();
@@ -39,8 +60,8 @@
         'Select the filters you want to apply',
         () => {
           eventIdToFulfill = getEventId() || NO_ID_YET;
-          needRoomButton.setBackgroundColor('#7CB342');
-          needRoomButton.setTextColor('#FFFFFF');
+          needRoomButton.style.backgroundColor = '#7CB342';
+          needRoomButton.style.color = '#FFFFFF';
         }
       );
       insertBefore(modal, document.body.firstChild);
@@ -90,8 +111,8 @@
     return registerRoomToBeFulfilled(eventIds[0], eventName);
   }
 
-  function getLocationInput() {
-    return document.querySelectorAll('[aria-label="Location"]')[0];
+  function getEventDetails() {
+    return document.querySelectorAll('[id="tabEventDetails"]')[0];
   }
 
   function registerRoomToBeFulfilled(eventId, eventName) {
@@ -120,7 +141,7 @@
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: (maybe) bug: button disappears on page refresh (due to leavingEventPage logic)
       resetGlobal();
-      await tryUntilPass(() => getLocationInput() && getSaveButton());
+      await tryUntilPass(() => getEventDetails() && getSaveButton());
       addNeedRoomListener();
     }
   });
