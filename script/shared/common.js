@@ -15,7 +15,6 @@ const ROOM_SELECTED = "room-selected";
 const NO_ROOM_FOUND = "no-room-found";
 const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
-const CONFIRM_ROOM_BOOKING_PREFIX = 'confirm_room_booking_';
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
 const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
@@ -27,11 +26,6 @@ const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 // UI modification actions
 const SHOW_BANNER = "show-banner";
 const ADD_OVERLAY = "add-overlay";
-
-// event edit actions
-const SAVE_EDIT = "save-edit";
-const EDIT_SAVED = "edit-saved";
-const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NOTIFY = "notify";
 

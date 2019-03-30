@@ -280,12 +280,10 @@ async function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
-  if (await hasAuth()) {
-    const isPastMeeting = await CalendarAPI.isPastMeetingB64(currentTask.data.eventId);
-    if (isPastMeeting) {
-      console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
-      return await nextTask();
-    }
+  const isPastMeeting = await CalendarAPI.isPastMeetingB64(currentTask.data.eventId);
+  if (isPastMeeting) {
+    console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
+    return await nextTask();
   }
 
   // throw in a random delay to avoid getting throttled by Google
@@ -343,7 +341,7 @@ async function triggerRoomBooking() {
     data: {
       eventFilters: currentTask.data.eventFilters,
       forceBookOnEdit: true,
-      suppressChanges: await hasAuth()
+      suppressChanges: true
     }
   });
 }
@@ -362,13 +360,8 @@ function preparePostTrigger() {
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
 
-      if (await hasAuth()) {
-        track('room-booking-new');
-        await roomBookingNew(eventId, eventName, msg.data.roomEmail);
-      } else {
-        track('room-booking-old');
-        roomBookingOld(eventId, eventName);
-      }
+      track('room-booking-new');
+      await bookRoom(eventId, eventName, msg.data.roomEmail);
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
@@ -392,22 +385,7 @@ function preparePostTrigger() {
   onMessage(roomSelectionListener, ONE_HOUR_MS);
 }
 
-function roomBookingOld(eventId, eventName) {
-  chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
-    iconUrl: "icon.png",
-    type: 'basic',
-    title: `Room found for ${eventName}!`,
-    message: '[!!IMPORTANT!!] Click "more" => "confirm"',
-    buttons: [{title: 'confirm'}],
-    requireInteraction: true
-  }, notificationId => {
-    // withdraw notification if the user hasn't take an action for 30 sec, otherwise the room hold will become stale
-    setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
-  });
-  save();
-}
-
-async function roomBookingNew(eventId, eventName, roomEmail) {
+async function bookRoom(eventId, eventName, roomEmail) {
   await CalendarAPI.addRoomB64(eventId, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
@@ -429,72 +407,8 @@ async function roomBookingNew(eventId, eventName, roomEmail) {
     });
     await onRoomSavedSuccess();
   } else {
-    // todo: move track call into onRoomSavedFailure function after roomBookingOld is deprecated
-    // room save failures are not expected in the book-via-api approach. log to confirm
-    track('room-save-failure');
     return await onRoomSavedFailure();
   }
-}
-
-(function handleRoomBookingConfirmation() {
-  chrome.notifications.onButtonClicked.addListener(notificationId => {
-    if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
-      return;
-    }
-
-    chrome.tabs.update(workerTabId, {active: true});
-  });
-})();
-
-(function handleRoomBookingCancellation() {
-  chrome.notifications.onClosed.addListener(async (notificationId, byUser) => {
-    if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
-      return;
-    }
-
-    if (!byUser) {
-      // only react to user actions
-      return;
-    }
-
-    const eventId = notificationId.replace(CONFIRM_ROOM_BOOKING_PREFIX, '');
-    if (!currentTask || currentTask.type !== EVENT || currentTask.data.eventId !== eventId) {
-      return;
-    }
-
-    console.log(`user cancelled task: ${JSON.stringify(currentTask)}. Moving on to the next...`);
-    await nextTask();
-  });
-})();
-
-function save() {
-  preparePostSave();
-  console.log(`trigger save for ${JSON.stringify(currentTask)}`);
-  emit(workerTabId, {type: SAVE_EDIT});
-}
-
-function preparePostSave() {
-
-  async function editSavedListener(msg, sender, sendResponse) {
-    if (!currentTask || currentTask.type !== EVENT) {
-      return;
-    }
-
-    const eventId = currentTask.data.eventId;
-
-    if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
-      // remove listener after handling the expected event to avoid double trigger
-      chrome.runtime.onMessage.removeListener(editSavedListener);
-      await onRoomSavedSuccess();
-    }
-
-    if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
-      chrome.runtime.onMessage.removeListener(editSavedListener);
-      await onRoomSavedFailure();
-    }
-  }
-
-  onMessage(editSavedListener, ONE_HOUR_MS);
 }
 
 async function onRoomSavedSuccess() {
@@ -505,6 +419,8 @@ async function onRoomSavedSuccess() {
 
 async function onRoomSavedFailure() {
   console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
+  // room save failures are not expected in the book-via-api approach. log to confirm
+  track('room-save-failure');
   enqueue(currentTask);
   // remove listener after handling the expected event to avoid double trigger
   await nextTask();
