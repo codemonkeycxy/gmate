@@ -133,10 +133,6 @@ function stopWorker() {
 // todo: tag gmate home page so that it shows up in google search first page
 // todo: add support for more advanced filters such as "3+", ">5", "<15" OR more properly support number range
 // todo: update github and chrome store description https:/search.google.com/search-console?resource_id=sc-domain:gmate.us
-// Testimony
-// Executive Recruiting Coordinator
-// 1.1 Holy cow I had to schedule 6 1-hour interviews for Executive candidates today over the weekend and was able to find rooms for all of them with your help. You have drastically reduced the stress of my day to day job and just wanted to reach out and express my appreciation!
-// 1.2 It has saved me HOURS of checking every few minutes for rooms. Everyone on my team has now downloaded it too!!!
 // todo: add A/B testing framework
 // todo: add beta testing token
 // todo: prevent too many pending meeting to be added. use notify to tell user
