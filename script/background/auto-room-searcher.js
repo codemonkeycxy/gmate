@@ -152,7 +152,7 @@ function stopWorker() {
 // todo: scenario, room booked via api but network went out after that so was not able to confirm
 // should still add the meeting to "room fulfilled" list since most likely the room is booked successfully
 // todo: attach dollar value to meeting using avg salary
-// todo: also notify on no need to book case. and add them to the "recently booked" section regardless
+// todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
 
 
@@ -361,6 +361,7 @@ function preparePostTrigger() {
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
       console.log(`no need to book for ${JSON.stringify(currentTask)}`);
+      notify('Great News!', `"${eventName}" already has a room that meets your criteria!`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       await nextTask();
@@ -394,12 +395,7 @@ async function bookRoom(eventId, eventName, roomEmail) {
   );
 
   if (success) {
-    chrome.notifications.create(null, {
-      iconUrl: "icon.png",
-      type: 'basic',
-      title: `Great News!`,
-      message: `Room found for ${eventName}!`
-    });
+    notify('Great News!', `Room found for "${eventName}"!`);
     await onRoomSavedSuccess();
   } else {
     return await onRoomSavedFailure();
