@@ -7,7 +7,7 @@
     addSaveListener(initialRooms);
   }
 
-  async function bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit) {
+  async function bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit, suppressChanges) {
     if (!forceBookOnEdit && isEdit()) {
       // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
@@ -20,7 +20,6 @@
     }
 
     let countdown = 20;
-    const blacklistedRoomIds = [];
     while (countdown > 0) {
       if (noRoomFound()) {
         return sendFinishMessage(NO_ROOM_FOUND);  // no room to select, early return
@@ -31,24 +30,15 @@
       clickLoadMore();
 
       let {roomList, roomIdToElement} = getRoomOptions();
-      roomList = roomList.filter(room => !blacklistedRoomIds.includes(room.id));
       const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
       const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
       if (selectedRoom) {
-        dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        // I've noticed an obscure bug that sometimes a selected room doesn't show up in the worker UI when the page is not active
-        // the following logic makes sure the selected room actually shows up in the UI
-        try {
-          return await tryUntilPass(
-            () => (selectedRoom.id in getSelectedRooms()),
-            () => sendFinishMessage(ROOM_SELECTED, selectedRoom)
-          );  // room selected, early return
-        } catch (e) {
-          // if the room somehow doesn't show up in the UI, blacklist it and try to look again
-          console.log(`blacklist ${selectedRoom.name}`);
-          blacklistedRoomIds.push(selectedRoom.id);
+        if (!suppressChanges) {
+          // suppressChanges means we are only interested in finding a matching room but we don't want to update the UI
+          dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
         }
+        return sendFinishMessage(ROOM_SELECTED, selectedRoom);
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
@@ -146,6 +136,7 @@
       type: eventType,
       data: {
         roomName: room && room.name,
+        roomEmail: room && room.id,
         eventId: getEventId()
       }
     });
@@ -371,17 +362,17 @@
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
       const forceBookOnEdit = msg.data && msg.data.forceBookOnEdit;
+      const suppressChanges = msg.data && msg.data.suppressChanges;
       const filters = msg.data && msg.data.eventFilters || await getRoomFilters();
       const {posFilter, negFilter, flexFilters} = filters;
 
-      await tryUntilPass(
-        isRoomTabLoaded,
-        async () => await bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit)
-      );
+      await tryUntilPass(isRoomTabLoaded);
+      await bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit, suppressChanges);
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
-      await tryUntilPass(isRoomTabLoaded, registerFavoriteRooms);
+      await tryUntilPass(isRoomTabLoaded);
+      registerFavoriteRooms();
     }
   });
 })();

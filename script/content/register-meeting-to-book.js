@@ -13,13 +13,20 @@
 
   function renderINeedARoomBtn() {
     const locationInput = getLocationInput();
-    const needRoomButton = document.createElement('button');
-    needRoomButton.textContent = "I need a room";
-    needRoomButton.style.background = '#4285f4';
-    needRoomButton.style.color = '#fff';
+    const needRoomButton = newButton();
+    needRoomButton.setText("I need a room");
+    needRoomButton.setBackgroundColor('#4285f4');
+    needRoomButton.setTextColor('#fff');
     insertAfter(needRoomButton, locationInput);
 
     needRoomButton.addEventListener("click", async () => {
+      needRoomButton.showSpinner();
+      const token = await promptAuth();  // block until user gives permission
+      needRoomButton.hideSpinner();
+      if (!token) {
+        // if the user refuses to give auth, can't let them continue
+        return;
+      }
       const {posFilter, negFilter, flexFilters} = await getRoomFilters();
       eventFilters = {
         [ROOM_BOOKING_FILTER_POSITIVE]: posFilter,
@@ -32,8 +39,8 @@
         'Select the filters you want to apply',
         () => {
           eventIdToFulfill = getEventId() || NO_ID_YET;
-          needRoomButton.style.background = '#7CB342';
-          needRoomButton.style.color = '#FFFFFF';
+          needRoomButton.setBackgroundColor('#7CB342');
+          needRoomButton.setTextColor('#FFFFFF');
         }
       );
       insertBefore(modal, document.body.firstChild);
@@ -63,7 +70,8 @@
       return await registerRoomToBeFulfilled(eventIdToFulfill, eventName);
     }
 
-    await tryUntilPass(isMainCalendarPage, sendFinishMessage);
+    await tryUntilPass(isMainCalendarPage);
+    sendFinishMessage();
   }
 
   function sendFinishMessage() {
@@ -96,7 +104,8 @@
           posFilter: eventFilters[ROOM_BOOKING_FILTER_POSITIVE],
           negFilter: eventFilters[ROOM_BOOKING_FILTER_NEGATIVE],
           flexFilters: eventFilters
-        }
+        },
+        bookRecurring: false
       }
     });
   }
@@ -111,10 +120,8 @@
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: (maybe) bug: button disappears on page refresh (due to leavingEventPage logic)
       resetGlobal();
-      await tryUntilPass(
-        () => getLocationInput() && getSaveButton(),
-        addNeedRoomListener
-      )
+      await tryUntilPass(() => getLocationInput() && getSaveButton());
+      addNeedRoomListener();
     }
   });
 })();

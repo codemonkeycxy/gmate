@@ -1,22 +1,6 @@
 // self-invoking function to avoid name collision
 (() => {
-  const cssId = 'banner-CSS';
   const bannerIdPrefix = 'gmate-banner';
-
-  function loadBannerCSS() {
-    if (document.getElementById(cssId)) {
-      return;
-    }
-
-    const head = document.getElementsByTagName('head')[0];
-    const link = document.createElement('link');
-    link.id = cssId;
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
-    link.media = 'all';
-    head.appendChild(link);
-  }
 
   function injectBanner(level, message) {
     const id = `${bannerIdPrefix}-${level}-${message}`;
@@ -32,7 +16,7 @@
   }
 
   function applyWorkerWarning(level, message) {
-    loadBannerCSS();
+    injectCss('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
     injectBanner(level, message);
   }
 

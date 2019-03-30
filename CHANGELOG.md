@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+- [enhancement] Add Calendar API auth prompt to "I need a room" button
+- [enhancement] Make room confirmation step unnecessary
+- [enhancement] Skip room searching for past meetings
+
 ## 1.0.1
 - [enhancement] Add several more offices into the location filter
 

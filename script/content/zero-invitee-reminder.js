@@ -14,7 +14,8 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === ZERO_INVITEE_REMINDER) {
-      await tryUntilPass(getSaveButton, addSaveListener)
+      await tryUntilPass(getSaveButton);
+      addSaveListener();
     }
   });
 })();

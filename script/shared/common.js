@@ -17,6 +17,7 @@ const NO_NEED_TO_BOOK = "no-need-to-book";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const CONFIRM_ROOM_BOOKING_PREFIX = 'confirm_room_booking_';
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
+const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
 const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
@@ -33,6 +34,9 @@ const EDIT_SAVED = "edit-saved";
 const SAVE_EDIT_FAILURE = "save-edit-failure";
 
 const NOTIFY = "notify";
+
+// auth
+const PROMPT_AUTH = "prompt-auth";
 
 // task types
 const NAP = "nap";
@@ -345,24 +349,24 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-async function tryUntilPass(predicate, callback, options) {
+async function tryUntilPass(predicate, options) {
   options = options || {};
   const sleepMs = options.sleepMs || 500;
   let countdown = options.countdown || 10;
-  const onError = options.onError;
 
   while (countdown > 0) {
-    if (!await predicate()) {
-      // if predicates returns not true, sleep for a while and try again
-      await sleep(sleepMs);
-    } else {
-      return await callback();
+    if (await predicate()) {
+      return true;
     }
+
+    // if predicates returns false, sleep for a while and try again
     countdown--;
+    console.log(`failed predicate. chances left: ${countdown}. sleep for ${sleepMs} milliseconds before trying again...`);
+    await sleep(sleepMs);
   }
 
-  if (onError) {
-    return onError();
+  if (options.suppressError) {
+    return false;
   }
 
   throw new Error(
@@ -491,10 +495,10 @@ function isPageActive() {
 }
 
 // https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
-function deepEqual () {
+function deepEqual() {
   var i, l, leftChain, rightChain;
 
-  function compare2Objects (x, y) {
+  function compare2Objects(x, y) {
     var p;
 
     // remember that NaN === NaN returns false
@@ -569,7 +573,7 @@ function deepEqual () {
           leftChain.push(x);
           rightChain.push(y);
 
-          if (!compare2Objects (x[p], y[p])) {
+          if (!compare2Objects(x[p], y[p])) {
             return false;
           }
 
@@ -611,5 +615,76 @@ function show(element) {
 }
 
 function hide(element) {
-  element.style.display = 'none'; 
+  element.style.display = 'none';
+}
+
+async function hasAuth() {
+  return await new Promise(
+    resolve => chrome.identity.getAuthToken({interactive: false}, token => {
+      if (chrome.runtime.lastError && chrome.runtime.lastError.message.includes('OAuth2 not granted or revoked')) {
+        return resolve(false);
+      }
+
+      resolve(Boolean(token));
+    })
+  );
+}
+
+async function promptAuth() {
+  if (chrome.identity) {  // for background script
+    return await new Promise(resolve => chrome.identity.getAuthToken({interactive: true}, token => {
+      if (chrome.runtime.lastError && chrome.runtime.lastError.message.includes('The user did not approve access')) {
+        return resolve(null);
+      }
+
+      resolve(token);
+    }));
+  } else {  // for content script
+    return await new Promise(resolve => chrome.runtime.sendMessage(
+      null, {type: PROMPT_AUTH}, null, token => resolve(token)
+    ));
+  }
+}
+
+async function getAuthToken() {
+  // todo: handle no auth error. send user a notification to ask for auth
+  return await new Promise(
+    resolve => chrome.identity.getAuthToken({interactive: false}, token => resolve(token))
+  );
+}
+
+function decodeEventId(base64Id) {
+  const [id, ownerEmail] = atob(base64Id).split(' ');
+  return {id, ownerEmail};
+}
+
+function encodeEventId(id, ownerEmail) {
+  const encoded = btoa(`${id} ${ownerEmail}`);
+  // remove the trailing '=' padding
+  // https://stackoverflow.com/questions/4492426/remove-trailing-when-base64-encoding
+  return removeTrailingChar(encoded, '=');
+}
+
+// a simple but inefficient way of removing trailing characters
+function removeTrailingChar(str, charToRemove) {
+  while (str && str.charAt(str.length - 1) === charToRemove) {
+    str = str.substr(0, str.length - 1);
+  }
+
+  return str;
+}
+
+function injectCss(cssUrl) {
+  if (document.getElementById(cssUrl)) {
+    return;
+  }
+
+  const head = document.getElementsByTagName('head')[0];
+  const link = document.createElement('link');
+  link.id = cssUrl;
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = cssUrl;
+  link.media = 'all';
+  head.appendChild(link);
 }

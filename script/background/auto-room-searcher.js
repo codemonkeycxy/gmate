@@ -71,10 +71,10 @@ function startWorker() {
     url: CALENDAR_PAGE_URL_PREFIX,
     active: false,
     pinned: true
-  }, tab => {
+  }, async tab => {
     workerTabId = tab.id;
     console.log(`worker ${workerTabId} initiated`);
-    nextTask();
+    await nextTask();
   });
 }
 
@@ -97,21 +97,16 @@ function stopWorker() {
   });
 }
 
-// todo: don't book for meetings in the past
-// todo: try out google calendar api
-// https://developers.google.com/calendar/quickstart/js#step_1_turn_on_the
-// https://stackoverflow.com/questions/49427531/chrome-extension-integrating-with-google-calendar-api
+// use chrome://identity-internals/ to control api credentials
+// no room searching api. similar questioned asked: https://productforums.google.com/forum/#!msg/calendar/UViDqLtV-gA/dduccKC6CgAJ
 // todo: add daily quota and anti-greedy mechanism
 // todo: add google analytics on queue size and other user behaviors
-// todo: allow per "i need a room" regex setting, and save past configurations for quick select
 // todo: who's holding my fav room. or large room for small group
 // todo: link to rating page
 // todo: (in the future) donation
 // todo: option to automatically pause when on battery/battery is low
-// todo: consider retiring super old tasks
 // todo: send crash log to google analytics for debugging
 // todo: room booking notification "confirm" button doesn't work on windows
-// todo: log last error to mixpanel
 // todo: (maybe) wrap background scripts with self-invoking function
 // use self-referring get function https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: add prioritization function, allow room size preference and VC preference
@@ -125,8 +120,7 @@ function stopWorker() {
 // todo: task removal is buggy
 // todo: allow user to be opted out of tracking
 // todo: log user version
-// todo: list recently fulfilled events
-// todo: maybe add "I need a room" button to the main calendar page
+// todo: list recently fulfilled events, maybe with their rooms
 // todo: educate people about advanced features - provide a guide by the "i need a room" button
 // todo: detect "too many failures"
 // todo: change logo color when the worker is paused
@@ -138,21 +132,58 @@ function stopWorker() {
 // todo: allow setting multiple room searching filters in one hit
 // todo: tag gmate home page so that it shows up in google search first page
 // todo: add support for more advanced filters such as "3+", ">5", "<15" OR more properly support number range
-// todo: update github and chrome store description https://search.google.com/search-console?resource_id=sc-domain:gmate.us
+// todo: update github and chrome store description https:/search.google.com/search-console?resource_id=sc-domain:gmate.us
+// Testimony
+// Executive Recruiting Coordinator
+// 1.1 Holy cow I had to schedule 6 1-hour interviews for Executive candidates today over the weekend and was able to find rooms for all of them with your help. You have drastically reduced the stress of my day to day job and just wanted to reach out and express my appreciation!
+// 1.2 It has saved me HOURS of checking every few minutes for rooms. Everyone on my team has now downloaded it too!!!
+// todo: add A/B testing framework
+// todo: add beta testing token
+// todo: prevent too many pending meeting to be added. use notify to tell user
+// todo: add privacy policy and terms of service to google api login
+// todo: log last error to mixpanel
+// https://stackoverflow.com/questions/28431505/unchecked-runtime-lasterror-when-using-chrome-api
+// this means 1) try catch all executions. 2) log chrome runtime last error in all chrome related invocations
+// todo: make a feature voting board
+// todo: handle no auth error in case user auth gets somehow revoked. send user a notification to ask for auth. see getAuthToken function
+// todo: noticed a declined room triggers "no need to book", probably due to UI loading issue. Replace it with API call
+// todo: tutorial "next" to "next: title"
+// todo: flag for "don't always ask for filters"
+// todo: book consistent rooms for recurring meetings
+// todo: maybe add "I need a room" button to the main calendar page for quicker action
+// todo: move "i need a room" to a more obvious location and make it bigger
+// todo: automatically/ask manually to send console log crash report
+// todo: enable open meeting url from room booked notification
+// todo: scenario, room booked via api but network went out after that so was not able to confirm
+// should still add the meeting to "room fulfilled" list since most likely the room is booked successfully
+// todo: attach dollar value to meeting using avg salary
+// todo: also notify on no need to book case. and add them to the "recently booked" section regardless
+// todo: generate WOW meeting/free time ratio
+
 
 // ==================== Task Queue Management ======================
-onMessage((msg, sender, sendResponse) => {
+onMessage(async (msg, sender, sendResponse) => {
   if (msg.type === ROOM_TO_BE_FULFILLED) {
     const eventId = msg.data.eventId;
     const eventName = msg.data.eventName;
     const eventFilters = msg.data.eventFilters;
+    const bookRecurring = msg.data.bookRecurring;
     if (!eventId) {
       // if this happens there's a bug
       throw new Error(`received empty event id. event name: ${eventName}`);
     }
 
-    enqueue(eventTask(eventId, eventName, eventFilters));
-    track(ROOM_TO_BE_FULFILLED);
+    let idsToBook = [eventId];
+    if (bookRecurring) {
+      // todo: test recurring with deleted and already booked
+      // todo: tricky to book recurring on first creation (i.e. before the recurring meeting is created)
+      idsToBook = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
+      track(RECURRING_ROOM_TO_BE_FULFILLED);
+    } else {
+      track(ROOM_TO_BE_FULFILLED);
+    }
+
+    enqueueMany(idsToBook.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
     if (!workerTabId) {
       startWorker();
     }
@@ -209,7 +240,7 @@ async function heartbeat() {
       console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
       // replace the dead url with the calendar main page url
       loadUrlOnWorker(CALENDAR_PAGE_URL_PREFIX);
-      return nextTask();
+      return await nextTask();
     }
   }
 
@@ -217,7 +248,7 @@ async function heartbeat() {
     console.log('worker idle for more than 5 min, resurrecting...');
 
     enqueue(currentTask);
-    nextTask();
+    await nextTask();
   }
 }
 
@@ -227,7 +258,7 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 // ==================== state machine ======================
 
-function nextTask() {
+async function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
   console.log(`current work: ${JSON.stringify(toBeFulfilled)}; task version: ${taskVersion}`);
   lastActiveTs = Date.now();
@@ -249,6 +280,14 @@ function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
+  if (await hasAuth()) {
+    const isPastMeeting = await CalendarAPI.isPastMeetingB64(currentTask.data.eventId);
+    if (isPastMeeting) {
+      console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
+      return await nextTask();
+    }
+  }
+
   // throw in a random delay to avoid getting throttled by Google
   const randDelay = getRandomInt(TEN_SEC_MS);
   console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
@@ -258,11 +297,11 @@ function nextTask() {
   }, randDelay);
 }
 
-function wakeUp(taskVersionBeforeNap) {
+async function wakeUp(taskVersionBeforeNap) {
   if (taskVersionBeforeNap !== taskVersion) {
     console.log(`the world has moved on when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
   } else {
-    nextTask();
+    await nextTask();
   }
 }
 
@@ -280,7 +319,7 @@ function loadEventPage() {
 }
 
 function preparePostLoad(urlToLoad) {
-  function pageLoadListener(tabId, changeInfo, tab) {
+  async function pageLoadListener(tabId, changeInfo, tab) {
     const isWorker = tabId === workerTabId;
     const isTargetUrl = tab.url === urlToLoad;
     const isLoaded = changeInfo.status === "complete";
@@ -289,27 +328,28 @@ function preparePostLoad(urlToLoad) {
       console.log(`${urlToLoad} loaded.`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.tabs.onUpdated.removeListener(pageLoadListener);
-      triggerRoomBooking();
+      await triggerRoomBooking();
     }
   }
 
   onTabUpdated(pageLoadListener, ONE_HOUR_MS);
 }
 
-function triggerRoomBooking() {
+async function triggerRoomBooking() {
   preparePostTrigger();
   console.log('trigger room booking');
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
     data: {
       eventFilters: currentTask.data.eventFilters,
-      forceBookOnEdit: true
+      forceBookOnEdit: true,
+      suppressChanges: await hasAuth()
     }
   });
 }
 
 function preparePostTrigger() {
-  function roomSelectionListener(msg, sender, sendResponse) {
+  async function roomSelectionListener(msg, sender, sendResponse) {
     if (!currentTask || currentTask.type !== EVENT) {
       return;
     }
@@ -319,29 +359,23 @@ function preparePostTrigger() {
 
     if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
       console.log(`room ${msg.data.roomName} selected for ${JSON.stringify(currentTask)}`);
-
-      chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
-        iconUrl: "icon.png",
-        type: 'basic',
-        title: `Room found for ${eventName}!`,
-        message: '[!!IMPORTANT!!] Click "more" => "confirm"',
-        buttons: [{title: 'confirm'}],
-        requireInteraction: true
-      }, notificationId => {
-        // withdraw notification if the user hasn't take an action for 30 sec, otherwise the room hold will become stale
-        setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
-      });
-
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      save();
+
+      if (await hasAuth()) {
+        track('room-booking-new');
+        await roomBookingNew(eventId, eventName, msg.data.roomEmail);
+      } else {
+        track('room-booking-old');
+        roomBookingOld(eventId, eventName);
+      }
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
       console.log(`no need to book for ${JSON.stringify(currentTask)}`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextTask();
+      await nextTask();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
@@ -351,11 +385,55 @@ function preparePostTrigger() {
       enqueue(currentTask);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextTask();
+      await nextTask();
     }
   }
 
   onMessage(roomSelectionListener, ONE_HOUR_MS);
+}
+
+function roomBookingOld(eventId, eventName) {
+  chrome.notifications.create(`${CONFIRM_ROOM_BOOKING_PREFIX}${eventId}`, {
+    iconUrl: "icon.png",
+    type: 'basic',
+    title: `Room found for ${eventName}!`,
+    message: '[!!IMPORTANT!!] Click "more" => "confirm"',
+    buttons: [{title: 'confirm'}],
+    requireInteraction: true
+  }, notificationId => {
+    // withdraw notification if the user hasn't take an action for 30 sec, otherwise the room hold will become stale
+    setTimeout(() => chrome.notifications.clear(notificationId), 3 * TEN_SEC_MS);
+  });
+  save();
+}
+
+async function roomBookingNew(eventId, eventName, roomEmail) {
+  await CalendarAPI.addRoomB64(eventId, roomEmail);
+  console.log('waiting for the newly added room to confirm...');
+
+  const success = await tryUntilPass(
+    async () => await CalendarAPI.isRoomConfirmedB64(eventId, roomEmail),
+    { // wait up to 5 min
+      sleepMs: TEN_SEC_MS,
+      countdown: 30,
+      suppressError: true
+    }
+  );
+
+  if (success) {
+    chrome.notifications.create(null, {
+      iconUrl: "icon.png",
+      type: 'basic',
+      title: `Great News!`,
+      message: `Room found for ${eventName}!`
+    });
+    await onRoomSavedSuccess();
+  } else {
+    // todo: move track call into onRoomSavedFailure function after roomBookingOld is deprecated
+    // room save failures are not expected in the book-via-api approach. log to confirm
+    track('room-save-failure');
+    return await onRoomSavedFailure();
+  }
 }
 
 (function handleRoomBookingConfirmation() {
@@ -369,7 +447,7 @@ function preparePostTrigger() {
 })();
 
 (function handleRoomBookingCancellation() {
-  chrome.notifications.onClosed.addListener((notificationId, byUser) => {
+  chrome.notifications.onClosed.addListener(async (notificationId, byUser) => {
     if (!notificationId.includes(CONFIRM_ROOM_BOOKING_PREFIX)) {
       return;
     }
@@ -385,7 +463,7 @@ function preparePostTrigger() {
     }
 
     console.log(`user cancelled task: ${JSON.stringify(currentTask)}. Moving on to the next...`);
-    nextTask();
+    await nextTask();
   });
 })();
 
@@ -397,7 +475,7 @@ function save() {
 
 function preparePostSave() {
 
-  function editSavedListener(msg, sender, sendResponse) {
+  async function editSavedListener(msg, sender, sendResponse) {
     if (!currentTask || currentTask.type !== EVENT) {
       return;
     }
@@ -405,31 +483,36 @@ function preparePostSave() {
     const eventId = currentTask.data.eventId;
 
     if (msg.type === EDIT_SAVED && msg.data.eventId === eventId) {
-      console.log(`room saved for ${JSON.stringify(currentTask)}`);
-      track('room-saved');
-      // refresh calendar main page so that it reflects the newly booked room
-      refreshCalendarMainPage({excludeTabIds: [workerTabId]});
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(editSavedListener);
-      nextTask();
+      await onRoomSavedSuccess();
     }
 
     if (msg.type === SAVE_EDIT_FAILURE && msg.data.eventId === eventId) {
-      console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
-
-      enqueue(currentTask);
-      // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(editSavedListener);
-      nextTask();
+      await onRoomSavedFailure();
     }
   }
 
   onMessage(editSavedListener, ONE_HOUR_MS);
 }
 
+async function onRoomSavedSuccess() {
+  console.log(`room saved for ${JSON.stringify(currentTask)}`);
+  track('room-saved');
+  await nextTask();
+}
+
+async function onRoomSavedFailure() {
+  console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
+  enqueue(currentTask);
+  // remove listener after handling the expected event to avoid double trigger
+  await nextTask();
+}
+
 // ==================== helpers ======================
 
-function enqueue(task) {
+function _enqueue(task) {
   if (!task) {
     return console.log('nothing to enqueue, move on...');
   }
@@ -445,6 +528,15 @@ function enqueue(task) {
   // add some buffer so that we don't retry immediately
   console.log(`enqueuing ${JSON.stringify(task)}...`);
   toBeFulfilled.push(...getNapFillers(5), task);
+}
+
+function enqueue(task) {
+  _enqueue(task);
+  saveGlobalVariables();
+}
+
+function enqueueMany(tasks) {
+  tasks.forEach(task => _enqueue(task));
   saveGlobalVariables();
 }
 

@@ -11,15 +11,16 @@
     // 1) no confirmation page (in case of no invitees)
     // 2) confirmation to notify invitees
     // 3) confirmation for recurring meetings + confirmation to notify invitees
-    await tryUntilPass(
+    const success = await tryUntilPass(
       () => confirmSaving() && isMainCalendarPage(),
-      () => sendFinishMessage(EDIT_SAVED, eventId, eventName),
       { // wait up to 30 sec
         sleepMs: 1000,
         countdown: 30,
-        onError: () => sendFinishMessage(SAVE_EDIT_FAILURE, eventId, eventName)
+        suppressError: true
       }
-    )
+    );
+    const eventType = success ? EDIT_SAVED : SAVE_EDIT_FAILURE;
+    sendFinishMessage(eventType, eventId, eventName);
   }
 
   function confirmSaving() {
@@ -48,7 +49,8 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === SAVE_EDIT) {
-      await tryUntilPass(getSaveButton, saveEdit);
+      await tryUntilPass(getSaveButton);
+      await saveEdit();
     }
   });
 })();
