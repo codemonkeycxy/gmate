@@ -29,7 +29,7 @@
 
     // reset the row content
     const needRoomButton = newButton();
-    needRoomButton.setText("Find me a room");
+    needRoomButton.setText("Find a room with GMate");
     needRoomButton.style.backgroundColor = 'rgb(45, 140, 255)';
     needRoomButton.style.color = '#fff';
     needRoomButton.style.height = '32px';

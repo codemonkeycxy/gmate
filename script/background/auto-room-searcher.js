@@ -154,6 +154,7 @@ function stopWorker() {
 // todo: attach dollar value to meeting using avg salary
 // todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
+// todo: button disappears after 1 refresh in the meeting edit page
 
 
 // ==================== Task Queue Management ======================
