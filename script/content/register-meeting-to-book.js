@@ -4,12 +4,45 @@
   let globals = {};
 
   function addNeedRoomListener() {
-    renderINeedARoomBtn();
+    renderSearchRoomBtn();
     listenToEventNameChange();
     listenToEventSave();
   }
 
-  function renderINeedARoomBtn() {
+  function renderSearchRoomBtn() {
+    const searchRoomBtn = insertSearchRoomBtn();
+
+    searchRoomBtn.addEventListener("click", async () => {
+      searchRoomBtn.showSpinner();
+      const token = await promptAuth();  // block until user gives permission
+      searchRoomBtn.hideSpinner();
+      if (!token) {
+        // if the user refuses to give auth, can't let them continue
+        return;
+      }
+
+      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
+      globals.eventFilters = {
+        [ROOM_BOOKING_FILTER_POSITIVE]: posFilter,
+        [ROOM_BOOKING_FILTER_NEGATIVE]: negFilter,
+        ...flexFilters
+      };
+
+      const modal = renderModal(
+        await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val)),
+        'Select the filters you want to apply',
+        () => {
+          globals.eventIdToFulfill = getEventId() || NO_ID_YET;
+          searchRoomBtn.style.backgroundColor = '#7CB342';
+          searchRoomBtn.style.color = '#FFFFFF';
+        }
+      );
+      insertBefore(modal, document.body.firstChild);
+      show(modal);
+    });
+  }
+
+  function insertSearchRoomBtn() {
     const eventDetails = getEventDetails();
 
     // insert gmate row after the location row
@@ -38,33 +71,7 @@
     needRoomButton.style.paddingRight = '12px';
     gmateRow.replaceChild(needRoomButton, gmateRow.children[1]);
 
-    needRoomButton.addEventListener("click", async () => {
-      needRoomButton.showSpinner();
-      const token = await promptAuth();  // block until user gives permission
-      needRoomButton.hideSpinner();
-      if (!token) {
-        // if the user refuses to give auth, can't let them continue
-        return;
-      }
-      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
-      globals.eventFilters = {
-        [ROOM_BOOKING_FILTER_POSITIVE]: posFilter,
-        [ROOM_BOOKING_FILTER_NEGATIVE]: negFilter,
-        ...flexFilters
-      };
-
-      const modal = renderModal(
-        await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val)),
-        'Select the filters you want to apply',
-        () => {
-          globals.eventIdToFulfill = getEventId() || NO_ID_YET;
-          needRoomButton.style.backgroundColor = '#7CB342';
-          needRoomButton.style.color = '#FFFFFF';
-        }
-      );
-      insertBefore(modal, document.body.firstChild);
-      show(modal);
-    });
+    return needRoomButton;
   }
 
   function listenToEventNameChange() {
@@ -139,7 +146,7 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
-      // todo: (maybe) bug: button disappears on page refresh (due to leavingEventPage logic)
+      // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       resetGlobal();
       await tryUntilPass(() => getEventDetails() && getSaveButton());
       addNeedRoomListener();
