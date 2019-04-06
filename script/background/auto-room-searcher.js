@@ -74,6 +74,7 @@ function startWorker() {
   }, async tab => {
     workerTabId = tab.id;
     console.log(`worker ${workerTabId} initiated`);
+    unsetPauseIcon();
     await nextTask();
   });
 }
@@ -88,6 +89,7 @@ function stopWorker() {
   currentTask = null;
   if (getAllEventTasks().length > 0) {
     notify('Caution!', 'Room searching is paused');
+    setPauseIcon();
   }
 
   console.log(`removing worker ${workerTabId}...`);
@@ -123,9 +125,6 @@ function stopWorker() {
 // todo: list recently fulfilled events, maybe with their rooms
 // todo: educate people about advanced features - provide a guide by the "i need a room" button
 // todo: detect "too many failures"
-// todo: change logo color when the worker is paused
-// https://etc.usf.edu/presentations/extras/letters/varsity_letters/36/19/index.html
-// https://stackoverflow.com/questions/8894461/updating-an-extension-button-dynamically-inspiration-required
 // todo: share gmate in lifehack uchat room
 // todo: randomly ask user for rating
 // todo: consider auto open control panel upon installation
@@ -466,8 +465,12 @@ function removeTask(taskId) {
   const oldLength = toBeFulfilled.length;
   toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
   saveGlobalVariables();
-  const newLength = toBeFulfilled.length;
 
+  if (getAllEventTasks().length === 0) {
+    unsetPauseIcon();
+  }
+
+  const newLength = toBeFulfilled.length;
   if (newLength === oldLength - 1) {
     return console.log(`successfully removed task with id ${taskId}`);
   }

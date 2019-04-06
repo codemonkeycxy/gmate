@@ -682,3 +682,12 @@ function injectCss(cssUrl) {
   link.media = 'all';
   head.appendChild(link);
 }
+
+function setPauseIcon() {
+  chrome.browserAction.setBadgeBackgroundColor({color: '#FF8C00'});
+  chrome.browserAction.setBadgeText({text: '|️|️'});
+}
+
+function unsetPauseIcon() {
+  chrome.browserAction.setBadgeText({text: ''});
+}
