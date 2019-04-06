@@ -1,9 +1,7 @@
 // self-invoking function to avoid name collision
 (() => {
   const NO_ID_YET = 'no-id-yet';
-  let eventIdToFulfill = null;
-  let eventFilters = {};
-  let eventName = '';
+  let globals = {};
 
   function addNeedRoomListener() {
     renderINeedARoomBtn();
@@ -49,17 +47,17 @@
         return;
       }
       const {posFilter, negFilter, flexFilters} = await getRoomFilters();
-      eventFilters = {
+      globals.eventFilters = {
         [ROOM_BOOKING_FILTER_POSITIVE]: posFilter,
         [ROOM_BOOKING_FILTER_NEGATIVE]: negFilter,
         ...flexFilters
       };
 
       const modal = renderModal(
-        await asyncRenderRoomBookingFilters((key, val) => (eventFilters[key] = val)),
+        await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val)),
         'Select the filters you want to apply',
         () => {
-          eventIdToFulfill = getEventId() || NO_ID_YET;
+          globals.eventIdToFulfill = getEventId() || NO_ID_YET;
           needRoomButton.style.backgroundColor = '#7CB342';
           needRoomButton.style.color = '#FFFFFF';
         }
@@ -71,8 +69,8 @@
 
   function listenToEventNameChange() {
     const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
-    eventName = titleInput.value;  // record initial title value
-    titleInput.addEventListener('input', e => eventName = e.target.value);
+    globals.eventName = titleInput.value;  // record initial title value
+    titleInput.addEventListener('input', e => globals.eventName = e.target.value);
   }
 
   function listenToEventSave() {
@@ -81,14 +79,14 @@
   }
 
   async function onSave() {
-    if (!eventIdToFulfill) {
+    if (!globals.eventIdToFulfill) {
       // no op if there's no event to fulfill
       return;
     }
 
-    if (eventIdToFulfill !== NO_ID_YET) {
+    if (globals.eventIdToFulfill !== NO_ID_YET) {
       // the page already carries a valid event id, we are done
-      return await registerRoomToBeFulfilled(eventIdToFulfill, eventName);
+      return await registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
     }
 
     await tryUntilPass(isMainCalendarPage);
@@ -97,18 +95,18 @@
 
   function sendFinishMessage() {
     // todo: use meeting time as a second differentiator
-    const eventIds = getEventIdByName(eventName);
+    const eventIds = getEventIdByName(globals.eventName);
     if (eventIds.length !== 1) {
       return chrome.runtime.sendMessage({
         type: ROOM_TO_BE_FULFILLED_FAILURE,
         data: {
           eventIds: eventIds,
-          eventName: eventName
+          eventName: globals.eventName
         }
       });
     }
 
-    return registerRoomToBeFulfilled(eventIds[0], eventName);
+    return registerRoomToBeFulfilled(eventIds[0], globals.eventName);
   }
 
   function getEventDetails() {
@@ -122,9 +120,9 @@
         eventId: eventId,
         eventName: eventName,
         eventFilters: {
-          posFilter: eventFilters[ROOM_BOOKING_FILTER_POSITIVE],
-          negFilter: eventFilters[ROOM_BOOKING_FILTER_NEGATIVE],
-          flexFilters: eventFilters
+          posFilter: globals.eventFilters[ROOM_BOOKING_FILTER_POSITIVE],
+          negFilter: globals.eventFilters[ROOM_BOOKING_FILTER_NEGATIVE],
+          flexFilters: globals.eventFilters
         },
         bookRecurring: false
       }
@@ -132,9 +130,11 @@
   }
 
   function resetGlobal() {
-    eventIdToFulfill = null;
-    eventFilters = {};
-    eventName = '';
+    globals = {
+      eventIdToFulfill: null,
+      eventFilters: {},
+      eventName: ''
+    };
   }
 
   onMessage(async (msg, sender, sendResponse) => {
