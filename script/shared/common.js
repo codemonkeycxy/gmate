@@ -57,6 +57,9 @@ const ALL = "all";
 const YES = 'yes';
 const NO = 'no';
 
+const LEFT = "left";
+const RIGHT = "right";
+
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;
 DEFAULT_FEATURE_TOGGLES[GENERATE_ZOOM_ID] = false;
@@ -286,6 +289,17 @@ function onMessage(callback, recycleTtl) {
       chrome.runtime.onMessage.removeListener(callback);
     }, recycleTtl);
   }
+}
+
+function onMessageOfType(expectedType, callback, recycleTtl) {
+  onMessage(async (msg, sender, sendResponse) => {
+    if (!msg.type || msg.type !== expectedType) {
+      // todo: log error on !msg.type
+      return;
+    }
+
+    await callback(msg, sender, sendResponse);
+  }, recycleTtl);
 }
 
 function onTabUpdated(callback, recycleTtl) {

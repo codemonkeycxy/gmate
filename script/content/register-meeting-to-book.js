@@ -29,7 +29,7 @@
       };
 
       const modal = renderModal(
-        await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val)),
+        await renderModelBody(),
         'Select the filters you want to apply',
         () => {
           globals.eventIdToFulfill = getEventId() || NO_ID_YET;
@@ -40,6 +40,18 @@
       insertBefore(modal, document.body.firstChild);
       show(modal);
     });
+  }
+
+  async function renderModelBody() {
+    const filterUI = await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val));
+    const bookRecurringCheckbox = renderCheckbox(
+      'apply to recurring events for the next 2 weeks',
+      false,
+      value => globals.bookRecurring = value,
+      RIGHT
+    );
+
+    return wrapUIComponents([filterUI, renderDivider(), bookRecurringCheckbox]);
   }
 
   function insertSearchRoomBtn() {
@@ -131,7 +143,8 @@
           negFilter: globals.eventFilters[ROOM_BOOKING_FILTER_NEGATIVE],
           flexFilters: globals.eventFilters
         },
-        bookRecurring: false
+        bookRecurring: globals.bookRecurring,
+        recurForWks: globals.recurForWks
       }
     });
   }
@@ -140,7 +153,9 @@
     globals = {
       eventIdToFulfill: null,
       eventFilters: {},
-      eventName: ''
+      eventName: '',
+      bookRecurring: false,
+      recurForWks: 2
     };
   }
 

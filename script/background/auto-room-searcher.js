@@ -154,73 +154,76 @@ function stopWorker() {
 // todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
 // todo: button disappears after 1 refresh in the meeting edit page
+// todo: wrap throw error and console warn/error with log to mixpanel
 
 
 // ==================== Task Queue Management ======================
-onMessage(async (msg, sender, sendResponse) => {
-  if (msg.type === ROOM_TO_BE_FULFILLED) {
-    const eventId = msg.data.eventId;
-    const eventName = msg.data.eventName;
-    const eventFilters = msg.data.eventFilters;
-    const bookRecurring = msg.data.bookRecurring;
-    if (!eventId) {
-      // if this happens there's a bug
-      throw new Error(`received empty event id. event name: ${eventName}`);
-    }
+onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
+  const eventId = msg.data.eventId;
+  const eventName = msg.data.eventName;
+  const eventFilters = msg.data.eventFilters;
 
-    let idsToBook = [eventId];
-    if (bookRecurring) {
-      // todo: test recurring with deleted and already booked
-      // todo: tricky to book recurring on first creation (i.e. before the recurring meeting is created)
-      idsToBook = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
-      track(RECURRING_ROOM_TO_BE_FULFILLED);
-    } else {
-      track(ROOM_TO_BE_FULFILLED);
-    }
-
-    enqueueMany(idsToBook.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
-    if (!workerTabId) {
-      startWorker();
-    }
+  if (!eventId) {
+    // if this happens there's a bug
+    throw new Error(`received empty event id. event name: ${eventName}`);
   }
 
-  if (msg.type === ROOM_TO_BE_FULFILLED_FAILURE) {
-    const eventName = msg.data.eventName;
-    const eventIds = msg.data.eventIds;
+  enqueue(eventTask(eventId, eventName, eventFilters));
+  track(ROOM_TO_BE_FULFILLED);
 
-    console.log(
-      `Expecting to register 1 event to the queue but found - event name: ${
-        eventName
-        } event ids: ${JSON.stringify(eventIds)}`
+  if (msg.data.bookRecurring) {
+    const eventSaved = await tryUntilPass(
+      async () => await CalendarAPI.getEventB64(eventId), {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}
     );
-    notify(
-      'Oops. We encountered a problem',
-      'Please open the meeting up and click "I need a room" again'
-    );
+    if (!eventSaved) {
+      // todo: add log here
+      return;  // todo: shouldn't return here
+    }
+
+    const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId, msg.data.recurForWks);
+    enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
+    track(RECURRING_ROOM_TO_BE_FULFILLED);
+  }
+
+  if (!workerTabId) {
+    startWorker();
   }
 });
 
-onMessage((msg, sender, cb) => {
-  if (msg.type === GET_QUEUE) {
-    cb({
-      type: GET_QUEUE,
-      data: {
-        eventTasks: getAllEventTasks(),
-        workerTabId: workerTabId
-      }
-    });
-  }
+onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
+  const eventName = msg.data.eventName;
+  const eventIds = msg.data.eventIds;
 
-  if (msg.type === REMOVE_TASK) {
-    removeTask(msg.data.taskId);
-    cb({
-      type: REMOVE_TASK,
-      data: {
-        eventTasks: getAllEventTasks(),
-        workerTabId: workerTabId
-      }
-    });
-  }
+  console.log(
+    `Expecting to register 1 event to the queue but found - event name: ${
+      eventName
+      } event ids: ${JSON.stringify(eventIds)}`
+  );
+  notify(
+    'Oops. We encountered a problem',
+    'Please open the meeting up and click "I need a room" again'
+  );
+});
+
+onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) => {
+  sendResponse({
+    type: GET_QUEUE,
+    data: {
+      eventTasks: getAllEventTasks(),
+      workerTabId: workerTabId
+    }
+  });
+});
+
+onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
+  removeTask(msg.data.taskId);
+  sendResponse({
+    type: REMOVE_TASK,
+    data: {
+      eventTasks: getAllEventTasks(),
+      workerTabId: workerTabId
+    }
+  });
 });
 
 // ==================== heartbeat ======================
@@ -355,7 +358,6 @@ function preparePostTrigger() {
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
 
-      track('room-booking-new');
       await bookRoom(eventId, eventName, msg.data.roomEmail);
     }
 

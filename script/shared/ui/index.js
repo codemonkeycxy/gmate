@@ -1,12 +1,19 @@
-function renderUIWrapper(name, child) {
+function wrapUIComponents(components) {
   const wrapper = document.createElement('div');
-  const title = document.createElement('span');
-  title.textContent = name + ': ';
+  components.forEach(component => wrapper.appendChild(component));
+  return wrapper
+}
 
-  // put everything together
-  wrapper.appendChild(title);
-  wrapper.appendChild(child);
-  return wrapper;
+function wrapUIWithText(name, child, textOn = LEFT) {
+  const title = document.createElement('span');
+
+  if (textOn === RIGHT) {
+    title.textContent = ` ${name}`;
+    return wrapUIComponents([child, title]);
+  } else {
+    title.textContent = `${name}: `;
+    return wrapUIComponents([title, child]);
+  }
 }
 
 function renderDropDownSelect(name, options, initialVal, onSelect) {
@@ -24,7 +31,7 @@ function renderDropDownSelect(name, options, initialVal, onSelect) {
   selectList.value = initialVal;
   selectList.addEventListener('change', e => onSelect(e.target.value));
 
-  return renderUIWrapper(name, selectList);
+  return wrapUIWithText(name, selectList);
 }
 
 function renderStringNumberRange(name, initialVal, onChange) {
@@ -36,14 +43,18 @@ function renderStringNumberRange(name, initialVal, onChange) {
   // todo: error on invalid input
   input.addEventListener('change', e => onChange(e.target.value));
 
-  return renderUIWrapper(name, input);
+  return wrapUIWithText(name, input);
 }
 
-function renderCheckbox(name, initialVal, onChange) {
+function renderCheckbox(name, initialVal, onChange, textOn = LEFT) {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.checked = initialVal;
   checkbox.addEventListener('click', e => onChange(e.target.checked));
 
-  return renderUIWrapper(name, checkbox);
+  return wrapUIWithText(name, checkbox, textOn);
+}
+
+function renderDivider() {
+  return document.createElement('hr');
 }
