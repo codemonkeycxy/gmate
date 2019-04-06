@@ -48,7 +48,3 @@
   }
 })(document, window.mixpanel || []);
 mixpanel.init(MIXPANEL_ID);
-
-function track(event_name, properties) {
-  mixpanel.track(event_name, properties);
-}

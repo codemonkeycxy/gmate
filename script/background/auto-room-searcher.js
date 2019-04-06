@@ -201,7 +201,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
   );
   notify(
     'Oops. We encountered a problem',
-    'Please open the meeting up and click "I need a room" again'
+    `Please open the meeting up and click "${SEARCH_ROOM_BTN_MSG}" again`
   );
 });
 

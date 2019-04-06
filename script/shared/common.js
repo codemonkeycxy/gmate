@@ -28,6 +28,7 @@ const SHOW_BANNER = "show-banner";
 const ADD_OVERLAY = "add-overlay";
 
 const NOTIFY = "notify";
+const TRACK = "track";
 
 // auth
 const PROMPT_AUTH = "prompt-auth";
@@ -59,6 +60,8 @@ const NO = 'no';
 
 const LEFT = "left";
 const RIGHT = "right";
+
+const SEARCH_ROOM_BTN_MSG = "Find a room with GMate";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;
@@ -349,6 +352,17 @@ function notify(title, msg) {
         title: title,
         message: msg
       }
+    });
+  }
+}
+
+function track(msg, extra) {
+  try {  // for background script
+    mixpanel.track(msg, extra);
+  } catch (e) {  // for content script
+    chrome.runtime.sendMessage({
+      type: TRACK,
+      data: {msg, extra}
     });
   }
 }
