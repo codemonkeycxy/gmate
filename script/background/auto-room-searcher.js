@@ -154,7 +154,7 @@ function stopWorker() {
 // todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
 // todo: button disappears after 1 refresh in the meeting edit page
-// todo: wrap throw error and console warn/error with log to mixpanel
+// todo: log persist to storage error
 
 
 // ==================== Task Queue Management ======================
@@ -165,28 +165,26 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
 
   if (!eventId) {
     // if this happens there's a bug
-    throw new Error(`received empty event id. event name: ${eventName}`);
+    throw gmateError('empty event id', {eventName});
   }
 
+  // enqueue the event at hand first even if we need to enqueue other recurring meetings later
+  // this way the UI is not blocked by the async bookRecurring logic
   enqueue(eventTask(eventId, eventName, eventFilters));
   track(ROOM_TO_BE_FULFILLED);
+  if (!workerTabId) {
+    startWorker();
+  }
 
+  // NOTE: leave the async logic towards the end in order not to block the UI
   if (msg.data.bookRecurring) {
-    const eventSaved = await tryUntilPass(
-      async () => await CalendarAPI.getEventB64(eventId), {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}
-    );
-    if (!eventSaved) {
-      // todo: add log here
-      return;  // todo: shouldn't return here
-    }
+    // the event might have just been created, wait until it can be fetched from the API before continuing
+    // tryUntilPass could fail but is very unlikely. since tryUntilPass has error logging so continue here optimistically
+    await tryUntilPass(async () => await CalendarAPI.getEventB64(eventId), {sleepMs: TEN_SEC_MS, countdown: 30});
 
     const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId, msg.data.recurForWks);
     enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
     track(RECURRING_ROOM_TO_BE_FULFILLED);
-  }
-
-  if (!workerTabId) {
-    startWorker();
   }
 });
 
