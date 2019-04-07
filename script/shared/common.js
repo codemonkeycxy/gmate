@@ -1,6 +1,8 @@
 // put reusable code in this file
 // reference: https://stackoverflow.com/questions/26240463/how-do-i-re-use-code-between-content-scripts-in-a-chrome-extension
 
+const APP_ID = 'delnddlekcgngcpgcebeaaffadedenmp';
+
 const TEN_SEC_MS = 10 * 1000;
 const ONE_MIN_MS = 60 * 1000;
 const FIVE_MIN_MS = 5 * ONE_MIN_MS;
@@ -296,8 +298,11 @@ function onMessage(callback, recycleTtl) {
 
 function onMessageOfType(expectedType, callback, recycleTtl) {
   onMessage(async (msg, sender, sendResponse) => {
-    if (!msg.type || msg.type !== expectedType) {
-      // todo: log error on !msg.type
+    if (!msg.type) {
+      throw errorWrapper('malformed message', {msg, expectedType});
+    }
+
+    if (msg.type !== expectedType) {
       return;
     }
 
@@ -718,4 +723,37 @@ function setPauseIcon() {
 
 function unsetPauseIcon() {
   chrome.browserAction.setBadgeText({text: ''});
+}
+
+function replaceAll(str, find, replace) {
+  function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  }
+
+  return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+/**
+ * error wrapper logs the error info (including stack trace) to both the console and the external tracker.
+ * in the end, it returns an error object for the caller to decide whether to throw
+ *
+ * @param msg required error message
+ * @param data optional extra payload data
+ * @returns {Error} a new error for the caller to throw
+ */
+function errorWrapper(msg, data = null) {
+  const infoBag = {msg};
+  if (data) {
+    infoBag.data = data;
+  }
+
+  // we could also have jammed data into the error message but that'd overflow the mixpanel tracker UI
+  const error = new Error(msg);
+  // make stack trace more compact to fit into mixpanel tracker's UI
+  infoBag.stack = replaceAll(error.stack, `chrome-extension://${APP_ID}/script/`, '');
+
+  track('error', infoBag);
+  console.error(infoBag);
+
+  return error;
 }
