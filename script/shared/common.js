@@ -325,16 +325,26 @@ async function getTabById(id) {
   return await new Promise(resolve => chrome.tabs.get(id, tab => resolve(tab)));
 }
 
-async function getFromStorage(keys) {
+async function getFromStorageLocal(keys) {
+  return await new Promise(resolve => chrome.storage.local.get(keys, result => resolve(result)));
+}
+
+async function getFromStorageSync(keys) {
   return await new Promise(resolve => chrome.storage.sync.get(keys, result => resolve(result)));
 }
 
-function persist(items) {
+// larger storage space but the data is not synced across Chrome browsers
+function persistLocal(items) {
+  chrome.storage.local.set(items);
+}
+
+// data synced across multiple Chrome browsers, but the storage space is more limited
+function persistSync(items) {
   chrome.storage.sync.set(items);
 }
 
-function persistPair(key, val) {
-  persist({[key]: val});
+function persistPairSync(key, val) {
+  persistSync({[key]: val});
 }
 
 function isMyMeeting() {

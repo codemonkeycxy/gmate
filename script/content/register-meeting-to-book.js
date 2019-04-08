@@ -45,7 +45,7 @@
   async function renderModelBody() {
     const filterUI = await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val));
     const bookRecurringCheckbox = renderCheckbox(
-      'apply to recurring events for the next 2 weeks',
+      'apply to recurring meetings for the next 2 weeks (note you may not always get the same room)',
       false,
       value => globals.bookRecurring = value,
       RIGHT

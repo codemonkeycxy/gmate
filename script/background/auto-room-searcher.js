@@ -1,4 +1,6 @@
 // ==================== global variable management ======================
+const GLOBAL_VARIABLE_KEY = 'background-global-variables';
+
 (async () => await bootstrap())();
 
 function saveGlobalVariables() {
@@ -10,14 +12,29 @@ function saveGlobalVariables() {
     lastActiveTs: lastActiveTs
   };
   console.log(`taking a snapshot of the current global variables`);
-  persist({
-    'background-global-variables': snapshot
-  });
+  persistLocal({[GLOBAL_VARIABLE_KEY]: snapshot});
 }
 
 async function bootstrap() {
-  const result = await getFromStorage({'background-global-variables': {}});
-  const globalVars = result['background-global-variables'];
+  // todo: remove fetching from sync storage once all users have migrated over
+  const syncResult = await getFromStorageSync({[GLOBAL_VARIABLE_KEY]: {}});
+  const localResult = await getFromStorageLocal({[GLOBAL_VARIABLE_KEY]: {}});
+
+  let globalVars = {};
+  if (!isEmpty(syncResult[GLOBAL_VARIABLE_KEY])) {
+    console.log('reading global vars from sync');
+    track('reading global vars from sync');
+
+    globalVars = syncResult[GLOBAL_VARIABLE_KEY];
+    // wipe out sync storage so we can fall on reading from local next time
+    await persistPairSync(GLOBAL_VARIABLE_KEY, {});
+  } else {
+    console.log('reading global vars from local');
+    track('reading global vars from local');
+
+    globalVars = localResult[GLOBAL_VARIABLE_KEY];
+  }
+
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
 
   toBeFulfilled = globalVars.toBeFulfilled || [];
@@ -154,8 +171,15 @@ function stopWorker() {
 // todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
 // todo: button disappears after 1 refresh in the meeting edit page
-// todo: log persist to storage error
-
+// todo: make checkbox text clickable
+// https://stackoverflow.com/questions/6293588/how-to-create-an-html-checkbox-with-a-clickable-label
+// todo: add tricks to book consistent rooms for recurring meetings to power user guide
+// 1) add your favorite room and book recurring for the next 100 wks. gmate skips already booked
+// 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
+// todo: before releasing v2.2.0 test the following:
+// 1) revoke auth and get auth
+// 2) sync storage to local storage transition
+// 3) recurring room from the past, future, with already booked, deleted, and rejected rooms
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {

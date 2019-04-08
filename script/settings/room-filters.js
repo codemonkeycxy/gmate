@@ -86,7 +86,7 @@ async function getFlexRoomFilters() {
   const storageKeys = {};
   filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.key)] = setting.default);
 
-  return await getFromStorage(storageKeys);
+  return await getFromStorageSync(storageKeys);
 }
 
 /**
@@ -94,7 +94,7 @@ async function getFlexRoomFilters() {
  * @returns {Promise<{posFilter: *, negFilter: *, flexFilters: *}>}
  */
 async function getRoomFilters() {
-  const result = await getFromStorage(DEFAULT_ROOM_BOOKING_FILTERS);
+  const result = await getFromStorageSync(DEFAULT_ROOM_BOOKING_FILTERS);
 
   return {
     posFilter: result[ROOM_BOOKING_FILTER_POSITIVE],

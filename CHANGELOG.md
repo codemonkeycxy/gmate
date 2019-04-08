@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - [feature] Support searching room for recurring meetings
 - [enhancement] Show a "paused" sign on the icon when the worker is stopped
 - [maintenance] Log more detailed crash report for analytics
+- [maintenance] Migrate room searching queue backup data to local storage for more space
 
 ## 2.1.0
 - [enhancement] Redesign the room searching button UI for better visibility
