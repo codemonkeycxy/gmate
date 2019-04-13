@@ -80,7 +80,7 @@ function buildCalendarAPI() {
   }
 
   async function addRoom(eventId, roomEmail) {
-    const event = await CalendarAPI.getEvent(eventId);
+    const event = await getEvent(eventId);
     event.attendees = event.attendees || [];
     event.attendees.push({
       email: roomEmail
@@ -118,17 +118,13 @@ function buildCalendarAPI() {
   }
 
   return {
-    getEvent,
     getEventB64,
     isPastMeetingB64,
-    getRecurringEvents,
     isRoomConfirmedB64,
     isEventCancelledB64,
     eventIdToRecurringIdsB64,
 
-    addRoom,
     addRoomB64,
-    updateEvent,
   }
 }
 
