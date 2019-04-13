@@ -201,17 +201,22 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
   // NOTE: leave the async logic towards the end in order not to block the UI
   if (msg.data.bookRecurring) {
     // the event might have just been created, wait until it can be fetched from the API before continuing
-    // tryUntilPass could fail but is very unlikely. since tryUntilPass has error logging so continue here optimistically
-    await tryUntilPass(async () => await CalendarAPI.getEventB64(eventId), {sleepMs: TEN_SEC_MS, countdown: 30});
+    const success = await tryUntilPass(
+      async () => await CalendarAPI.getEventB64(eventId),
+      {sleepMs: 1000, countdown: 15, suppressError: true}  // wait up to 15 sec
+    );
+    if (!success) {
+      return notify('Oops. We encountered a problem', 'Unable to enqueue recurring meetings. Please try again');
+    }
 
     const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
     enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
     track(RECURRING_ROOM_TO_BE_FULFILLED);
 
     if (recurringIds.length < 2) {
-      notify("Warning!", `Only found ${recurringIds.length} recurring meeting. Are you sure?`);
+      notify('Warning!', `Only found ${recurringIds.length} recurring meeting. Are you sure?`);
     } else {
-      notify("Success!", `Added ${recurringIds.length} meetings to the room searching queue`);
+      notify('Success!', `Added ${recurringIds.length} meetings to the room searching queue`);
     }
   }
 });
@@ -408,11 +413,7 @@ async function bookRoom(eventId, eventName, roomEmail) {
 
   const success = await tryUntilPass(
     async () => await CalendarAPI.isRoomConfirmedB64(eventId, roomEmail),
-    { // wait up to 5 min
-      sleepMs: TEN_SEC_MS,
-      countdown: 30,
-      suppressError: true
-    }
+    {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
   );
 
   if (success) {
