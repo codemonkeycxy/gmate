@@ -176,6 +176,8 @@ function stopWorker() {
 // todo: add tricks to book consistent rooms for recurring meetings to power user guide
 // 1) add your favorite room and book recurring for the next 100 wks. gmate skips already booked
 // 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
+// todo: study this useful link and possibly fetch more matching rooms
+// https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
