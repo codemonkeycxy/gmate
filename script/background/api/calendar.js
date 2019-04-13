@@ -18,6 +18,11 @@ function buildCalendarAPI() {
     );
   }
 
+  async function isEventCancelledB64(b64Id) {
+    const event = await getEventB64(b64Id);
+    return !event || event.status === 'cancelled';
+  }
+
   async function isPastMeetingB64(b64Id) {
     const event = await getEventB64(b64Id);
     const start = new Date(event.start.dateTime);
@@ -118,6 +123,7 @@ function buildCalendarAPI() {
     isPastMeetingB64,
     getRecurringEvents,
     isRoomConfirmedB64,
+    isEventCancelledB64,
     eventIdToRecurringIdsB64,
 
     addRoom,

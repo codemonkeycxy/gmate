@@ -257,17 +257,6 @@ async function heartbeat() {
   console.log('heartbeat check. still alive...');
   saveGlobalVariables();
 
-  if (workerTabId && currentTask && currentTask.type === EVENT) {
-    const worker = await getTabById(workerTabId);
-    // if an event no longer exists, remove on to the next task
-    if (worker.url.includes('removed')) {
-      console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
-      // replace the dead url with the calendar main page url
-      loadUrlOnWorker(CALENDAR_PAGE_URL_PREFIX);
-      return await nextTask();
-    }
-  }
-
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
 
@@ -304,8 +293,13 @@ async function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
-  const isPastMeeting = await CalendarAPI.isPastMeetingB64(currentTask.data.eventId);
-  if (isPastMeeting) {
+  const eventId = currentTask.data.eventId;
+  if (await CalendarAPI.isEventCancelledB64(eventId)) {
+    console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
+    return await nextTask();
+  }
+
+  if (await CalendarAPI.isPastMeetingB64(eventId)) {
     console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
     return await nextTask();
   }

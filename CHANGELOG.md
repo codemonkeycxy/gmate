@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - [enhancement] Show a "paused" sign on the icon when the worker is stopped
 - [maintenance] Log more detailed crash report for analytics
 - [maintenance] Migrate room searching queue backup data to local storage for more space
+- [maintenance] Move cancelled meeting detection to use Calendar API for better stability
 
 ## 2.1.0
 - [enhancement] Redesign the room searching button UI for better visibility
