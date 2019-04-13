@@ -293,6 +293,11 @@ async function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
+  // throw in a random delay to avoid getting throttled by Google
+  const randDelayMs = getRandomInt(TEN_SEC_MS);
+  console.log(`next task will start in ${Math.round(randDelayMs / 1000)} sec...`);
+  await sleep(randDelayMs);
+
   const eventId = currentTask.data.eventId;
   if (await CalendarAPI.isEventCancelledB64(eventId)) {
     console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
@@ -304,13 +309,7 @@ async function nextTask() {
     return await nextTask();
   }
 
-  // throw in a random delay to avoid getting throttled by Google
-  const randDelay = getRandomInt(TEN_SEC_MS);
-  console.log(`next task will start in ${Math.round(randDelay / 1000)} sec...`);
-  setTimeout(() => {
-    console.log('load next event');
-    loadEventPage();
-  }, randDelay);
+  loadEventPage();
 }
 
 async function wakeUp(taskVersionBeforeNap) {
