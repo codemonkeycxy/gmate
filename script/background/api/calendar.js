@@ -52,11 +52,10 @@ function buildCalendarAPI() {
       }`
     );
 
-    // todo: test empty result
     return result.items;
   }
 
-  async function eventIdToRecurringIdsB64(b64Id, lookAheadWeeks = 2) {
+  async function eventIdToRecurringIdsB64(b64Id, lookAheadWeeks = 54) {
     const {id, ownerEmail} = decodeEventId(b64Id);
     const event = await getEvent(id);
     const start = new Date(event.start.dateTime);

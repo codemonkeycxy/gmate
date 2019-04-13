@@ -176,8 +176,6 @@ function stopWorker() {
 // todo: add tricks to book consistent rooms for recurring meetings to power user guide
 // 1) add your favorite room and book recurring for the next 100 wks. gmate skips already booked
 // 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
-// todo: before releasing v2.2.0 test the following:
-// 3) recurring room from the past, future, with already booked, deleted, and rejected rooms
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -204,7 +202,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
     // tryUntilPass could fail but is very unlikely. since tryUntilPass has error logging so continue here optimistically
     await tryUntilPass(async () => await CalendarAPI.getEventB64(eventId), {sleepMs: TEN_SEC_MS, countdown: 30});
 
-    const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId, msg.data.recurForWks);
+    const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
     enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
     track(RECURRING_ROOM_TO_BE_FULFILLED);
   }
