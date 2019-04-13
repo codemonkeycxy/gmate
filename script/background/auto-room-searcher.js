@@ -205,6 +205,12 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
     const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
     enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
     track(RECURRING_ROOM_TO_BE_FULFILLED);
+
+    if (recurringIds.length < 2) {
+      notify("Warning!", `Only found ${recurringIds.length} recurring meeting. Are you sure?`);
+    } else {
+      notify("Success!", `Added ${recurringIds.length} meetings to the room searching queue`);
+    }
   }
 });
 
