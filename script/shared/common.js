@@ -352,6 +352,25 @@ function isMyMeeting() {
   return Boolean(getElementByText('legend', 'Guests can:'));
 }
 
+/**
+ * throttle notifications to avoid overwhelming the user
+ * this function uses a simple throttle strategy:
+ * if the new message is the same as the previous one, then don't send it
+ */
+const notifyThrottled = (() => {
+  let lastMsg;
+
+  return (title, msg) => {
+    if (lastMsg === msg) {
+      console.log(`Throttled repeated message ${msg} to avoid bugging the user`);
+    } else {
+      notify(title, msg);
+    }
+
+    lastMsg = msg;
+  }
+})();
+
 function notify(title, msg) {
   if (chrome.notifications) {  // for background script
     chrome.notifications.create(null, {

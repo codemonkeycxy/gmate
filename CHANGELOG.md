@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 2.2.0
 - [feature] Support searching room for recurring meetings
 - [enhancement] Show a "paused" sign on the icon when the worker is stopped
+- [enhancement] Throttle room found messages to avoid overwhelming users
 - [maintenance] Log more detailed crash report for analytics
 - [maintenance] Migrate room searching queue backup data to local storage for more space
 - [maintenance] Move cancelled meeting detection to use Calendar API for better stability

@@ -387,7 +387,7 @@ function preparePostTrigger() {
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
       console.log(`no need to book for ${JSON.stringify(currentTask)}`);
-      notify('Great News!', `"${eventName}" already has a room that meets your criteria!`);
+      notifyThrottled('Great News!', `"${eventName}" already has a room that meets your criteria!`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       await nextTask();
@@ -417,7 +417,9 @@ async function bookRoom(eventId, eventName, roomEmail) {
   );
 
   if (success) {
-    notify('Great News!', `Room found for "${eventName}"!`);
+    // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
+    // increasing the message's cardinality (e.g. log room name with message)
+    notifyThrottled('Great News!', `Room found for "${eventName}"!`);
     await onRoomSavedSuccess();
   } else {
     return await onRoomSavedFailure();
