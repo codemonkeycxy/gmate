@@ -177,8 +177,6 @@ function stopWorker() {
 // 1) add your favorite room and book recurring for the next 100 wks. gmate skips already booked
 // 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
 // todo: before releasing v2.2.0 test the following:
-// 1) revoke auth and get auth
-// 2) sync storage to local storage transition
 // 3) recurring room from the past, future, with already booked, deleted, and rejected rooms
 
 // ==================== Task Queue Management ======================

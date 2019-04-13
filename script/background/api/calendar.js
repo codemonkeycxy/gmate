@@ -27,7 +27,8 @@ function buildCalendarAPI() {
   }
 
   async function getEvent(eventId) {
-    return await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`);
+    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`);
+    return result.error ? null : result;
   }
 
   async function getEventB64(b64Id) {
