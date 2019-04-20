@@ -20,7 +20,7 @@ function buildCalendarAPI() {
 
   async function isEventCancelledB64(b64Id) {
     const event = await getEventB64(b64Id);
-    return !event || event.status === 'cancelled';
+    return event && event.status === 'cancelled';
   }
 
   async function isPastMeetingB64(b64Id) {
