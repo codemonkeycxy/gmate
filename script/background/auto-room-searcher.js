@@ -190,11 +190,6 @@ function stopWorker() {
 // 14:41:02.937 calendar.js:107 TypeError: Failed to fetch
 // (anonymous) @ calendar.js:107
 // 14:41:02.940 _generated_background_page.html:1 Uncaught (in promise) TypeError: Failed to fetch
-// todo: add faq for log in issue
-// 1) remove credentials chrome://identity-internals/
-// 2) log off account and log in again
-// 3) turn on account syncing
-// 4) remove random accounts (chrome manage accounts)
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
