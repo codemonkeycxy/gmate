@@ -178,6 +178,23 @@ function stopWorker() {
 // 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
 // todo: study this useful link and possibly fetch more matching rooms
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
+// todo: use free/busy api to look for suitable rooms
+// https://developers.google.com/calendar/v3/reference/freebusy/query?apix_params=%7B%22resource%22%3A%7B%22items%22%3A%5B%7B%22id%22%3A%22uber.com_53454131313931326e6441766531327468576f6f646c616e645061726b313256432d3536393539%40resource.calendar.google.com%22%7D%2C%7B%22id%22%3A%22uber.com_53656131393131326e64417665313274684175746f6d6174696f6e5465616d2d373737383632%40resource.calendar.google.com%22%7D%5D%2C%22timeMin%22%3A%222019-04-03T10%3A00%3A00Z%22%2C%22timeMax%22%3A%222019-05-03T10%3A00%3A00Z%22%7D%7D
+// todo: update gmate link message current https://www.gmate.us/ only says GMate
+// todo: bug room got removed due to auth error/no internet connection
+// _generated_background_page.html:1 Unchecked runtime.lastError: OAuth2 request failed: Connection failed (-106).
+// 20:09:09.216 www.googleapis.com/calendar/v3/calendars/primary/events/5ittf616tovtotit9p1lavcobt:1 Failed to load resource: the server responded with a status of 401 ()
+// 20:09:09.218 auto-room-searcher.js:310 {"id":46,"type":"event","data":{"eventId":"NWl0dGY2MTZ0b3Z0b3RpdDlwMWxhdmNvYnQgeGlueWlAdWJlci5jb20","eventName":"Jam on pain points from expiring doc blocker project","eventFilters":{"posFilter":"","negFilter":"","flexFilters":{"room-booking-filter-positive-1":"","room-booking-filter-negative":"","room-booking-filter-uber-floor":"4,5","room-booking-filter-uber-location":"SFO | 1455 Market","room-booking-filter-uber-need_vc":true,"room-booking-filter-uber-room_size":"3-9"}}}} no longer exists, moving on to the next task...
+// _generated_background_page.html:1 Unchecked runtime.lastError: OAuth2 request failed: Connection failed (-106).
+// 14:41:02.936 www.googleapis.com/calendar/v3/calendars/primary/events/3vfp3gisdvmmggu1338pcp8gog:1 Failed to load resource: net::ERR_INTERNET_DISCONNECTED
+// 14:41:02.937 calendar.js:107 TypeError: Failed to fetch
+// (anonymous) @ calendar.js:107
+// 14:41:02.940 _generated_background_page.html:1 Uncaught (in promise) TypeError: Failed to fetch
+// todo: add faq for log in issue
+// 1) remove credentials chrome://identity-internals/
+// 2) log off account and log in again
+// 3) turn on account syncing
+// 4) remove random accounts (chrome manage accounts)
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
