@@ -299,7 +299,7 @@ function onMessage(callback, recycleTtl) {
 function onMessageOfType(expectedType, callback, recycleTtl) {
   onMessage(async (msg, sender, sendResponse) => {
     if (!msg.type) {
-      throw gmateError('malformed message', {msg, expectedType});
+      throw GMateError('malformed message', {msg, expectedType});
     }
 
     if (msg.type !== expectedType) {
@@ -425,7 +425,7 @@ async function tryUntilPass(predicate, options) {
     return false;
   }
 
-  throw gmateError('tryUntilPass failed');
+  throw GMateError('tryUntilPass failed');
 }
 
 async function sleep(ms) {
@@ -768,7 +768,7 @@ function replaceAll(str, find, replace) {
  * @param data optional extra payload data
  * @returns {Error} a new error for the caller to throw
  */
-function gmateError(msg, data = null) {
+function GMateError(msg, data = null) {
   const infoBag = {msg};
   if (data) {
     infoBag.data = data;

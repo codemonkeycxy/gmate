@@ -23,12 +23,11 @@ function buildCalendarAPI() {
     return event && event.status === 'cancelled';
   }
 
-  async function isPastMeetingB64(b64Id) {
+  async function isPastEventB64(b64Id) {
     const event = await getEventB64(b64Id);
-    const start = new Date(event.start.dateTime);
     const now = new Date();
 
-    return start < now;
+    return event && new Date(event.start.dateTime) < now;
   }
 
   async function getEvent(eventId) {
@@ -104,8 +103,7 @@ function buildCalendarAPI() {
         .then(response => response.json()) // Transform the data into json
         .then(data => resolve(data))
         .catch(error => {
-          console.error(error);
-          throw error;
+          throw GMateError(error.message);
         })
     );
   }
@@ -119,7 +117,7 @@ function buildCalendarAPI() {
 
   return {
     getEventB64,
-    isPastMeetingB64,
+    isPastEventB64,
     isRoomConfirmedB64,
     isEventCancelledB64,
     eventIdToRecurringIdsB64,

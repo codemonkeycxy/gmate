@@ -204,7 +204,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
 
   if (!eventId) {
     // if this happens there's a bug
-    throw gmateError('empty event id', {eventName});
+    throw GMateError('empty event id', {eventName});
   }
 
   // enqueue the event at hand first even if we need to enqueue other recurring meetings later
@@ -320,13 +320,14 @@ async function nextTask() {
   console.log(`next task will start in ${Math.round(randDelayMs / 1000)} sec...`);
   await sleep(randDelayMs);
 
+  // todo: the following CalendarAPI happens at room searching rate. either optimize or raise the quota when there are more users
   const eventId = currentTask.data.eventId;
   if (await CalendarAPI.isEventCancelledB64(eventId)) {
     console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
     return await nextTask();
   }
 
-  if (await CalendarAPI.isPastMeetingB64(eventId)) {
+  if (await CalendarAPI.isPastEventB64(eventId)) {
     console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
     return await nextTask();
   }

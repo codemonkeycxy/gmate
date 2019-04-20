@@ -25,8 +25,8 @@ onMessage((msg, sender, cb) => {
 //   await promptAuth();
 //   const pastMeeting = 'NjBwdjA5czh0Nzl1aW92ZmNkM3ZsOW9lcXQgeGlueWlAdWJlci5jb20';
 //   const futureMeeting = 'NWg5OWtyM2U2bGgxZ2x0OXVpYzdocDUxNDUgeGlueWlAdWJlci5jb20';
-//   console.log(await CalendarAPI.isPastMeetingB64(pastMeeting));
-//   console.log(await CalendarAPI.isPastMeetingB64(futureMeeting));
+//   console.log(await CalendarAPI.isPastEventB64(pastMeeting));
+//   console.log(await CalendarAPI.isPastEventB64(futureMeeting));
 //
 //   const updated = await CalendarAPI.addRoomB64(base64Id, 'uber.com_2d3631343836363435363330@resource.calendar.google.com');
 //   console.log(updated);
