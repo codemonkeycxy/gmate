@@ -88,7 +88,7 @@ function startWorker() {
     url: CALENDAR_PAGE_URL_PREFIX,
     active: false,
     pinned: true
-  }, async tab => {
+  }, tab => {
     workerTabId = tab.id;
     console.log(`worker ${workerTabId} initiated`);
     unsetPauseIcon();
@@ -270,7 +270,7 @@ onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
 });
 
 // ==================== heartbeat ======================
-async function heartbeat() {
+function heartbeat() {
   console.log('heartbeat check. still alive...');
   saveGlobalVariables();
 
@@ -335,10 +335,8 @@ async function nextTask() {
   loadEventPage();
 }
 
-async function wakeUp(taskVersionBeforeNap) {
-  if (taskVersionBeforeNap !== taskVersion) {
-    console.log(`the world has moved on when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
-  } else {
+function wakeUp(taskVersionBeforeNap) {
+  if (isTaskFresh(taskVersionBeforeNap)) {
     nextTaskFireAndForget();
   }
 }
@@ -438,19 +436,19 @@ async function bookRoom(eventId, eventName, roomEmail) {
     // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
     // increasing the message's cardinality (e.g. log room name with message)
     notifyThrottled('Great News!', `Room found for "${eventName}"!`);
-    await onRoomSavedSuccess();
+    onRoomSavedSuccess();
   } else {
-    return await onRoomSavedFailure();
+    return onRoomSavedFailure();
   }
 }
 
-async function onRoomSavedSuccess() {
+function onRoomSavedSuccess() {
   console.log(`room saved for ${JSON.stringify(currentTask)}`);
   track('room-saved');
   nextTaskFireAndForget();
 }
 
-async function onRoomSavedFailure() {
+function onRoomSavedFailure() {
   console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
   // room save failures are not expected in the book-via-api approach. log to confirm
   track('room-save-failure');
@@ -460,6 +458,15 @@ async function onRoomSavedFailure() {
 }
 
 // ==================== helpers ======================
+
+function isTaskFresh(myTaskVersion) {
+  if (myTaskVersion !== taskVersion) {
+    console.log(`the world has moved on when I was sleeping... my task version: ${myTaskVersion}, current task version: ${taskVersion}`);
+    return false
+  } else {
+    return true
+  }
+}
 
 function _enqueue(task) {
   if (!task) {
