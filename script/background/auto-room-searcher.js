@@ -92,7 +92,7 @@ function startWorker() {
     workerTabId = tab.id;
     console.log(`worker ${workerTabId} initiated`);
     unsetPauseIcon();
-    await nextTask();
+    nextTaskFireAndForget();
   });
 }
 
@@ -278,7 +278,7 @@ async function heartbeat() {
     console.log('worker idle for more than 5 min, resurrecting...');
 
     enqueue(currentTask);
-    await nextTask();
+    nextTaskFireAndForget();
   }
 }
 
@@ -287,6 +287,11 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 
 // ==================== state machine ======================
+
+/* don't wait for next task to return otherwise you could be blocked forever */
+function nextTaskFireAndForget() {
+  return nextTask();
+}
 
 async function nextTask() {
   console.log(`set last active timestamp to ${lastActiveTs.toString()}`);
@@ -319,12 +324,12 @@ async function nextTask() {
   const eventId = currentTask.data.eventId;
   if (await CalendarAPI.isEventCancelledB64(eventId)) {
     console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
-    return await nextTask();
+    return nextTaskFireAndForget();
   }
 
   if (await CalendarAPI.isPastEventB64(eventId)) {
     console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
-    return await nextTask();
+    return nextTaskFireAndForget();
   }
 
   loadEventPage();
@@ -334,7 +339,7 @@ async function wakeUp(taskVersionBeforeNap) {
   if (taskVersionBeforeNap !== taskVersion) {
     console.log(`the world has moved on when I was sleeping... my task version: ${taskVersionBeforeNap}, current task version: ${taskVersion}`);
   } else {
-    await nextTask();
+    nextTaskFireAndForget();
   }
 }
 
@@ -403,7 +408,7 @@ function preparePostTrigger() {
       notifyThrottled('Great News!', `"${eventName}" already has a room that meets your criteria!`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      await nextTask();
+      nextTaskFireAndForget();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
@@ -413,7 +418,7 @@ function preparePostTrigger() {
       enqueue(currentTask);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      await nextTask();
+      nextTaskFireAndForget();
     }
   }
 
@@ -442,7 +447,7 @@ async function bookRoom(eventId, eventName, roomEmail) {
 async function onRoomSavedSuccess() {
   console.log(`room saved for ${JSON.stringify(currentTask)}`);
   track('room-saved');
-  await nextTask();
+  nextTaskFireAndForget();
 }
 
 async function onRoomSavedFailure() {
@@ -451,7 +456,7 @@ async function onRoomSavedFailure() {
   track('room-save-failure');
   enqueue(currentTask);
   // remove listener after handling the expected event to avoid double trigger
-  await nextTask();
+  nextTaskFireAndForget();
 }
 
 // ==================== helpers ======================
