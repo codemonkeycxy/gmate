@@ -332,7 +332,7 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  loadEventPage();
+  loadEventPage(taskVersion);
 }
 
 function wakeUp(taskVersionBeforeNap) {
@@ -341,7 +341,11 @@ function wakeUp(taskVersionBeforeNap) {
   }
 }
 
-function loadEventPage() {
+function loadEventPage(taskVersion) {
+  if (!isTaskFresh(taskVersion)) {
+    return;
+  }
+
   if (!currentTask || currentTask.type !== EVENT) {
     return;
   }
@@ -349,13 +353,17 @@ function loadEventPage() {
   const eventId = currentTask.data.eventId;
   const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
 
-  preparePostLoad(urlToLoad);
+  preparePostLoad(urlToLoad, taskVersion);
   console.log(`load new url ${urlToLoad}`);
   loadUrlOnWorker(urlToLoad);
 }
 
-function preparePostLoad(urlToLoad) {
-  async function pageLoadListener(tabId, changeInfo, tab) {
+function preparePostLoad(urlToLoad, taskVersion) {
+  function pageLoadListener(tabId, changeInfo, tab) {
+    if (!isTaskFresh(taskVersion)) {
+      return;
+    }
+
     const isWorker = tabId === workerTabId;
     const isTargetUrl = tab.url === urlToLoad;
     const isLoaded = changeInfo.status === "complete";
@@ -364,15 +372,15 @@ function preparePostLoad(urlToLoad) {
       console.log(`${urlToLoad} loaded.`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.tabs.onUpdated.removeListener(pageLoadListener);
-      await triggerRoomBooking();
+      triggerRoomBooking(taskVersion);
     }
   }
 
   onTabUpdated(pageLoadListener, ONE_HOUR_MS);
 }
 
-async function triggerRoomBooking() {
-  preparePostTrigger();
+function triggerRoomBooking(taskVersion) {
+  preparePostTrigger(taskVersion);
   console.log('trigger room booking');
   emit(workerTabId, {
     type: AUTO_ROOM_BOOKING,
@@ -384,8 +392,12 @@ async function triggerRoomBooking() {
   });
 }
 
-function preparePostTrigger() {
+function preparePostTrigger(taskVersion) {
   async function roomSelectionListener(msg, sender, sendResponse) {
+    if (!isTaskFresh(taskVersion)) {
+      return;
+    }
+
     if (!currentTask || currentTask.type !== EVENT) {
       return;
     }
@@ -397,8 +409,7 @@ function preparePostTrigger() {
       console.log(`room ${msg.data.roomName} selected for ${JSON.stringify(currentTask)}`);
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
-
-      await bookRoom(eventId, eventName, msg.data.roomEmail);
+      await bookRoom(eventId, eventName, msg.data.roomEmail, taskVersion);
     }
 
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
@@ -423,7 +434,11 @@ function preparePostTrigger() {
   onMessage(roomSelectionListener, ONE_HOUR_MS);
 }
 
-async function bookRoom(eventId, eventName, roomEmail) {
+async function bookRoom(eventId, eventName, roomEmail, taskVersion) {
+  if (!isTaskFresh(taskVersion)) {
+    return;
+  }
+
   await CalendarAPI.addRoomB64(eventId, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
@@ -436,19 +451,27 @@ async function bookRoom(eventId, eventName, roomEmail) {
     // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
     // increasing the message's cardinality (e.g. log room name with message)
     notifyThrottled('Great News!', `Room found for "${eventName}"!`);
-    onRoomSavedSuccess();
+    onRoomSavedSuccess(taskVersion);
   } else {
-    return onRoomSavedFailure();
+    onRoomSavedFailure(taskVersion);
   }
 }
 
-function onRoomSavedSuccess() {
+function onRoomSavedSuccess(taskVersion) {
+  if (!isTaskFresh(taskVersion)) {
+    return;
+  }
+
   console.log(`room saved for ${JSON.stringify(currentTask)}`);
   track('room-saved');
   nextTaskFireAndForget();
 }
 
-function onRoomSavedFailure() {
+function onRoomSavedFailure(taskVersion) {
+  if (!isTaskFresh(taskVersion)) {
+    return;
+  }
+
   console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
   // room save failures are not expected in the book-via-api approach. log to confirm
   track('room-save-failure');
