@@ -103,18 +103,41 @@ async function getRoomFilters() {
   }
 }
 
-function checkRoomEligibility(roomStr, userFilterInputs) {
+function matchRoom(roomStr, posFilter, negFilter, flexFilters) {
+  let matchPosFilter = true;
+  let matchNegFilter = false;
+  let matchFlexFilter = true;
+
+  if (posFilter) {
+    const posRe = new RegExp(posFilter);
+    // return if name matches with positive filter
+    matchPosFilter = roomStr.match(posRe);
+  }
+
+  if (negFilter) {
+    const negRe = new RegExp(negFilter);
+    matchNegFilter = roomStr.match(negRe);
+  }
+
+  if (flexFilters) {
+    matchFlexFilter = matchRoomByFlexFilters(roomStr, flexFilters);
+  }
+
+  return matchPosFilter && !matchNegFilter && matchFlexFilter;
+}
+
+function matchRoomByFlexFilters(roomStr, flexFilters) {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
 
   return filterSettings.every(
-    filterSetting => checkRoomEligibilityByFilter(roomStr, filterSetting, userFilterInputs)
+    filterSetting => matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters)
   );
 }
 
-function checkRoomEligibilityByFilter(roomStr, filterSetting, userFilterInput) {
+function matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters) {
   const storageKey = getRoomFilterStorageKey(filterSetting.key);
-  const storageVal = userFilterInput[storageKey];
+  const storageVal = flexFilters[storageKey];
   if (storageVal === ANY) {
     return true;
   }

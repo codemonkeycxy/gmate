@@ -209,24 +209,7 @@
 
   async function filterRooms(rooms, posFilter, negFilter, flexFilters) {
     rooms = rooms.filter(room => room.status !== DECLINED);
-
-    if (posFilter) {
-      const posRe = new RegExp(posFilter);
-      // return if name matches with positive filter
-      rooms = rooms.filter(room => room.name.match(posRe));
-    }
-
-    if (negFilter) {
-      const negRe = new RegExp(negFilter);
-      // DON'T return if name matches with negative filter
-      rooms = rooms.filter(room => !room.name.match(negRe));
-    }
-
-    if (flexFilters) {
-      rooms = rooms.filter(room => checkRoomEligibility(room.name, flexFilters));
-    }
-
-    return rooms;
+    return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
   }
 
   async function pickFavoriteRoom(rooms) {
