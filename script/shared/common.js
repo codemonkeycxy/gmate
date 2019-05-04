@@ -35,10 +35,6 @@ const TRACK = "track";
 // auth
 const PROMPT_AUTH = "prompt-auth";
 
-// task types
-const NAP = "nap";
-const EVENT = "event";
-
 // settings panel actions
 const GET_QUEUE = "get-queue";
 const REMOVE_TASK = "remove-task";

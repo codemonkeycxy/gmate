@@ -26,6 +26,7 @@
       "script/tracking.js",
       "script/versions.js",
       "script/background/api/calendar.js",
+      "script/background/entity/task.js",
       "script/background/index.js",
       "script/background/show-announcement.js",
       "script/background/edit-page-actions.js",

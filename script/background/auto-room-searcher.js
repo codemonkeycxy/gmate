@@ -194,7 +194,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
 
   // enqueue the event at hand first even if we need to enqueue other recurring meetings later
   // this way the UI is not blocked by the async bookRecurring logic
-  enqueue(eventTask(eventId, eventName, eventFilters));
+  enqueue(EventTask(eventId, eventName, eventFilters));
   track(ROOM_TO_BE_FULFILLED);
   if (!workerTabId) {
     startWorker();
@@ -212,7 +212,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
     }
 
     const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
-    enqueueMany(recurringIds.map(idToBook => eventTask(idToBook, eventName, eventFilters)));
+    enqueueMany(recurringIds.map(idToBook => EventTask(idToBook, eventName, eventFilters)));
     track(RECURRING_ROOM_TO_BE_FULFILLED);
 
     if (recurringIds.length < 2) {
@@ -300,7 +300,7 @@ async function nextTask() {
 
   const nextAction = dequeue();
   currentTask = nextAction;
-  if (nextAction.type === NAP) {
+  if (nextAction.type === TASK_TYPE.NAP) {
     console.log('nap for one min');
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
@@ -336,7 +336,7 @@ function loadEventPage(taskVersion) {
     return;
   }
 
-  if (!currentTask || currentTask.type !== EVENT) {
+  if (!currentTask || currentTask.type !== TASK_TYPE.EVENT) {
     return;
   }
 
@@ -388,7 +388,7 @@ function preparePostTrigger(taskVersion) {
       return;
     }
 
-    if (!currentTask || currentTask.type !== EVENT) {
+    if (!currentTask || currentTask.type !== TASK_TYPE.EVENT) {
       return;
     }
 
@@ -486,7 +486,7 @@ function _enqueue(task) {
     return console.log('nothing to enqueue, move on...');
   }
 
-  if (task.type !== EVENT) {
+  if (task.type !== TASK_TYPE.EVENT) {
     return console.log(`only need enqueue event tasks. ignoring ${JSON.stringify(task)}`);
   }
 
@@ -540,30 +540,11 @@ function removeTask(taskId) {
   console.error(`an error occurred during task removal. old task count ${oldLength}, new task count ${newLength}`);
 }
 
-function eventTask(eventId, eventName, eventFilters) {
-  return {
-    id: nextId(),
-    type: EVENT,
-    data: {
-      eventId: eventId,
-      eventName: eventName,
-      eventFilters: eventFilters
-    }
-  };
-}
-
-function napTask() {
-  return {
-    id: nextId(),
-    type: NAP
-  }
-}
-
 function estimateTimeToCompletion() {
   const avgEventTaskTime = 1 / 10;  // one tenth of a minute (aka 10 tasks per minute)
   let timeToCompletion = 0;
 
-  toBeFulfilled.forEach(task => timeToCompletion += task.type === NAP ? 1 : avgEventTaskTime);
+  toBeFulfilled.forEach(task => timeToCompletion += task.type === TASK_TYPE.NAP ? 1 : avgEventTaskTime);
   return Math.round(timeToCompletion);
 }
 
@@ -571,7 +552,7 @@ function isEventInQueue(eventTask) {
   // we purposefully NOT dedup against the currentTask here
   // since we have use cases that we need to push the current task back into the queue
   return toBeFulfilled.filter(task => {
-    if (task.type !== EVENT) {
+    if (task.type !== TASK_TYPE.EVENT) {
       return false;
     }
 
@@ -583,9 +564,9 @@ function isEventInQueue(eventTask) {
  * return all the event tasks from the task queue. Note the return value includes the currentTask as well
  */
 function getAllEventTasks() {
-  const toBeFulFilledEventTasks = toBeFulfilled.filter(task => task.type === EVENT);
+  const toBeFulFilledEventTasks = toBeFulfilled.filter(task => task.type === TASK_TYPE.EVENT);
 
-  if (currentTask && currentTask.type === EVENT) {
+  if (currentTask && currentTask.type === TASK_TYPE.EVENT) {
     return [currentTask, ...toBeFulFilledEventTasks];
   } else {
     return toBeFulFilledEventTasks;
@@ -605,7 +586,7 @@ function getNapFillers(napMinutes) {
   napMinutes = napMinutes - timeToCompletion;
   console.log(`given the current tasks will take ${timeToCompletion} minutes complete, adding ${napMinutes} minutes nap to the task queue...`);
   for (let i = 0; i < napMinutes; i++) {
-    fillers.push(napTask());
+    fillers.push(NapTask());
   }
 
   return fillers;
