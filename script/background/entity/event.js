@@ -34,7 +34,7 @@ class Event {
       return false;
     }
 
-    return this.rooms.some(room => room.email === roomEmail && room.status === ATTENDEE_STATUS.ACCEPTED);
+    return this.rooms.some(room => room.email === roomEmail && room.isConfirmed());
   }
 }
 
@@ -42,6 +42,10 @@ class Attendee {
   constructor({email, status}) {
     this.email = email;
     this.status = status;
+  }
+
+  isConfirmed() {
+    return this.status === ATTENDEE_STATUS.ACCEPTED;
   }
 }
 
