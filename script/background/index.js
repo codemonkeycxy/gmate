@@ -21,24 +21,9 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-// (async () => {
-//   await promptAuth();
-//   const pastMeeting = 'NjBwdjA5czh0Nzl1aW92ZmNkM3ZsOW9lcXQgeGlueWlAdWJlci5jb20';
-//   const futureMeeting = 'NWg5OWtyM2U2bGgxZ2x0OXVpYzdocDUxNDUgeGlueWlAdWJlci5jb20';
-//   console.log(await CalendarAPI.isPastEventB64(pastMeeting));
-//   console.log(await CalendarAPI.isPastEventB64(futureMeeting));
-//
-//   const updated = await CalendarAPI.addRoomB64(base64Id, 'uber.com_2d3631343836363435363330@resource.calendar.google.com');
-//   console.log(updated);
-//
-//   await sleep(3 * TEN_SEC_MS);
-//   const event = await CalendarAPI.getEventB64(base64Id);
-//   console.log(event);
-//
-//   const updated2 = await CalendarAPI.addRoomB64(base64Id, 'uber.com_383432313535383739@resource.calendar.google.com');
-//   console.log(updated2);
-//
-//   await sleep(3 * TEN_SEC_MS);
-//   const event2 = await CalendarAPI.getEventB64(base64Id);
-//   console.log(event2);
-// })();
+(async () => {
+  await promptAuth();
+  const b64 = 'NDQxdjE0cGVmNDJubXBybnVkN2RncjQ4azIgeGlueWlAdWJlci5jb20';
+  console.log(decodeEventId(b64));
+  console.log(await CalendarAPI.getEventB64(b64));
+})();

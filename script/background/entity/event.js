@@ -12,7 +12,8 @@ const ATTENDEE_STATUS = {
 };
 
 class Event {
-  constructor({status, start, rooms, humanAttendees}) {
+  constructor({id, status, start, rooms, humanAttendees}) {
+    this.id = id;
     this.status = status;
     this.start = start;
     this.rooms = rooms || [];
@@ -38,8 +39,7 @@ class Event {
 }
 
 class Attendee {
-  constructor({id, email, status}) {
-    this.id = id;
+  constructor({email, status}) {
     this.email = email;
     this.status = status;
   }

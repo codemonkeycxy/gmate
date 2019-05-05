@@ -104,6 +104,7 @@ function buildCalendarAPI() {
 
     const attendees = gEvent.attendees || [];
     return new Event({
+      id: gEvent.id,
       status: gEvent.status,
       start: new Date(gEvent.start.dateTime),
       rooms: attendees.filter(gAttendee => gAttendee.resource).map(gAttendee => toInternalRoom(gAttendee)),
@@ -118,7 +119,6 @@ function buildCalendarAPI() {
     }
 
     return new Room({
-      id: gAttendee.id,
       email: gAttendee.email,
       status: gAttendee.responseStatus,
     });
@@ -131,7 +131,6 @@ function buildCalendarAPI() {
     }
 
     return new HumanAttendee({
-      id: gAttendee.id,
       email: gAttendee.email,
       status: gAttendee.responseStatus,
     });
