@@ -180,11 +180,14 @@ function stopWorker() {
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: use free/busy api to look for suitable rooms
 // https://developers.google.com/calendar/v3/reference/freebusy/query?apix_params=%7B%22resource%22%3A%7B%22items%22%3A%5B%7B%22id%22%3A%22uber.com_53454131313931326e6441766531327468576f6f646c616e645061726b313256432d3536393539%40resource.calendar.google.com%22%7D%2C%7B%22id%22%3A%22uber.com_53656131393131326e64417665313274684175746f6d6174696f6e5465616d2d373737383632%40resource.calendar.google.com%22%7D%5D%2C%22timeMin%22%3A%222019-04-03T10%3A00%3A00Z%22%2C%22timeMax%22%3A%222019-05-03T10%3A00%3A00Z%22%7D%7D
-// todo: test
+// todo: test before releasing v2.2.1
 // 1) is cancelled
 // 2) is past
 // 3) already booked
 // 4) by the time of notification, the room is already confirmed
+// 5) no need to book (single & recurring) task filter different from default filters
+// todo: remove fetching from sync storage once all users have migrated over
+// todo: remove the UI driven "no need to book" after confirming there's no more traffic
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -326,8 +329,15 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  if (event.isPast()) {
+  if (event.isInPast()) {
     console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
+    return nextTaskFireAndForget();
+  }
+
+  const {posFilter, negFilter, flexFilters} = currentTask.data.eventFilters;
+  if (!isEmpty(event.matchingRooms(posFilter, negFilter, flexFilters))) {
+    console.log(`no need to book for ${JSON.stringify(currentTask)}`);
+    notifyThrottled('Great News!', `"${event.name}" already has a room that meets your criteria!`);
     return nextTaskFireAndForget();
   }
 
@@ -411,7 +421,11 @@ function preparePostTrigger(taskVersion) {
       await bookRoom(eventId, eventName, msg.data.roomEmail, taskVersion);
     }
 
+    // todo: remove this block after confirming there's no more traffic
     if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
+      track('unexpected-traffic', {where: 'old style "no need to book"'});
+      GMateError('unexpected traffic');
+
       console.log(`no need to book for ${JSON.stringify(currentTask)}`);
       notifyThrottled('Great News!', `"${eventName}" already has a room that meets your criteria!`);
       // remove listener after handling the expected event to avoid double trigger

@@ -3,7 +3,7 @@
   "version": "2.2.0",
   "manifest_version": 2,
   "minimum_chrome_version": "64",
-  "description": "Smart Google Calendar Meeting Management Helper",
+  "description": "Smart Google Calendar Manager",
   "browser_action": {
     "default_title": "gmate",
     "default_popup": "options.html"

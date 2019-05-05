@@ -21,7 +21,7 @@ class Event {
     this.humanAttendees = humanAttendees || [];
   }
 
-  isPast() {
+  isInPast() {
     const now = new Date();
     return this.start < now;
   }
@@ -38,10 +38,10 @@ class Event {
     return this.rooms.some(room => room.email === roomEmail && room.isAccepted());
   }
 
-  // hasMatchingRoom() {
-  //   rooms = rooms.filter(room => room.status !== DECLINED);
-  //   return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
-  // }
+  matchingRooms(posFilter, negFilter, flexFilters) {
+    const rooms = this.rooms.filter(room => room.isAccepted());
+    return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+  }
 }
 
 class Attendee {
