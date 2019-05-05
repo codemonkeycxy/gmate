@@ -444,7 +444,7 @@ async function bookRoom(eventId, eventName, roomEmail, taskVersion) {
   const success = await tryUntilPass(
     async () => {
       const event = await CalendarAPI.getEventB64(eventId);
-      return event && event.isRoomConfirmed(roomEmail);
+      return event && event.hasRoomAccepted(roomEmail);
     },
     {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
   );
