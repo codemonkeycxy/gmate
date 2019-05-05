@@ -1,47 +1,28 @@
+/**
+ * naming convention:
+ *   - g<Name> means google api object format. e.g. gEvent, gAttendee
+ *   - <Name> (without "g" prefix) means internal entity. e.g. Event, Room, HumanAttendee
+ *
+ * g<Name> can be used within this namespace, returned objects MUST either be primitives or internal entities
+ */
 function buildCalendarAPI() {
-  const RESPONSE_STATUS = {
-    NEEDS_ACTION: 'needsAction',
-    DECLINED: 'declined',
-    TENTATIVE: 'tentative',
-    ACCEPTED: 'accepted'
-  };
-
-  async function isRoomConfirmedB64(b64Id, roomEmail) {
-    const event = await getEventB64(b64Id);
-    if (!event || isEmpty(event.attendees)) {
-      // no room in the first place
-      return false;
-    }
-
-    return event.attendees.some(
-      attendee => attendee.email === roomEmail && attendee.responseStatus === RESPONSE_STATUS.ACCEPTED
-    );
-  }
-
-  async function isEventCancelledB64(b64Id) {
-    const event = await getEventB64(b64Id);
-    return event && event.status === 'cancelled';
-  }
-
-  async function isPastEventB64(b64Id) {
-    const event = await getEventB64(b64Id);
-    const now = new Date();
-
-    return event && new Date(event.start.dateTime) < now;
-  }
-
-  async function getEvent(eventId) {
+  async function getGEvent(eventId) {
     const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`);
     return result.error ? null : result;
   }
 
   async function getEventB64(b64Id) {
-    return await getEvent(decodeEventId(b64Id).id);
+    const gEvent = await getGEvent(decodeEventId(b64Id).id);
+    if (!gEvent) {
+      return null;
+    }
+
+    return toInternalEvent(gEvent);
   }
 
-  async function getRecurringEvents(eventId, start, end) {
-    const event = await getEvent(eventId);
-    const recurringEventId = event.recurringEventId;
+  async function getRecurringGEvents(eventId, start, end) {
+    const gEvent = await getGEvent(eventId);
+    const recurringEventId = gEvent.recurringEventId;
     if (!recurringEventId) {
       return [];
     }
@@ -61,30 +42,30 @@ function buildCalendarAPI() {
 
   async function eventIdToRecurringIdsB64(b64Id, lookAheadWeeks = 54) {
     const {id, ownerEmail} = decodeEventId(b64Id);
-    const event = await getEvent(id);
-    const start = new Date(event.start.dateTime);
+    const gEvent = await getGEvent(id);
+    const start = new Date(gEvent.start.dateTime);
     const end = new Date();
     end.setDate(start.getDate() + 7 * lookAheadWeeks);
 
-    const recurringEvents = await getRecurringEvents(id, start, end);
-    return recurringEvents.map(recurringEvent => encodeEventId(recurringEvent.id, ownerEmail));
+    const recurringGEvents = await getRecurringGEvents(id, start, end);
+    return recurringGEvents.map(gEvent => encodeEventId(gEvent.id, ownerEmail));
   }
 
-  async function updateEvent(event) {
+  async function updateGEvent(gEvent) {
     return await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}`,
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${gEvent.id}`,
       'PUT',
-      event
+      gEvent
     );
   }
 
   async function addRoom(eventId, roomEmail) {
-    const event = await getEvent(eventId);
-    event.attendees = event.attendees || [];
-    event.attendees.push({
+    const gEvent = await getGEvent(eventId);
+    gEvent.attendees = gEvent.attendees || [];
+    gEvent.attendees.push({
       email: roomEmail
     });
-    return await updateEvent(event);
+    return await updateGEvent(gEvent);
   }
 
   async function addRoomB64(b64Id, roomEmail) {
@@ -115,11 +96,49 @@ function buildCalendarAPI() {
     });
   }
 
+  // gEvent - google api event defined here: https://developers.google.com/calendar/v3/reference/events#resource
+  function toInternalEvent(gEvent) {
+    if (!Object.values(EVENT_STATUS).includes(gEvent.status)) {
+      throw GMateError(`unrecognized event status ${gEvent.status}`);
+    }
+
+    const attendees = gEvent.attendees || [];
+    return new Event({
+      status: gEvent.status,
+      start: new Date(gEvent.start.dateTime),
+      rooms: attendees.filter(gAttendee => gAttendee.resource).map(gAttendee => toInternalRoom(gAttendee)),
+      humanAttendees: attendees.filter(gAttendee => !gAttendee.resource).map(gAttendee => toInternalHumanAttendee(gAttendee)),
+    });
+  }
+
+  // gAttendee - google api attendee defined here: https://developers.google.com/calendar/v3/reference/events#resource
+  function toInternalRoom(gAttendee) {
+    if (!Object.values(ATTENDEE_STATUS).includes(gAttendee.responseStatus)) {
+      throw GMateError(`unrecognized attendee status ${gAttendee.responseStatus}`);
+    }
+
+    return new Room({
+      id: gAttendee.id,
+      email: gAttendee.email,
+      status: gAttendee.responseStatus,
+    });
+  }
+
+  // gAttendee - google api attendee defined here: https://developers.google.com/calendar/v3/reference/events#resource
+  function toInternalHumanAttendee(gAttendee) {
+    if (!Object.values(ATTENDEE_STATUS).includes(gAttendee.responseStatus)) {
+      throw GMateError(`unrecognized attendee status ${gAttendee.responseStatus}`);
+    }
+
+    return new HumanAttendee({
+      id: gAttendee.id,
+      email: gAttendee.email,
+      status: gAttendee.responseStatus,
+    });
+  }
+
   return {
     getEventB64,
-    isPastEventB64,
-    isRoomConfirmedB64,
-    isEventCancelledB64,
     eventIdToRecurringIdsB64,
 
     addRoomB64,

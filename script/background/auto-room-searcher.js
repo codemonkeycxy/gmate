@@ -180,6 +180,11 @@ function stopWorker() {
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: use free/busy api to look for suitable rooms
 // https://developers.google.com/calendar/v3/reference/freebusy/query?apix_params=%7B%22resource%22%3A%7B%22items%22%3A%5B%7B%22id%22%3A%22uber.com_53454131313931326e6441766531327468576f6f646c616e645061726b313256432d3536393539%40resource.calendar.google.com%22%7D%2C%7B%22id%22%3A%22uber.com_53656131393131326e64417665313274684175746f6d6174696f6e5465616d2d373737383632%40resource.calendar.google.com%22%7D%5D%2C%22timeMin%22%3A%222019-04-03T10%3A00%3A00Z%22%2C%22timeMax%22%3A%222019-05-03T10%3A00%3A00Z%22%7D%7D
+// todo: test
+// 1) is cancelled
+// 2) is past
+// 3) already booked
+// 4) by the time of notification, the room is already confirmed
 
 // ==================== Task Queue Management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -310,14 +315,18 @@ async function nextTask() {
   console.log(`next task will start in ${Math.round(randDelayMs / 1000)} sec...`);
   await sleep(randDelayMs);
 
-  // todo: the following CalendarAPI happens at room searching rate. either optimize or raise the quota when there are more users
-  const eventId = currentTask.data.eventId;
-  if (await CalendarAPI.isEventCancelledB64(eventId)) {
+  const event = await CalendarAPI.getEventB64(currentTask.data.eventId);
+  if (!event) {
+    GMateError("current task event not found", currentTask);
+    return nextTaskFireAndForget();
+  }
+
+  if (event.isCancelled()) {
     console.log(`${JSON.stringify(currentTask)} no longer exists, moving on to the next task...`);
     return nextTaskFireAndForget();
   }
 
-  if (await CalendarAPI.isPastEventB64(eventId)) {
+  if (event.isPast()) {
     console.log(`no need to book room for a past meeting: ${JSON.stringify(currentTask)}`);
     return nextTaskFireAndForget();
   }
@@ -433,7 +442,10 @@ async function bookRoom(eventId, eventName, roomEmail, taskVersion) {
   console.log('waiting for the newly added room to confirm...');
 
   const success = await tryUntilPass(
-    async () => await CalendarAPI.isRoomConfirmedB64(eventId, roomEmail),
+    async () => {
+      const event = await CalendarAPI.getEventB64(eventId);
+      return event && event.isRoomConfirmed(roomEmail);
+    },
     {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
   );
 
