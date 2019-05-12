@@ -268,7 +268,8 @@ function heartbeat() {
 setInterval(heartbeat, ONE_MIN_MS);
 
 // refresh full room list every 6 hours
-setInterval(refreshFullRoomList, 6 * ONE_HOUR_MS);
+// todo: no ready to turn on yet. need to wait for all existing users to grant permission
+// setInterval(refreshFullRoomList, 6 * ONE_HOUR_MS);
 
 // ==================== state machine ======================
 
@@ -511,12 +512,6 @@ function saveGlobalVarNoBlock() {
 
 async function refreshFullRoomList() {
   console.log('refreshing full room list...');
-  if (!hasAuth()) {
-    // todo: drop auth check when the traffic goes to zero
-    track('missing g suite auth');
-    return [];
-  }
-
   const rooms = await CalendarAPI.getAllRooms();
   if (isEmpty(rooms)) {
     throw GMateError("received empty full room list from API");
