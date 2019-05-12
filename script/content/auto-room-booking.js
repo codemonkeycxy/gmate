@@ -213,7 +213,7 @@
   }
 
   async function pickFavoriteRoom(rooms) {
-    const result = await getFromStorageSync({"favorite-rooms": {}});
+    const result = await getFromSync({"favorite-rooms": {}});
     const favRooms = result["favorite-rooms"];
     let favoriteRoom;
     let favorability = -1;
@@ -301,7 +301,7 @@
   }
 
   async function updateFavorability(selectedRooms) {
-    const result = await getFromStorageSync({"favorite-rooms": {}});
+    const result = await getFromSync({"favorite-rooms": {}});
     const favoriteRooms = result["favorite-rooms"];
     selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 

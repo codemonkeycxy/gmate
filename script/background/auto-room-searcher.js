@@ -6,8 +6,8 @@ const FULL_ROOM_LIST_KEY = 'full-room-list';
 
 async function bootstrap() {
   // todo: remove fetching from sync storage once all users have migrated over
-  const syncResult = await getFromStorageSync({[GLOBAL_VARIABLE_KEY]: {}});
-  const localResult = await getFromStorageLocal({[GLOBAL_VARIABLE_KEY]: {}});
+  const syncResult = await getKeyFromSync(GLOBAL_VARIABLE_KEY, {});
+  const localResult = await getKeyFromLocal(GLOBAL_VARIABLE_KEY, {});
 
   let globalVars = {};
   if (!isEmpty(syncResult[GLOBAL_VARIABLE_KEY])) {

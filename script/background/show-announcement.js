@@ -2,7 +2,7 @@ const LAST_VERSION = "last-version";
 const currVersion = chrome.runtime.getManifest().version;
 
 (async () => {
-  const result = await getFromStorageSync({[LAST_VERSION]: null});
+  const result = await getKeyFromSync(LAST_VERSION, null);
   const lastVersion = result[LAST_VERSION];
   persistSync({[LAST_VERSION]: currVersion});
 
