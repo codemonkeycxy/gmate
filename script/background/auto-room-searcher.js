@@ -1,5 +1,6 @@
 // ==================== global variable management ======================
 const GLOBAL_VARIABLE_KEY = 'background-global-variables';
+const FULL_ROOM_LIST_KEY = 'full-room-list';
 
 (async () => await bootstrap())();
 
@@ -172,7 +173,7 @@ function stopWorker() {
 // todo: remove the UI driven "no need to book" after confirming there's no more traffic
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 
-// ==================== Task Queue Management ======================
+// ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
   const eventId = msg.data.eventId;
   const eventName = msg.data.eventName;
@@ -250,7 +251,7 @@ onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
   });
 });
 
-// ==================== heartbeat ======================
+// ==================== scheduled jobs ======================
 function heartbeat() {
   console.log('heartbeat check. still alive...');
   saveGlobalVariables();
@@ -266,6 +267,8 @@ function heartbeat() {
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
 
+// refresh full room list every 6 hours
+setInterval(refreshFullRoomList, 6 * ONE_HOUR_MS);
 
 // ==================== state machine ======================
 
@@ -500,6 +503,24 @@ function saveGlobalVariables() {
   };
   console.log(`taking a snapshot of the current global variables`);
   persistLocal({[GLOBAL_VARIABLE_KEY]: snapshot});
+}
+
+async function refreshFullRoomList() {
+  console.log('refreshing full room list...');
+  if (!hasAuth()) {
+    // todo: drop auth check when the traffic goes to zero
+    track('missing g suite auth');
+    return;
+  }
+
+  const rooms = await CalendarAPI.getAllRooms();
+  if (isEmpty(rooms)) {
+    GMateError("received empty full room list from API");
+    return;
+  }
+
+  console.log(`saving ${rooms.length} rooms to local storage...`);
+  persistLocal({[FULL_ROOM_LIST_KEY]: rooms});
 }
 
 function _enqueue(task) {

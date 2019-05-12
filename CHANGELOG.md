@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.0
+- [maintenance] Set up integration with G Suite Admin SDK to get full room list
+
 ## 2.2.1
 - [maintenance] Optimize task pruner to reduce network calls
 
