@@ -22,6 +22,7 @@
   "background": {
     "scripts": [
       "script/shared/common.js",
+      "script/shared/storage.js",
       "script/settings/langley.js",
       "script/settings/room-filters.js",
       "script/tracking.js",
@@ -46,6 +47,7 @@
       ],
       "js": [
         "script/shared/common.js",
+        "script/shared/storage.js",
         "script/settings/room-filters.js",
         "script/shared/ui/index.js",
         "script/shared/ui/modal.js",
