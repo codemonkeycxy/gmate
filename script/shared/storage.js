@@ -3,7 +3,8 @@ async function getFromLocal(keys) {
 }
 
 async function getKeyFromLocal(key, defaultVal) {
-  return await getFromLocal({[key]: defaultVal});
+  const result = await getFromLocal({[key]: defaultVal});
+  return result[key];
 }
 
 async function getFromSync(keys) {
@@ -11,7 +12,8 @@ async function getFromSync(keys) {
 }
 
 async function getKeyFromSync(key, defaultVal) {
-  return await getFromSync({[key]: defaultVal});
+  const result = await getFromSync({[key]: defaultVal});
+  return result[key];
 }
 
 // larger storage space but the data is not synced across Chrome browsers

@@ -10,18 +10,18 @@ async function bootstrap() {
   const localResult = await getKeyFromLocal(GLOBAL_VARIABLE_KEY, {});
 
   let globalVars = {};
-  if (!isEmpty(syncResult[GLOBAL_VARIABLE_KEY])) {
+  if (!isEmpty(syncResult)) {
     console.log('reading global vars from sync');
     track('reading global vars from sync');
 
-    globalVars = syncResult[GLOBAL_VARIABLE_KEY];
+    globalVars = syncResult;
     // wipe out sync storage so we can fall on reading from local next time
     await persistPairSync(GLOBAL_VARIABLE_KEY, {});
   } else {
     console.log('reading global vars from local');
     track('reading global vars from local');
 
-    globalVars = localResult[GLOBAL_VARIABLE_KEY];
+    globalVars = localResult;
   }
 
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
@@ -254,7 +254,7 @@ onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
 // ==================== scheduled jobs ======================
 function heartbeat() {
   console.log('heartbeat check. still alive...');
-  saveGlobalVariables();
+  saveGlobalVarNoBlock();
 
   if (Date.now() - lastActiveTs > FIVE_MIN_MS) {
     console.log('worker idle for more than 5 min, resurrecting...');
@@ -493,7 +493,10 @@ function isTaskFresh(myTaskVersion) {
   }
 }
 
-function saveGlobalVariables() {
+/**
+ * data write can take long, this function doesn't block for a return
+ */
+function saveGlobalVarNoBlock() {
   const snapshot = {
     toBeFulfilled: toBeFulfilled,
     workerTabId: workerTabId,
@@ -502,6 +505,7 @@ function saveGlobalVariables() {
     lastActiveTs: lastActiveTs
   };
   console.log(`taking a snapshot of the current global variables`);
+  // purposefully no await here in order not to block
   persistPairLocal(GLOBAL_VARIABLE_KEY, snapshot);
 }
 
@@ -524,6 +528,15 @@ async function refreshFullRoomList() {
   return rooms;
 }
 
+async function getFullRoomList() {
+  const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
+  if (!isEmpty(rooms)) {
+    return rooms;
+  }
+
+  return await refreshFullRoomList();
+}
+
 function _enqueue(task) {
   if (!task) {
     return console.log('nothing to enqueue, move on...');
@@ -544,19 +557,19 @@ function _enqueue(task) {
 
 function enqueue(task) {
   _enqueue(task);
-  saveGlobalVariables();
+  saveGlobalVarNoBlock();
 }
 
 function enqueueMany(tasks) {
   tasks.forEach(task => _enqueue(task));
-  saveGlobalVariables();
+  saveGlobalVarNoBlock();
 }
 
 function dequeue() {
   const task = toBeFulfilled.shift();
   console.log(`dequeuing ${JSON.stringify(task)}...`);
 
-  saveGlobalVariables();
+  saveGlobalVarNoBlock();
   return task;
 }
 
@@ -569,7 +582,7 @@ function removeTask(taskId) {
 
   const oldLength = toBeFulfilled.length;
   toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
-  saveGlobalVariables();
+  saveGlobalVarNoBlock();
 
   if (getAllEventTasks().length === 0) {
     unsetPauseIcon();

@@ -2,9 +2,8 @@ const LAST_VERSION = "last-version";
 const currVersion = chrome.runtime.getManifest().version;
 
 (async () => {
-  const result = await getKeyFromSync(LAST_VERSION, null);
-  const lastVersion = result[LAST_VERSION];
-  persistSync({[LAST_VERSION]: currVersion});
+  const lastVersion = await getKeyFromSync(LAST_VERSION, null);
+  await persistPairSync(LAST_VERSION, currVersion);
 
   if (lastVersion === null) {
     // first time install, show the welcome page
