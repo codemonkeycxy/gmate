@@ -502,7 +502,7 @@ function saveGlobalVariables() {
     lastActiveTs: lastActiveTs
   };
   console.log(`taking a snapshot of the current global variables`);
-  persistLocal({[GLOBAL_VARIABLE_KEY]: snapshot});
+  persistPairLocal(GLOBAL_VARIABLE_KEY, snapshot);
 }
 
 async function refreshFullRoomList() {
@@ -520,7 +520,7 @@ async function refreshFullRoomList() {
   }
 
   console.log(`saving ${rooms.length} rooms to local storage...`);
-  persistLocal({[FULL_ROOM_LIST_KEY]: rooms});
+  persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
 }
 
 function _enqueue(task) {

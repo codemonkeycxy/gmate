@@ -334,6 +334,10 @@ function persistLocal(items) {
   chrome.storage.local.set(items);
 }
 
+function persistPairLocal(key, val) {
+  persistLocal({[key]: val});
+}
+
 // data synced across multiple Chrome browsers, but the storage space is more limited
 function persistSync(items) {
   chrome.storage.sync.set(items);
@@ -341,11 +345,6 @@ function persistSync(items) {
 
 function persistPairSync(key, val) {
   persistSync({[key]: val});
-}
-
-function isMyMeeting() {
-  // if I control what guests can do, that means this is a meeting I own
-  return Boolean(getElementByText('legend', 'Guests can:'));
 }
 
 /**
