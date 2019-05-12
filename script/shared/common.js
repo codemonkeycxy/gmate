@@ -330,21 +330,21 @@ async function getFromStorageSync(keys) {
 }
 
 // larger storage space but the data is not synced across Chrome browsers
-function persistLocal(items) {
-  chrome.storage.local.set(items);
+async function persistLocal(items) {
+  await new Promise(resolve => chrome.storage.local.set(items, () => resolve()));
 }
 
-function persistPairLocal(key, val) {
-  persistLocal({[key]: val});
+async function persistPairLocal(key, val) {
+  await persistLocal({[key]: val});
 }
 
 // data synced across multiple Chrome browsers, but the storage space is more limited
-function persistSync(items) {
-  chrome.storage.sync.set(items);
+async function persistSync(items) {
+  await new Promise(resolve => chrome.storage.sync.set(items, () => resolve()));
 }
 
-function persistPairSync(key, val) {
-  persistSync({[key]: val});
+async function persistPairSync(key, val) {
+  await persistSync({[key]: val});
 }
 
 /**

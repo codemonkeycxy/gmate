@@ -510,17 +510,18 @@ async function refreshFullRoomList() {
   if (!hasAuth()) {
     // todo: drop auth check when the traffic goes to zero
     track('missing g suite auth');
-    return;
+    return [];
   }
 
   const rooms = await CalendarAPI.getAllRooms();
   if (isEmpty(rooms)) {
-    GMateError("received empty full room list from API");
-    return;
+    throw GMateError("received empty full room list from API");
   }
 
   console.log(`saving ${rooms.length} rooms to local storage...`);
-  persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+  await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+
+  return rooms;
 }
 
 function _enqueue(task) {
