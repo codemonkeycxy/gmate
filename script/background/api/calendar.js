@@ -30,11 +30,11 @@ function buildCalendarAPI() {
     const result = await _callCalendarAPI(
       `https://www.googleapis.com/calendar/v3/calendars/primary/events/${
         recurringEventId
-      }/instances?timeMin=${
+        }/instances?timeMin=${
         start.toISOString()
-      }&timeMax=${
+        }&timeMax=${
         end.toISOString()
-      }`
+        }`
     );
 
     return result.items;
@@ -70,6 +70,46 @@ function buildCalendarAPI() {
 
   async function addRoomB64(b64Id, roomEmail) {
     return await addRoom(decodeEventId(b64Id).id, roomEmail);
+  }
+
+  /**
+   * Get all the rooms can be booked by the current user. Expect this function to run for long. Don't use it frequently
+   * or block UI experience
+   *
+   * Note: this function returns a raw dictionary instead of an entity for easier serialization/deserialization
+   */
+  async function getAllRooms() {
+    const rooms = [];
+    let hasNext = true;
+    let pageToken = "";
+    let countdown = 20;  // use a countdown to guard against infinite loop
+
+    while (countdown > 0 && hasNext) {
+      countdown--;
+      const result = await _getAllRoomsNext(pageToken);
+      pageToken = result.nextPageToken;
+      hasNext = Boolean(result.nextPageToken);
+
+      result.items.forEach(item => rooms.push({
+        email: item.resourceEmail,
+        name: item.generatedResourceName,
+      }));
+    }
+
+    if (countdown === 0) {
+      GMateError("getAllRooms hits infinite loop");
+    }
+
+    return rooms;
+  }
+
+  async function _getAllRoomsNext(pageToken) {
+    let url = "https://www.googleapis.com/admin/directory/v1/customer/my_customer/resources/calendars?maxResults=500&orderBy=resourceName";
+    if (pageToken) {
+      url = `${url}&pageToken=${pageToken}`;
+    }
+
+    return await _callCalendarAPI(url);
   }
 
   async function _callCalendarAPI(url, method = 'GET', data) {
@@ -140,6 +180,7 @@ function buildCalendarAPI() {
 
   return {
     getEventB64,
+    getAllRooms,
     eventIdToRecurringIdsB64,
 
     addRoomB64,

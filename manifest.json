@@ -15,7 +15,8 @@
   "oauth2": {
     "client_id": "1042899541434-521sble02pl040mui4hc69351bi378se.apps.googleusercontent.com",
     "scopes": [
-      "https://www.googleapis.com/auth/calendar"
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/admin.directory.resource.calendar.readonly"
     ]
   },
   "background": {

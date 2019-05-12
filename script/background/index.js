@@ -23,7 +23,5 @@ onMessage((msg, sender, cb) => {
 
 // (async () => {
 //   await promptAuth();
-//   const b64 = 'NDQxdjE0cGVmNDJubXBybnVkN2RncjQ4azIgeGlueWlAdWJlci5jb20';
-//   console.log(decodeEventId(b64));
-//   console.log(await CalendarAPI.getEventB64(b64));
+//   console.log(await CalendarAPI.getAllRooms());
 // })();

@@ -3,18 +3,6 @@ const GLOBAL_VARIABLE_KEY = 'background-global-variables';
 
 (async () => await bootstrap())();
 
-function saveGlobalVariables() {
-  const snapshot = {
-    toBeFulfilled: toBeFulfilled,
-    workerTabId: workerTabId,
-    currentTask: currentTask,
-    taskVersion: taskVersion,
-    lastActiveTs: lastActiveTs
-  };
-  console.log(`taking a snapshot of the current global variables`);
-  persistLocal({[GLOBAL_VARIABLE_KEY]: snapshot});
-}
-
 async function bootstrap() {
   // todo: remove fetching from sync storage once all users have migrated over
   const syncResult = await getFromStorageSync({[GLOBAL_VARIABLE_KEY]: {}});
@@ -500,6 +488,18 @@ function isTaskFresh(myTaskVersion) {
   } else {
     return true
   }
+}
+
+function saveGlobalVariables() {
+  const snapshot = {
+    toBeFulfilled: toBeFulfilled,
+    workerTabId: workerTabId,
+    currentTask: currentTask,
+    taskVersion: taskVersion,
+    lastActiveTs: lastActiveTs
+  };
+  console.log(`taking a snapshot of the current global variables`);
+  persistLocal({[GLOBAL_VARIABLE_KEY]: snapshot});
 }
 
 function _enqueue(task) {
