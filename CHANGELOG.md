@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 3.0.0
 - [maintenance] Set up integration with G Suite Admin SDK to get full room list
+- [fix] Mute room booking email notification to reduce noise
 
 ## 2.2.1
 - [maintenance] Optimize task pruner to reduce network calls

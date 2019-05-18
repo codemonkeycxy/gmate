@@ -53,7 +53,7 @@ function buildCalendarAPI() {
 
   async function updateGEvent(gEvent) {
     return await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${gEvent.id}`,
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${gEvent.id}?sendUpdates=none`,
       'PUT',
       gEvent
     );
