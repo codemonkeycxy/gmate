@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 3.0.1
 - [fix] Pin down auth token scope to allow users time to grant additional permissions
+- [enhancement] Catch and log auth errors
+- [maintenance] Log error by type for better monitoring and debugging
 
 ## 3.0.0
 - [maintenance] Set up integration with G Suite Admin SDK to get full room list

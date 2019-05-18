@@ -1,7 +1,11 @@
+function _authNotFound() {
+  return chrome.runtime.lastError && chrome.runtime.lastError.message.includes('OAuth2 not granted or revoked');
+}
+
 async function hasAuth() {
   return await new Promise(
     resolve => chrome.identity.getAuthToken({interactive: false}, token => {
-      if (chrome.runtime.lastError && chrome.runtime.lastError.message.includes('OAuth2 not granted or revoked')) {
+      if (_authNotFound()) {
         return resolve(false);
       }
 
@@ -29,10 +33,16 @@ async function promptAuth() {
 async function getAuthToken() {
   // todo: handle no auth error. send user a notification to ask for auth
   return await new Promise(
-    resolve => chrome.identity.getAuthToken({
+    (resolve, reject) => chrome.identity.getAuthToken({
       interactive: false,
       // explicitly pin down to old scopes. this gives users time to grant permissions to the new scope
       scopes: ['https://www.googleapis.com/auth/calendar']  // todo: remove this after all users are migrated to the new scopes listed in manifest
-    }, token => resolve(token))
+    }, token => {
+      if (_authNotFound()) {
+        return reject(GMateError('auth not found'));
+      }
+
+      return resolve(token);
+    })
   );
 }

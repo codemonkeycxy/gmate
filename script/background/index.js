@@ -22,6 +22,6 @@ onMessage((msg, sender, cb) => {
 });
 
 // (async () => {
-//   await promptAuth();
-//   console.log(await CalendarAPI.getAllRooms());
+//   console.log(await getAuthToken());
+//   // console.log(await CalendarAPI.getAllRooms());
 // })();

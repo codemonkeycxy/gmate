@@ -714,6 +714,7 @@ function GMateError(msg, data = null) {
   infoBag.stack = replaceAll(error.stack, `chrome-extension://${APP_ID}/script/`, '');
 
   track('error', infoBag);
+  track(msg, infoBag);
   console.error(infoBag);
 
   return error;
