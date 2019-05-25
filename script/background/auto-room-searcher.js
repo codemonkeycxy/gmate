@@ -129,7 +129,6 @@ function stopWorker() {
 // this means 1) try catch all executions. 2) log chrome runtime last error in all chrome related invocations
 // todo: make a feature voting board
 // todo: handle no auth error in case user auth gets somehow revoked. send user a notification to ask for auth. see getAuthToken function
-// todo: noticed a declined room triggers "no need to book", probably due to UI loading issue. Replace it with API call
 // todo: tutorial "next" to "next: title"
 // todo: flag for "don't always ask for filters"
 // todo: book consistent rooms for recurring meetings
@@ -151,8 +150,6 @@ function stopWorker() {
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: use free/busy api to look for suitable rooms
 // https://developers.google.com/calendar/v3/reference/freebusy/query?apix_params=%7B%22resource%22%3A%7B%22items%22%3A%5B%7B%22id%22%3A%22uber.com_53454131313931326e6441766531327468576f6f646c616e645061726b313256432d3536393539%40resource.calendar.google.com%22%7D%2C%7B%22id%22%3A%22uber.com_53656131393131326e64417665313274684175746f6d6174696f6e5465616d2d373737383632%40resource.calendar.google.com%22%7D%5D%2C%22timeMin%22%3A%222019-04-03T10%3A00%3A00Z%22%2C%22timeMax%22%3A%222019-05-03T10%3A00%3A00Z%22%7D%7D
-// todo: remove fetching from sync storage once all users have migrated over
-// todo: remove the UI driven "no need to book" after confirming there's no more traffic
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: increased error in https://mixpanel.com/report/1836777/live#chosen_columns:!('$browser','$city',mp_country_code,distinct_id,'$referring_domain'),column_widths:!(200,100,223,153,217,257,170),search:error
 
@@ -389,18 +386,6 @@ function preparePostTrigger(taskVersion) {
       // remove listener after handling the expected event to avoid double trigger
       chrome.runtime.onMessage.removeListener(roomSelectionListener);
       await bookRoom(eventId, eventName, msg.data.roomEmail, taskVersion);
-    }
-
-    // todo: remove this block after confirming there's no more traffic
-    if (msg.type === NO_NEED_TO_BOOK && msg.data.eventId === eventId) {
-      track('unexpected-traffic', {where: 'old style "no need to book"'});
-      GMateError('unexpected traffic');
-
-      console.log(`no need to book for ${JSON.stringify(currentTask)}`);
-      notifyThrottled('Great News!', `"${eventName}" already has a room that meets your criteria!`);
-      // remove listener after handling the expected event to avoid double trigger
-      chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextTaskFireAndForget();
     }
 
     if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {

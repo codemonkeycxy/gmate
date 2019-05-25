@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 3.0.2
 - [maintenance] Stop reading persisted room searching data from sync storage
+- [maintenance] Handle past event using API call instead of UI worker
 
 ## 3.0.1
 - [fix] Pin down auth token scope to allow users time to grant additional permissions
