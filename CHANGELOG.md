@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.2
+- [maintenance] Stop reading persisted room searching data from sync storage
+
 ## 3.0.1
 - [fix] Pin down auth token scope to allow users time to grant additional permissions
 - [enhancement] Catch and log auth errors

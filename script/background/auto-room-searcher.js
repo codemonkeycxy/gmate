@@ -5,25 +5,7 @@ const FULL_ROOM_LIST_KEY = 'full-room-list';
 (async () => await bootstrap())();
 
 async function bootstrap() {
-  // todo: remove fetching from sync storage once all users have migrated over
-  const syncResult = await getKeyFromSync(GLOBAL_VARIABLE_KEY, {});
-  const localResult = await getKeyFromLocal(GLOBAL_VARIABLE_KEY, {});
-
-  let globalVars = {};
-  if (!isEmpty(syncResult)) {
-    console.log('reading global vars from sync');
-    track('reading global vars from sync');
-
-    globalVars = syncResult;
-    // wipe out sync storage so we can fall on reading from local next time
-    await persistPairSync(GLOBAL_VARIABLE_KEY, {});
-  } else {
-    console.log('reading global vars from local');
-    track('reading global vars from local');
-
-    globalVars = localResult;
-  }
-
+  const globalVars = await getKeyFromLocal(GLOBAL_VARIABLE_KEY, {});
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
 
   toBeFulfilled = globalVars.toBeFulfilled || [];
