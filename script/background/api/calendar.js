@@ -91,9 +91,18 @@ function buildCalendarAPI() {
       return [];
     }
 
-    return roomEmails.filter(id => {
-      const roomAvailability = freeBusy.calendars[id];
-      return roomAvailability && !isEmpty(roomAvailability.busy);
+    return roomEmails.filter(email => {
+      const roomAvailability = freeBusy.calendars[email];
+      if (isEmpty(roomAvailability)) {
+        return false;
+      }
+
+      if (!isEmpty(roomAvailability.errors)) {
+        GMateError('room availability api error', {errors: roomAvailability.errors});
+        return false;
+      }
+
+      return isEmpty(roomAvailability.busy);
     });
   }
 
