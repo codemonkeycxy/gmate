@@ -33,11 +33,7 @@ async function promptAuth() {
 async function getAuthToken() {
   // todo: handle no auth error. send user a notification to ask for auth
   return await new Promise(
-    (resolve, reject) => chrome.identity.getAuthToken({
-      interactive: false,
-      // explicitly pin down to old scopes. this gives users time to grant permissions to the new scope
-      scopes: ['https://www.googleapis.com/auth/calendar']  // todo: remove this after all users are migrated to the new scopes listed in manifest
-    }, token => {
+    (resolve, reject) => chrome.identity.getAuthToken({interactive: false}, token => {
       if (_authNotFound()) {
         return reject(GMateError('auth not found'));
       }
