@@ -390,11 +390,10 @@ function removeTask(taskId) {
 }
 
 function estimateTimeToCompletion() {
-  const avgEventTaskTime = 1 / 10;  // one tenth of a minute (aka 10 tasks per minute)
   let timeToCompletion = 0;
 
-  toBeFulfilled.forEach(task => timeToCompletion += task.type === TASK_TYPE.NAP ? 1 : avgEventTaskTime);
-  return Math.round(timeToCompletion);
+  toBeFulfilled.forEach(task => timeToCompletion += task.type === TASK_TYPE.NAP ? 1 : 0);
+  return timeToCompletion;
 }
 
 function isEventInQueue(eventTask) {
