@@ -13,6 +13,7 @@ const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
 // room booking related actions
+const FAVORIATE_ROOMS = "favorite-rooms";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";

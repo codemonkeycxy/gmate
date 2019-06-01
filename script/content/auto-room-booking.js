@@ -31,10 +31,10 @@
 
       let {roomList, roomIdToElement} = getRoomOptions();
       const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
-      const selectedRoom = await pickFavoriteRoom(filteredRooms);
+      const selectedRoomEmail = await pickFavoriteRoomEmail(filteredRooms.map(room => room.id));
 
-      if (selectedRoom) {
-        return dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
+      if (selectedRoomEmail) {
+        return dispatchMouseEvent(roomIdToElement[selectedRoomEmail], "click", true, true);
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
@@ -194,30 +194,28 @@
     return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
   }
 
-  async function pickFavoriteRoom(rooms) {
-    const result = await getFromSync({"favorite-rooms": {}});
-    const favRooms = result["favorite-rooms"];
-    let favoriteRoom;
+  async function pickFavoriteRoomEmail(roomEmails) {
+    if (isEmpty(roomEmails)) {
+      return null;
+    }
+
+    const favRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
+    let favoriteRoomEmail = roomEmails[0];  // default to pick the first item from the list
     let favorability = -1;
 
-    rooms.forEach(candidate => {
-      if (!favRooms[candidate.id]) {
+    roomEmails.forEach(roomEmail => {
+      if (!favRooms[roomEmail]) {
         return;
       }
 
-      const currFav = favRooms[candidate.id].count;
-      if (candidate.id in favRooms && currFav > favorability) {
-        favoriteRoom = candidate;
+      const currFav = favRooms[roomEmail].count;
+      if (roomEmail in favRooms && currFav > favorability) {
+        favoriteRoomEmail = roomEmail;
         favorability = currFav;
       }
     });
 
-    if (!favoriteRoom && rooms.length > 0) {
-      // if can't find a favorite room based on historical data, randomly pick one from the list
-      favoriteRoom = rooms[0];
-    }
-
-    return favoriteRoom;
+    return favoriteRoomEmail;
   }
 
   function getSelectedRooms() {
@@ -283,11 +281,10 @@
   }
 
   async function updateFavorability(selectedRooms) {
-    const result = await getFromSync({"favorite-rooms": {}});
-    const favoriteRooms = result["favorite-rooms"];
+    const favoriteRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
     selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 
-    persistSync({"favorite-rooms": favoriteRooms});
+    persistPairSync(FAVORIATE_ROOMS, favoriteRooms);
   }
 
   function updateFavorabilityForOne(newRoom, favoriteRooms) {
