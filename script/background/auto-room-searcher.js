@@ -150,6 +150,7 @@ function stopWorker() {
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: increased error in https://mixpanel.com/report/1836777/live#chosen_columns:!('$browser','$city',mp_country_code,distinct_id,'$referring_domain'),column_widths:!(200,100,223,153,217,257,170),search:error
+// todo: show warning to user if the filter matches with 0 rooms
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -300,11 +301,19 @@ async function nextTask() {
   }
 
   const allRooms = await getFullRoomList();
-  const matchingRooms = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
-  // todo: handle no matching rooms
-  console.log(`found ${matchingRooms.length} room candidates`);
+  const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+  console.log(`found ${roomCandidates.length} room candidates`);
+  if (isEmpty(roomCandidates)) {
+    // 0 room candidates indicate either a room list fetching issue or a filter setup issue. log more info for investigation
+    GMateError('zero room candidates', {
+      roomListLength: allRooms.length,
+      posFilter,
+      negFilter,
+      flexFilters
+    })
+  }
 
-  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, matchingRooms.map(room => room.email));
+  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
   if (isEmpty(freeRooms)) {
     console.log('no free room is found. try again later...');
     enqueue(currentTask);
