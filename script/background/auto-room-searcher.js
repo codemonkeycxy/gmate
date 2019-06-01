@@ -248,7 +248,7 @@ async function nextTask() {
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
   // todo: pick a room with capacity closer to the event human invitees
-  const success = await bookRoom(eventIdB64, pickFavoriteRoom(freeRooms));
+  const success = await bookRoom(eventIdB64, await pickFavoriteRoom(freeRooms));
 
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
