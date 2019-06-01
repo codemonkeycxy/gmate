@@ -248,7 +248,7 @@ async function nextTask() {
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
   // todo: pick a room with capacity closer to the event human invitees
-  const success = await bookRoom(eventIdB64, event.name, pickFavoriteRoom(freeRooms));
+  const success = await bookRoom(eventIdB64, pickFavoriteRoom(freeRooms));
 
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
@@ -273,7 +273,7 @@ function wakeUp(taskVersionBeforeNap) {
   }
 }
 
-async function bookRoom(eventIdB64, eventName, roomEmail) {
+async function bookRoom(eventIdB64, roomEmail) {
   await CalendarAPI.addRoomB64(eventIdB64, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
