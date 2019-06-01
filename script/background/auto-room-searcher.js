@@ -277,7 +277,8 @@ async function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
-  const event = await CalendarAPI.getEventB64(currentTask.data.eventId);
+  const eventIdB64 = currentTask.data.eventId;
+  const event = await CalendarAPI.getEventB64(eventIdB64);
   if (!event) {
     GMateError("current task event not found", currentTask);
     return nextTaskFireAndForget();
@@ -321,7 +322,7 @@ async function nextTask() {
   }
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
-  const success = await bookRoom(event.id, event.name, freeRooms[0]);
+  const success = await bookRoom(eventIdB64, event.name, freeRooms[0]);
 
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
@@ -346,13 +347,13 @@ function wakeUp(taskVersionBeforeNap) {
   }
 }
 
-async function bookRoom(eventId, eventName, roomEmail) {
-  await CalendarAPI.addRoomB64(eventId, roomEmail);
+async function bookRoom(eventIdB64, eventName, roomEmail) {
+  await CalendarAPI.addRoomB64(eventIdB64, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
   return await tryUntilPass(
     async () => {
-      const event = await CalendarAPI.getEventB64(eventId);
+      const event = await CalendarAPI.getEventB64(eventIdB64);
       return event && event.hasRoomAccepted(roomEmail);
     },
     {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
