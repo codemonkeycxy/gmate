@@ -9,14 +9,15 @@
 
   async function bookFavoriteRoom(posFilter, negFilter, flexFilters) {
     if (isEdit()) {
-      // don't book on meeting edit unless forced otherwise
-      return
+      // only auto book for new events
+      return;
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
     const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
     if (!isEmpty(matchingRooms)) {
-      return
+      // a qualified room is already booked
+      return;
     }
 
     let countdown = 20;
@@ -24,10 +25,6 @@
       if (noRoomFound()) {
         return;  // no room to select, early return
       }
-
-      // load up more potential room candidates for selection
-      expandLocationTree();
-      clickLoadMore();
 
       let {roomList, roomIdToElement} = getRoomOptions();
       const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
@@ -41,67 +38,6 @@
       await sleep(500);
       countdown--;
     }
-  }
-
-  // rooms are organized as an expandable list by each location
-  function getLocationTrees() {
-    let allTrees = document.querySelectorAll('[aria-label="All locations"]')[0];
-    if (!allTrees) {
-      return [];
-    }
-
-    allTrees = allTrees.querySelectorAll('[aria-expanded]');
-    const results = [];
-    // todo: generalize
-    const targetLocations = [
-      'SFO | 1455 Market',
-      'ATL | 1201 Peachtree',
-      'MEX | Río Lerma 232',
-      'MEX | Torre Mayor',
-      'NYC | 636 W. 28th',
-      'NYC | 1400 Broadway',
-      'PAO | 900 Arastradero A',
-      'PAO | 900 Arastradero B',
-      'SEA | 1191 2nd Ave',
-      'SFO | 555 Market',
-      'SFO | 685 Market',
-    ];
-
-    for (let i = 0; i < allTrees.length; i++) {
-      const tree = allTrees[i];
-      const locationName = tree.getAttribute('aria-label');
-      const shouldSelect = targetLocations.some(
-        targetLocation => locationName.toLowerCase().trim().includes(targetLocation.toLowerCase().trim())
-      );
-
-      if (shouldSelect) {
-        results.push(tree);
-      }
-    }
-
-    return results;
-  }
-
-  function expandLocationTree() {
-    const trees = getLocationTrees();
-    trees.forEach(tree => {
-      if (tree.getAttribute('aria-expanded') === 'true') {
-        return;
-      }
-
-      dispatchMouseEvent(tree, "click", true, true)
-    });
-  }
-
-  // click the "Load more" UI to load more rooms
-  function clickLoadMore() {
-    const allTrees = document.querySelectorAll('[aria-label="All locations"]')[0];
-    if (!allTrees) {
-      return;
-    }
-
-    const loadMoreDivs = getAllElementsByText('div', 'Load more', allTrees);
-    loadMoreDivs.forEach(loadMore => dispatchMouseEvent(loadMore, "click", true, true));
   }
 
   function isRoomTabLoaded() {
@@ -125,12 +61,7 @@
   }
 
   function getRoomOptions() {
-    // these are the rooms intelligently recommended by Google Calendar and they load quickly
-    const suggestedRooms = getSuggestedRooms();
-    // then we also click around the Calendar UI to get more relevant rooms for selection, these rooms load more slowly
-    const allLocationRooms = getAllLocationRooms();
-    const roomElements = suggestedRooms.concat(allLocationRooms);
-
+    const roomElements = getSuggestedRooms();
     // convert html element collection to standard array
     const roomList = [];
     const roomIdToElement = {};
@@ -161,24 +92,6 @@
     } catch (e) {
       return result;
     }
-
-    // convert nodelist, htmlcollection, etc into generic array
-    // https://stackoverflow.com/questions/15763358/difference-between-htmlcollection-nodelists-and-arrays-of-objects
-    for (let i = 0; i < rooms.length; i++) {
-      result.push(rooms[i]);
-    }
-
-    return result;
-  }
-
-  function getAllLocationRooms() {
-    const allLocations = document.querySelectorAll('[aria-label="All locations"]')[0];
-    if (!allLocations) {
-      return [];
-    }
-
-    const rooms = allLocations.querySelectorAll('[data-email]');
-    const result = [];
 
     // convert nodelist, htmlcollection, etc into generic array
     // https://stackoverflow.com/questions/15763358/difference-between-htmlcollection-nodelists-and-arrays-of-objects
