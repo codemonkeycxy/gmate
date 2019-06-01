@@ -251,7 +251,7 @@ setInterval(heartbeat, ONE_MIN_MS);
 
 /* don't wait for next task to return otherwise you could be blocked forever */
 function nextTaskFireAndForget() {
-  return nextTask();
+  nextTask();
 }
 
 async function nextTask() {
@@ -301,17 +301,33 @@ async function nextTask() {
 
   const allRooms = await getFullRoomList();
   const matchingRooms = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
-  console.log(`found ${matchingRooms.length} room candidates`);
   // todo: handle no matching rooms
-  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, matchingRooms.map(room => room.email));
+  console.log(`found ${matchingRooms.length} room candidates`);
 
+  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, matchingRooms.map(room => room.email));
   if (isEmpty(freeRooms)) {
     console.log('no free room is found. try again later...');
     enqueue(currentTask);
+    return nextTaskFireAndForget();
+  }
+
+  console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
+  const success = await bookRoom(event.id, event.name, freeRooms[0]);
+
+  if (success) {
+    console.log(`room saved for ${JSON.stringify(currentTask)}`);
+    // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
+    // increasing the message's cardinality (e.g. log room name with message)
+    notifyThrottled('Great News!', `Room found for "${event.name}"!`);
+    track('room-saved');
     nextTaskFireAndForget();
   } else {
-    console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
-    await bookRoom(event.id, event.name, freeRooms[0]);
+    console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
+    // room save failures are not expected in the book-via-api approach. log to confirm
+    track('room-save-failure');
+    enqueue(currentTask);
+    // remove listener after handling the expected event to avoid double trigger
+    nextTaskFireAndForget();
   }
 }
 
@@ -325,37 +341,13 @@ async function bookRoom(eventId, eventName, roomEmail) {
   await CalendarAPI.addRoomB64(eventId, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
-  const success = await tryUntilPass(
+  return await tryUntilPass(
     async () => {
       const event = await CalendarAPI.getEventB64(eventId);
       return event && event.hasRoomAccepted(roomEmail);
     },
     {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
   );
-
-  if (success) {
-    // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
-    // increasing the message's cardinality (e.g. log room name with message)
-    notifyThrottled('Great News!', `Room found for "${eventName}"!`);
-    onRoomSavedSuccess(taskVersion);
-  } else {
-    onRoomSavedFailure(taskVersion);
-  }
-}
-
-function onRoomSavedSuccess() {
-  console.log(`room saved for ${JSON.stringify(currentTask)}`);
-  track('room-saved');
-  nextTaskFireAndForget();
-}
-
-function onRoomSavedFailure() {
-  console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
-  // room save failures are not expected in the book-via-api approach. log to confirm
-  track('room-save-failure');
-  enqueue(currentTask);
-  // remove listener after handling the expected event to avoid double trigger
-  nextTaskFireAndForget();
 }
 
 // ==================== helpers ======================
