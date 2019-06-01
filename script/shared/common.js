@@ -38,8 +38,6 @@ const PROMPT_AUTH = "prompt-auth";
 // settings panel actions
 const GET_QUEUE = "get-queue";
 const REMOVE_TASK = "remove-task";
-const START_WORKER = "start-worker";
-const STOP_WORKER = "stop-worker";
 
 // room status
 const ACCEPTED = "accepted";

@@ -1,5 +1,5 @@
 /* ==================== Global Variables ======================= */
-let toBeFulfilled, workerTabId, currentTask, taskVersion, lastActiveTs;
+let toBeFulfilled, currentTask, taskVersion, lastActiveTs;
 
 chrome.runtime.setUninstallURL('https://www.gmate.us/faq/common-problems#h.p_9n8u0cEo6KHr');
 

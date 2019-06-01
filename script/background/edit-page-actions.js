@@ -9,19 +9,6 @@ onTabUpdated(async (tabId, changeInfo, tab) => {
   const leavingEventPage = changeInfo.url && !changeInfo.url.startsWith(EDIT_PAGE_URL_PREFIX);
   const isLoaded = changeInfo.status === "complete";
 
-  if (tabId === workerTabId) {
-    // mask out the worker page to avoid accidental disruption from the user
-    emit(tabId, {type: ADD_OVERLAY});
-    emit(tabId, {
-      type: SHOW_BANNER,
-      data: {
-        level: WARNING,
-        message: "Warning! This page is reserved for GMate auto room searching. Please leave it running by itself and avoid interrupting it"
-      }
-    });
-    return;
-  }
-
   if (leavingEventPage) {
     // if is leaving the event page, remove the current tab from the action list
     tabInAction = tabInAction.filter(busyTabId => busyTabId !== tabId);

@@ -9,7 +9,6 @@ async function bootstrap() {
   console.log(`loaded global variables ${JSON.stringify(globalVars)}`);
 
   toBeFulfilled = globalVars.toBeFulfilled || [];
-  workerTabId = globalVars.workerTabId || null;
   currentTask = globalVars.currentTask || null;
   taskVersion = globalVars.taskVersion || 0;
   lastActiveTs = globalVars.lastActiveTs || Date.now();
@@ -17,74 +16,6 @@ async function bootstrap() {
   // push the saved current task into the task queue to start afresh
   enqueue(currentTask);
   currentTask = null;
-
-  if (workerTabId) {
-    chrome.tabs.get(workerTabId, () => {
-      if (chrome.runtime.lastError) {
-        console.log(`worker ${workerTabId} is no longer available. resetting...`);
-        workerTabId = null;
-        startWorker();
-      }
-    });
-  }
-}
-
-// ==================== worker management ======================
-chrome.extension.onConnect.addListener(port =>
-  port.onMessage.addListener(msg => {
-    if (msg.type === START_WORKER) {
-      startWorker();
-    }
-
-    if (msg.type === STOP_WORKER) {
-      stopWorker();
-    }
-  })
-);
-
-chrome.tabs.onRemoved.addListener(tabId => {
-  if (tabId === workerTabId) {
-    stopWorker();
-  }
-});
-
-function startWorker() {
-  if (workerTabId) {
-    // don't spawn if there's already one
-    return;
-  }
-
-  console.log('initiating worker...');
-  chrome.tabs.create({
-    url: CALENDAR_PAGE_URL_PREFIX,
-    active: false,
-    pinned: true
-  }, tab => {
-    workerTabId = tab.id;
-    console.log(`worker ${workerTabId} initiated`);
-    unsetPauseIcon();
-    nextTaskFireAndForget();
-  });
-}
-
-function stopWorker() {
-  if (!workerTabId) {
-    // nothing to kill
-    return;
-  }
-
-  enqueue(currentTask);
-  currentTask = null;
-  if (getAllEventTasks().length > 0) {
-    notify('Caution!', 'Room searching is paused');
-    setPauseIcon();
-  }
-
-  console.log(`removing worker ${workerTabId}...`);
-  chrome.tabs.remove(workerTabId, () => {
-    console.log(`worker ${workerTabId} removed`);
-    workerTabId = null;
-  });
 }
 
 // use chrome://identity-internals/ to control api credentials
@@ -167,9 +98,6 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
   // this way the UI is not blocked by the async bookRecurring logic
   enqueue(EventTask(eventId, eventName, eventFilters));
   track(ROOM_TO_BE_FULFILLED);
-  if (!workerTabId) {
-    startWorker();
-  }
 
   // NOTE: leave the async logic towards the end in order not to block the UI
   if (msg.data.bookRecurring) {
@@ -216,7 +144,6 @@ onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) => {
     type: GET_QUEUE,
     data: {
       eventTasks: getAllEventTasks(),
-      workerTabId: workerTabId
     }
   });
 });
@@ -227,7 +154,6 @@ onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
     type: REMOVE_TASK,
     data: {
       eventTasks: getAllEventTasks(),
-      workerTabId: workerTabId
     }
   });
 });
@@ -261,10 +187,6 @@ async function nextTask() {
   lastActiveTs = Date.now();
   taskVersion++;
   currentTask = null;
-
-  if (!workerTabId) {
-    return console.log('worker not available. processing paused');
-  }
 
   if (toBeFulfilled.length === 0) {
     return console.log('no task to fulfill. waiting for new tasks to come in');
@@ -377,7 +299,6 @@ function isTaskFresh(myTaskVersion) {
 function saveGlobalVarNoBlock() {
   const snapshot = {
     toBeFulfilled: toBeFulfilled,
-    workerTabId: workerTabId,
     currentTask: currentTask,
     taskVersion: taskVersion,
     lastActiveTs: lastActiveTs

@@ -1,8 +1,6 @@
 // self-invoking function to avoid name collision
 (() => {
   const TASK_QUEUE_UI_GROUP = "task-queue-ui-group";
-  const WORKER_ACTIVE_UI_GROUP = "worker-active-ui-group";
-  const WORKER_STOPPED_UI_GROUP = "worker-stopped-ui-group";
   const TO_BE_FULFILLED_QUEUE = "to-be-fulfilled-queue";
 
   renderTaskQueueUI();
@@ -31,7 +29,6 @@
 
   function injectTaskQueueUI(payload) {
     const eventTasks = payload.data.eventTasks;
-    const workerTabId = payload.data.workerTabId;
     const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
 
     if (eventTasks.length === 0) {
@@ -40,7 +37,6 @@
 
     show(taskQueueUIGroup);
     populateTasks(eventTasks);
-    displayWorkerController(workerTabId);
   }
 
   function populateTasks(eventTasks) {
@@ -53,18 +49,5 @@
       }`;
 
     addTaskRemovalListener();
-  }
-
-  function displayWorkerController(workerTabId) {
-    const workerActiveUIGroup = document.getElementById(WORKER_ACTIVE_UI_GROUP);
-    const workerStoppedUIGroup = document.getElementById(WORKER_STOPPED_UI_GROUP);
-
-    if (workerTabId) {
-      show(workerActiveUIGroup);
-      hide(workerStoppedUIGroup);
-    } else {
-      hide(workerActiveUIGroup);
-      show(workerStoppedUIGroup);
-    }
   }
 })();
