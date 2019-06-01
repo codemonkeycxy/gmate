@@ -10,19 +10,19 @@
   async function bookFavoriteRoom(posFilter, negFilter, flexFilters) {
     if (isEdit()) {
       // don't book on meeting edit unless forced otherwise
-      return sendFinishMessage(NO_NEED_TO_BOOK);
+      return
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
     const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
     if (!isEmpty(matchingRooms)) {
-      return sendFinishMessage(NO_NEED_TO_BOOK);
+      return
     }
 
     let countdown = 20;
     while (countdown > 0) {
       if (noRoomFound()) {
-        return sendFinishMessage(NO_ROOM_FOUND);  // no room to select, early return
+        return;  // no room to select, early return
       }
 
       // load up more potential room candidates for selection
@@ -34,17 +34,13 @@
       const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
       if (selectedRoom) {
-        dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        return sendFinishMessage(ROOM_SELECTED, selectedRoom);
+        return dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
       }
 
       // can't find a room, sleep a little bit and look again because more rooms might have been loaded by then
       await sleep(500);
       countdown--;
     }
-
-    // can't find a room after 20 tries so we give up
-    sendFinishMessage(NO_ROOM_FOUND);
   }
 
   // rooms are organized as an expandable list by each location
@@ -126,17 +122,6 @@
   function noRoomFound() {
     const noRoom = getNoRoomFlag();
     return hasNoRoomFlag() && isElementVisible(noRoom);
-  }
-
-  function sendFinishMessage(eventType, room) {
-    chrome.runtime.sendMessage({
-      type: eventType,
-      data: {
-        roomName: room && room.name,
-        roomEmail: room && room.id,
-        eventId: getEventId()
-      }
-    });
   }
 
   function getRoomOptions() {
