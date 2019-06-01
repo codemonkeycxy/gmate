@@ -193,6 +193,8 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
       notify('Success!', `Added ${recurringIds.length} meetings to the room searching queue`);
     }
   }
+
+  await refreshFullRoomList();
 });
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
@@ -246,10 +248,6 @@ function heartbeat() {
 
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
-
-// refresh full room list every 6 hours
-// todo: no ready to turn on yet. need to wait for all existing users to grant permission
-// setInterval(refreshFullRoomList, 6 * ONE_HOUR_MS);
 
 // ==================== state machine ======================
 
