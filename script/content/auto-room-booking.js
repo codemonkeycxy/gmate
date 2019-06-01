@@ -194,30 +194,6 @@
     return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
   }
 
-  async function pickFavoriteRoomEmail(roomEmails) {
-    if (isEmpty(roomEmails)) {
-      return null;
-    }
-
-    const favRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
-    let favoriteRoomEmail = roomEmails[0];  // default to pick the first item from the list
-    let favorability = -1;
-
-    roomEmails.forEach(roomEmail => {
-      if (!favRooms[roomEmail]) {
-        return;
-      }
-
-      const currFav = favRooms[roomEmail].count;
-      if (roomEmail in favRooms && currFav > favorability) {
-        favoriteRoomEmail = roomEmail;
-        favorability = currFav;
-      }
-    });
-
-    return favoriteRoomEmail;
-  }
-
   function getSelectedRooms() {
     const selectedRoomListUI = document.querySelectorAll(
       '[aria-label="Rooms added to this event."]'
