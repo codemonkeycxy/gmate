@@ -148,8 +148,6 @@ function stopWorker() {
 // 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
 // todo: study this useful link and possibly fetch more matching rooms
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
-// todo: use free/busy api to look for suitable rooms
-// https://developers.google.com/calendar/v3/reference/freebusy/query?apix_params=%7B%22resource%22%3A%7B%22items%22%3A%5B%7B%22id%22%3A%22uber.com_53454131313931326e6441766531327468576f6f646c616e645061726b313256432d3536393539%40resource.calendar.google.com%22%7D%2C%7B%22id%22%3A%22uber.com_53656131393131326e64417665313274684175746f6d6174696f6e5465616d2d373737383632%40resource.calendar.google.com%22%7D%5D%2C%22timeMin%22%3A%222019-04-03T10%3A00%3A00Z%22%2C%22timeMax%22%3A%222019-05-03T10%3A00%3A00Z%22%7D%7D
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: increased error in https://mixpanel.com/report/1836777/live#chosen_columns:!('$browser','$city',mp_country_code,distinct_id,'$referring_domain'),column_widths:!(200,100,223,153,217,257,170),search:error
 
@@ -278,11 +276,6 @@ async function nextTask() {
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
   }
 
-  // throw in a random delay to avoid getting throttled by Google
-  const randDelayMs = getRandomInt(TEN_SEC_MS);
-  console.log(`next task will start in ${Math.round(randDelayMs / 1000)} sec...`);
-  await sleep(randDelayMs);
-
   const event = await CalendarAPI.getEventB64(currentTask.data.eventId);
   if (!event) {
     GMateError("current task event not found", currentTask);
@@ -308,8 +301,18 @@ async function nextTask() {
 
   const allRooms = await getFullRoomList();
   const matchingRooms = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+  console.log(`found ${matchingRooms.length} room candidates`);
+  // todo: handle no matching rooms
+  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, matchingRooms.map(room => room.email));
 
-  loadEventPage(taskVersion);
+  if (isEmpty(freeRooms)) {
+    console.log('no free room is found. try again later...');
+    enqueue(currentTask);
+    nextTaskFireAndForget();
+  } else {
+    console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
+    await bookRoom(event.id, event.name, freeRooms[0]);
+  }
 }
 
 function wakeUp(taskVersionBeforeNap) {
@@ -318,96 +321,7 @@ function wakeUp(taskVersionBeforeNap) {
   }
 }
 
-function loadEventPage(taskVersion) {
-  if (!isTaskFresh(taskVersion)) {
-    return;
-  }
-
-  if (!currentTask || currentTask.type !== TASK_TYPE.EVENT) {
-    return;
-  }
-
-  const eventId = currentTask.data.eventId;
-  const urlToLoad = `${EDIT_PAGE_URL_PREFIX}/${eventId}`;
-
-  preparePostLoad(urlToLoad, taskVersion);
-  console.log(`load new url ${urlToLoad}`);
-  loadUrlOnWorker(urlToLoad);
-}
-
-function preparePostLoad(urlToLoad, taskVersion) {
-  function pageLoadListener(tabId, changeInfo, tab) {
-    if (!isTaskFresh(taskVersion)) {
-      return;
-    }
-
-    const isWorker = tabId === workerTabId;
-    const isTargetUrl = tab.url === urlToLoad;
-    const isLoaded = changeInfo.status === "complete";
-
-    if (isWorker && isTargetUrl && isLoaded) {
-      console.log(`${urlToLoad} loaded.`);
-      // remove listener after handling the expected event to avoid double trigger
-      chrome.tabs.onUpdated.removeListener(pageLoadListener);
-      triggerRoomBooking(taskVersion);
-    }
-  }
-
-  onTabUpdated(pageLoadListener, ONE_HOUR_MS);
-}
-
-function triggerRoomBooking(taskVersion) {
-  preparePostTrigger(taskVersion);
-  console.log('trigger room booking');
-  emit(workerTabId, {
-    type: AUTO_ROOM_BOOKING,
-    data: {
-      eventFilters: currentTask.data.eventFilters,
-      forceBookOnEdit: true,
-      suppressChanges: true
-    }
-  });
-}
-
-function preparePostTrigger(taskVersion) {
-  async function roomSelectionListener(msg, sender, sendResponse) {
-    if (!isTaskFresh(taskVersion)) {
-      return;
-    }
-
-    if (!currentTask || currentTask.type !== TASK_TYPE.EVENT) {
-      return;
-    }
-
-    const eventId = currentTask.data.eventId;
-    const eventName = currentTask.data.eventName;
-
-    if (msg.type === ROOM_SELECTED && msg.data.eventId === eventId) {
-      console.log(`room ${msg.data.roomName} selected for ${JSON.stringify(currentTask)}`);
-      // remove listener after handling the expected event to avoid double trigger
-      chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      await bookRoom(eventId, eventName, msg.data.roomEmail, taskVersion);
-    }
-
-    if (msg.type === NO_ROOM_FOUND && msg.data.eventId === eventId) {
-      // enqueue the event to be searched later
-      console.log(`no room found for ${JSON.stringify(currentTask)}`);
-
-      enqueue(currentTask);
-      // remove listener after handling the expected event to avoid double trigger
-      chrome.runtime.onMessage.removeListener(roomSelectionListener);
-      nextTaskFireAndForget();
-    }
-  }
-
-  onMessage(roomSelectionListener, ONE_HOUR_MS);
-}
-
-async function bookRoom(eventId, eventName, roomEmail, taskVersion) {
-  if (!isTaskFresh(taskVersion)) {
-    return;
-  }
-
+async function bookRoom(eventId, eventName, roomEmail) {
   await CalendarAPI.addRoomB64(eventId, roomEmail);
   console.log('waiting for the newly added room to confirm...');
 
@@ -429,21 +343,13 @@ async function bookRoom(eventId, eventName, roomEmail, taskVersion) {
   }
 }
 
-function onRoomSavedSuccess(taskVersion) {
-  if (!isTaskFresh(taskVersion)) {
-    return;
-  }
-
+function onRoomSavedSuccess() {
   console.log(`room saved for ${JSON.stringify(currentTask)}`);
   track('room-saved');
   nextTaskFireAndForget();
 }
 
-function onRoomSavedFailure(taskVersion) {
-  if (!isTaskFresh(taskVersion)) {
-    return;
-  }
-
+function onRoomSavedFailure() {
   console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
   // room save failures are not expected in the book-via-api approach. log to confirm
   track('room-save-failure');
@@ -610,12 +516,4 @@ function getNapFillers(napMinutes) {
   }
 
   return fillers;
-}
-
-function loadUrlOnWorker(urlToLoad) {
-  chrome.tabs.update(workerTabId, {
-    url: urlToLoad,
-    active: false,
-    pinned: true
-  });
 }
