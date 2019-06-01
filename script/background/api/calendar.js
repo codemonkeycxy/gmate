@@ -77,10 +77,24 @@ function buildCalendarAPI() {
       return [];
     }
 
+    // freeBusy api has a 50 item size limit
+    const emailChunks = chunk(roomEmails, 50);
+    const result = [];
+    for (let i = 0; i < emailChunks.length; i++) {
+      const emailChunk = emailChunks[i];
+      console.log(`check room availability batch ${i+1}; count: ${emailChunk.length}`);
+      const freeRooms = await _pickFreeRooms(startStr, endStr, emailChunk);
+      freeRooms.forEach(roomEmail => result.push(roomEmail));
+    }
+    return result;
+  }
+
+  async function _pickFreeRooms(startStr, endStr, roomEmails) {
     const params = {
       timeMin: startStr,
       timeMax: endStr,
-      items: roomEmails.map(email => ({id: email}))
+      items: roomEmails.map(email => ({id: email})),
+      calendarExpansionMax: 50
     };
     const freeBusy = await _callCalendarAPI(
       `https://www.googleapis.com/calendar/v3/freeBusy`,
@@ -93,16 +107,7 @@ function buildCalendarAPI() {
 
     return roomEmails.filter(email => {
       const roomAvailability = freeBusy.calendars[email];
-      if (isEmpty(roomAvailability)) {
-        return false;
-      }
-
-      if (!isEmpty(roomAvailability.errors)) {
-        GMateError('room availability api error', {errors: roomAvailability.errors});
-        return false;
-      }
-
-      return isEmpty(roomAvailability.busy);
+      return roomAvailability && isEmpty(roomAvailability.errors) && isEmpty(roomAvailability.busy);
     });
   }
 
