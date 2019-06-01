@@ -28,7 +28,7 @@
 
       let {roomList, roomIdToElement} = getRoomOptions();
       const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
-      const selectedRoomEmail = await pickFavoriteRoomEmail(filteredRooms.map(room => room.id));
+      const selectedRoomEmail = await pickFavoriteRoom(filteredRooms.map(room => room.id));
 
       if (selectedRoomEmail) {
         return dispatchMouseEvent(roomIdToElement[selectedRoomEmail], "click", true, true);

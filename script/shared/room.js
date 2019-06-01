@@ -71,13 +71,13 @@ function matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters) {
   return filterSetting.validate(roomStr, storageVal);
 }
 
-async function pickFavoriteRoomEmail(roomEmails) {
+async function pickFavoriteRoom(roomEmails) {
   if (isEmpty(roomEmails)) {
     return null;
   }
 
   const favRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
-  let favoriteRoomEmail = roomEmails[0];  // default to pick the first item from the list
+  let favoriteRoom = roomEmails[0];  // default to pick the first item from the list
   let favorability = -1;
 
   roomEmails.forEach(roomEmail => {
@@ -87,10 +87,10 @@ async function pickFavoriteRoomEmail(roomEmails) {
 
     const currFav = favRooms[roomEmail].count;
     if (roomEmail in favRooms && currFav > favorability) {
-      favoriteRoomEmail = roomEmail;
+      favoriteRoom = roomEmail;
       favorability = currFav;
     }
   });
 
-  return favoriteRoomEmail;
+  return favoriteRoom;
 }

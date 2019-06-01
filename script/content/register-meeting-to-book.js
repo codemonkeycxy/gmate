@@ -73,7 +73,7 @@
     // reset the row content
     const needRoomButton = newButton();
     needRoomButton.setText(SEARCH_ROOM_BTN_MSG);
-    needRoomButton.style.backgroundColor = 'rgb(45, 140, 255)';
+    needRoomButton.style.backgroundColor = '#4285f4';
     needRoomButton.style.color = '#fff';
     needRoomButton.style.height = '32px';
     needRoomButton.style.fontSize = '12px';
