@@ -72,6 +72,31 @@ function buildCalendarAPI() {
     return await addRoom(decodeEventId(b64Id).id, roomEmail);
   }
 
+  async function pickFreeRooms(startStr, endStr, roomEmails) {
+    if (isEmpty(roomEmails)) {
+      return [];
+    }
+
+    const params = {
+      timeMin: startStr,
+      timeMax: endStr,
+      items: roomEmails.map(email => ({id: email}))
+    };
+    const freeBusy = await _callCalendarAPI(
+      `https://www.googleapis.com/calendar/v3/freeBusy`,
+      'POST',
+      params
+    );
+    if (isEmpty(freeBusy.calendars)) {
+      return [];
+    }
+
+    return roomEmails.filter(id => {
+      const roomAvailability = freeBusy.calendars[id];
+      return roomAvailability && !isEmpty(roomAvailability.busy);
+    });
+  }
+
   /**
    * Get all the rooms can be booked by the current user. Expect this function to run for long. Don't use it frequently
    * or block UI experience
@@ -185,6 +210,7 @@ function buildCalendarAPI() {
     getEventB64,
     getAllRooms,
     eventIdToRecurringIdsB64,
+    pickFreeRooms,
 
     addRoomB64,
   }
