@@ -82,6 +82,7 @@ async function bootstrap() {
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 // todo: increased error in https://mixpanel.com/report/1836777/live#chosen_columns:!('$browser','$city',mp_country_code,distinct_id,'$referring_domain'),column_widths:!(200,100,223,153,217,257,170),search:error
 // todo: show warning to user if the filter matches with 0 rooms
+// todo: pick a room with capacity closer to the event human invitees
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -244,6 +245,7 @@ async function nextTask() {
   }
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
+  // todo: pick a room with capacity closer to the event human invitees
   const success = await bookRoom(eventIdB64, event.name, pickFavoriteRoom(freeRooms));
 
   if (success) {
