@@ -195,6 +195,8 @@ async function nextTask() {
 
   const nextAction = dequeue();
   currentTask = nextAction;
+  saveGlobalVarNoBlock();
+
   if (nextAction.type === TASK_TYPE.NAP) {
     console.log('nap for one min');
     return setTimeout(wakeUp, ONE_MIN_MS, taskVersion);
