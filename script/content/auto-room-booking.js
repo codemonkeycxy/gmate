@@ -7,8 +7,8 @@
     addSaveListener(initialRooms);
   }
 
-  async function bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit, suppressChanges) {
-    if (!forceBookOnEdit && isEdit()) {
+  async function bookFavoriteRoom(posFilter, negFilter, flexFilters) {
+    if (isEdit()) {
       // don't book on meeting edit unless forced otherwise
       return sendFinishMessage(NO_NEED_TO_BOOK);
     }
@@ -34,10 +34,7 @@
       const selectedRoom = await pickFavoriteRoom(filteredRooms);
 
       if (selectedRoom) {
-        if (!suppressChanges) {
-          // suppressChanges means we are only interested in finding a matching room but we don't want to update the UI
-          dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
-        }
+        dispatchMouseEvent(roomIdToElement[selectedRoom.id], "click", true, true);
         return sendFinishMessage(ROOM_SELECTED, selectedRoom);
       }
 
@@ -344,13 +341,11 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      const forceBookOnEdit = msg.data && msg.data.forceBookOnEdit;
-      const suppressChanges = msg.data && msg.data.suppressChanges;
       const filters = msg.data && msg.data.eventFilters || await getRoomFilters();
       const {posFilter, negFilter, flexFilters} = filters;
 
       await tryUntilPass(isRoomTabLoaded);
-      await bookFavoriteRoom(posFilter, negFilter, flexFilters, forceBookOnEdit, suppressChanges);
+      await bookFavoriteRoom(posFilter, negFilter, flexFilters);
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {

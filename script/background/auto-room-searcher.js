@@ -174,7 +174,7 @@ function heartbeat() {
 // fire a heartbeat check every minute
 setInterval(heartbeat, ONE_MIN_MS);
 
-// ==================== state machine ======================
+// ==================== task fulfillment logic ======================
 
 /* don't wait for next task to return otherwise you could be blocked forever */
 function nextTaskFireAndForget() {
