@@ -306,6 +306,9 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
+  const allRooms = await getFullRoomList();
+  const matchingRooms = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+
   loadEventPage(taskVersion);
 }
 

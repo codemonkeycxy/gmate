@@ -148,6 +148,9 @@ function buildCalendarAPI() {
       name: gEvent.summary,
       status: gEvent.status,
       start: new Date(gEvent.start.dateTime),
+      startStr: gEvent.start.dateTime,
+      end: new Date(gEvent.end.dateTime),
+      endStr: gEvent.end.dateTime,
       rooms: attendees.filter(gAttendee => gAttendee.resource).map(gAttendee => toInternalRoom(gAttendee)),
       humanAttendees: attendees.filter(gAttendee => !gAttendee.resource).map(gAttendee => toInternalHumanAttendee(gAttendee)),
     });

@@ -12,11 +12,14 @@ const ATTENDEE_STATUS = {
 };
 
 class Event {
-  constructor({id, name, status, start, rooms, humanAttendees}) {
+  constructor({id, name, status, start, startStr, end, endStr, rooms, humanAttendees}) {
     this.id = id;
     this.name = name;
     this.status = status;
     this.start = start;
+    this.startStr = startStr;
+    this.end = end;
+    this.endStr = endStr;
     this.rooms = rooms || [];
     this.humanAttendees = humanAttendees || [];
   }
