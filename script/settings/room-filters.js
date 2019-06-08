@@ -33,7 +33,7 @@ const COMPANY_SPECIFIC_FILTERS = {
 
       return {
         valid: false,
-        errMsg: "Starting from June 24, 2019, location selection will be required. If your office address is not listed in the dropdown, email xinyichencxy@gmail.com"
+        errMsg: "Starting from June 17, 2019, location selection will be required. If your office address is not listed in the dropdown, email xinyichencxy@gmail.com"
       }
     }
   }, {
