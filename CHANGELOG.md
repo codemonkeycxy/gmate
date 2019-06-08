@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.3
+- [feature] Add the ability to set error message on room searching filters
+- [enhancement] Start to soft-block unspecified location filters
+
 ## 3.0.2
 - [maintenance] Stop reading persisted room searching data from sync storage
 - [maintenance] Handle past event using API call instead of UI worker

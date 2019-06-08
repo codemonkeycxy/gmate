@@ -22,13 +22,26 @@ const COMPANY_SPECIFIC_FILTERS = {
       'SFO | 685 Market',
     ],
     default: ANY,
-    validate: (roomStr, location) => roomStr.includes(location)
+    match: (roomStr, location) => roomStr.includes(location),
+    validateInput: input => {
+      if (input !== ANY) {
+        return {
+          valid: true,
+          errMsg: null
+        }
+      }
+
+      return {
+        valid: false,
+        errMsg: "Starting from June 24, 2019, location selection will be required. If your office address is not listed in the dropdown, email xinyichencxy@gmail.com"
+      }
+    }
   }, {
     key: 'floor',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Floor',
     type: NUM_RANGE,
     default: '',
-    validate: (roomStr, floorRangeStr) => {
+    match: (roomStr, floorRangeStr) => {
       const floors = parseNumbersFromString(floorRangeStr);
       if (isEmpty(floors)) {
         return true;
@@ -45,7 +58,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     displayName: 'Room size',
     type: NUM_RANGE,
     default: '',
-    validate: (roomStr, roomSizeRangeStr) => {
+    match: (roomStr, roomSizeRangeStr) => {
       const roomSizes = parseNumbersFromString(roomSizeRangeStr);
       if (isEmpty(roomSizes)) {
         return true;
@@ -61,7 +74,7 @@ const COMPANY_SPECIFIC_FILTERS = {
     displayName: 'Must have VC',
     type: CHECKBOX,
     default: false,
-    validate: (roomStr, mustHaveVC) => {
+    match: (roomStr, mustHaveVC) => {
       if (!mustHaveVC) {
         return true;
       }
@@ -142,5 +155,5 @@ function matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters) {
     return true;
   }
 
-  return filterSetting.validate(roomStr, storageVal);
+  return filterSetting.match(roomStr, storageVal);
 }
