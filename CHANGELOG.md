@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 4.0.0
 - [enhancement] Fully switch room searching to the background and eliminate the browser based worker
 
+## 3.0.3
+- [feature] Add the ability to set error message on room searching filters
+- [enhancement] Start to soft-block unspecified location filters
+
 ## 3.0.2
 - [maintenance] Stop reading persisted room searching data from sync storage
 - [maintenance] Handle past event using API call instead of UI worker

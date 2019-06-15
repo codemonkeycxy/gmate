@@ -124,13 +124,12 @@ async function asyncRenderRoomBookingFilters(onChange) {
 
   // user can pick one option from a list of dropdown values
   function renderSingleOptionFilter(title, initialVal, storageKey, filterSetting) {
-    const filterOptions = filterSetting.options;
-
     return renderDropDownSelect(
       title,
-      filterOptions,
+      filterSetting.options,
       initialVal,
-      selected => onChange(storageKey, selected)
+      selected => onChange(storageKey, selected),
+      filterSetting.validateInput
     );
   }
 

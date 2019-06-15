@@ -6,17 +6,30 @@ function wrapUIComponents(components) {
 
 function wrapUIWithText(name, child, textOn = LEFT) {
   const title = document.createElement('span');
+  const errorMsg = document.createElement('div');
+  errorMsg.style.color = '#a94442';
+  let result;
 
   if (textOn === RIGHT) {
     title.textContent = ` ${name}`;
-    return wrapUIComponents([child, title]);
+    result = wrapUIComponents([child, title, errorMsg]);
   } else {
     title.textContent = `${name}: `;
-    return wrapUIComponents([title, child]);
+    result = wrapUIComponents([title, child, errorMsg]);
   }
+
+  result.setError = validation => {
+    if (!validation.valid) {
+      errorMsg.textContent = validation.errMsg;
+    } else {
+      errorMsg.textContent = null;
+    }
+  };
+
+  return result;
 }
 
-function renderDropDownSelect(name, options, initialVal, onSelect) {
+function renderDropDownSelect(name, options, initialVal, onSelect, validateInput) {
   const selectList = document.createElement('select');
   // populate the option list
   options.forEach(option => {
@@ -27,11 +40,18 @@ function renderDropDownSelect(name, options, initialVal, onSelect) {
     selectList.appendChild(optionUI);
   });
 
+  const result = wrapUIWithText(name, selectList);
+  result.setError(validateInput(initialVal));
+
   // set up initial value and change listener
   selectList.value = initialVal;
-  selectList.addEventListener('change', e => onSelect(e.target.value));
+  selectList.addEventListener('change', e => {
+    const input = e.target.value;
+    onSelect(input);
+    result.setError(validateInput(input));
+  });
 
-  return wrapUIWithText(name, selectList);
+  return result;
 }
 
 function renderStringNumberRange(name, initialVal, onChange) {
