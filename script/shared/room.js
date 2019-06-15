@@ -68,7 +68,7 @@ function matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters) {
     return true;
   }
 
-  return filterSetting.validate(roomStr, storageVal);
+  return filterSetting.match(roomStr, storageVal);
 }
 
 async function pickFavoriteRoom(roomEmails) {
