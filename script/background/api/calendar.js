@@ -23,6 +23,14 @@ function buildCalendarAPI() {
 
   async function getGEvent(eventId, ownerEmail) {
     const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${toCalendarId(ownerEmail)}/events/${eventId}`);
+    if (result.error) {
+      GMateError(`event fetching error - ${result.error.message}`, {
+        eventId,
+        ownerEmail,
+        error: result.error
+      });
+    }
+
     return result.error ? null : result;
   }
 
@@ -67,9 +75,9 @@ function buildCalendarAPI() {
     return recurringGEvents.map(gEvent => encodeEventId(gEvent.id, ownerEmail));
   }
 
-  async function updateGEvent(gEvent) {
+  async function updateGEvent(eventId, ownerEmail, gEvent) {
     return await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${gEvent.id}?sendUpdates=none`,
+      `https://www.googleapis.com/calendar/v3/calendars/${toCalendarId(ownerEmail)}/events/${eventId}?sendUpdates=none`,
       'PUT',
       gEvent
     );
@@ -81,7 +89,7 @@ function buildCalendarAPI() {
     gEvent.attendees.push({
       email: roomEmail
     });
-    return await updateGEvent(gEvent);
+    return await updateGEvent(eventId, ownerEmail, gEvent);
   }
 
   async function addRoomB64(b64Id, roomEmail) {
@@ -99,7 +107,7 @@ function buildCalendarAPI() {
     const result = [];
     for (let i = 0; i < emailChunks.length; i++) {
       const emailChunk = emailChunks[i];
-      console.log(`check room availability batch ${i+1}; count: ${emailChunk.length}`);
+      console.log(`check room availability batch ${i + 1}; count: ${emailChunk.length}`);
       const freeRooms = await _pickFreeRooms(startStr, endStr, emailChunk);
       freeRooms.forEach(roomEmail => result.push(roomEmail));
     }

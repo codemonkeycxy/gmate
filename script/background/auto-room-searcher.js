@@ -87,6 +87,7 @@ async function bootstrap() {
 // todo: event gets dropped if they are booked for a different calendar
 // todo: race condition still observed, need to apply isTaskFresh more aggressively
 // todo: use docs retro as a way to debug recurring event booking (exclude deleted?)
+// todo: allow user to choose whether to notify participants
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
