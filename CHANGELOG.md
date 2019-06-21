@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 4.1.0
 - [fix] Allow room booking for someone else's calendar
+- [enhancement] Add retry for room booking tasks in case of Calendar API outage
 
 ## 4.0.0
 - [enhancement] Fully switch room searching to the background and eliminate the browser based worker
