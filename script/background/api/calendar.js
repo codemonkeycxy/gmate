@@ -6,13 +6,14 @@
  * g<Name> can be used within this namespace, returned objects MUST either be primitives or internal entities
  */
 function buildCalendarAPI() {
-  async function getGEvent(eventId) {
-    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`);
+  async function getGEvent(eventId, ownerEmail) {
+    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${ownerEmail || 'primary'}/events/${eventId}`);
     return result.error ? null : result;
   }
 
   async function getEventB64(b64Id) {
-    const gEvent = await getGEvent(decodeEventId(b64Id).id);
+    const {id, ownerEmail} = decodeEventId(b64Id);
+    const gEvent = await getGEvent(id, ownerEmail);
     if (!gEvent) {
       return null;
     }
@@ -20,15 +21,15 @@ function buildCalendarAPI() {
     return toInternalEvent(gEvent);
   }
 
-  async function getRecurringGEvents(eventId, start, end) {
-    const gEvent = await getGEvent(eventId);
+  async function getRecurringGEvents(eventId, ownerEmail, start, end) {
+    const gEvent = await getGEvent(eventId, ownerEmail);
     const recurringEventId = gEvent.recurringEventId;
     if (!recurringEventId) {
       return [];
     }
 
     const result = await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${
+      `https://www.googleapis.com/calendar/v3/calendars/${ownerEmail || 'primary'}/events/${
         recurringEventId
         }/instances?timeMin=${
         start.toISOString()
@@ -42,12 +43,12 @@ function buildCalendarAPI() {
 
   async function eventIdToRecurringIdsB64(b64Id, lookAheadWeeks = 54) {
     const {id, ownerEmail} = decodeEventId(b64Id);
-    const gEvent = await getGEvent(id);
+    const gEvent = await getGEvent(id, ownerEmail);
     const start = new Date(gEvent.start.dateTime);
     const end = new Date();
     end.setDate(start.getDate() + 7 * lookAheadWeeks);
 
-    const recurringGEvents = await getRecurringGEvents(id, start, end);
+    const recurringGEvents = await getRecurringGEvents(id, ownerEmail, start, end);
     return recurringGEvents.map(gEvent => encodeEventId(gEvent.id, ownerEmail));
   }
 
@@ -59,8 +60,8 @@ function buildCalendarAPI() {
     );
   }
 
-  async function addRoom(eventId, roomEmail) {
-    const gEvent = await getGEvent(eventId);
+  async function addRoom(eventId, ownerEmail, roomEmail) {
+    const gEvent = await getGEvent(eventId, ownerEmail);
     gEvent.attendees = gEvent.attendees || [];
     gEvent.attendees.push({
       email: roomEmail
@@ -69,7 +70,8 @@ function buildCalendarAPI() {
   }
 
   async function addRoomB64(b64Id, roomEmail) {
-    return await addRoom(decodeEventId(b64Id).id, roomEmail);
+    const {id, ownerEmail} = decodeEventId(b64Id);
+    return await addRoom(id, ownerEmail, roomEmail);
   }
 
   async function pickFreeRooms(startStr, endStr, roomEmails) {
