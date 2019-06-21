@@ -22,5 +22,5 @@ onMessage((msg, sender, cb) => {
 });
 
 // (async () => {
-//   console.log(await CalendarAPI.pickFreeRooms('2019-06-03T19:00:00-07:00', '2019-06-03T19:30:00-07:00', ['uber.com_53464f3535354d61726b657431397468536865696b685a61796564526f6164392d373538343436@resource.calendar.google.com', 'uber.com_53464f3535354d61726b657432307468426f7765727953747265657431322d363338343337@resource.calendar.google.com']));
+//   console.log(await CalendarAPI.getEventB64('MXZoYThybWsyam1pcmViMXE1MG5mY28zZzcgdWJlci5jb21fbWlhZzY4cWgydWcxN2ExZG5zMmdidHZwbzRAZw'));
 // })();

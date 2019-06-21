@@ -83,6 +83,8 @@ async function bootstrap() {
 // todo: increased error in https://mixpanel.com/report/1836777/live#chosen_columns:!('$browser','$city',mp_country_code,distinct_id,'$referring_domain'),column_widths:!(200,100,223,153,217,257,170),search:error
 // todo: show warning to user if the filter matches with 0 rooms
 // todo: pick a room with capacity closer to the event human invitees
+// todo: set reload warning for unsaved room filters
+// todo: event gets dropped if they are booked for a different calendar
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -206,6 +208,8 @@ async function nextTask() {
   const event = await CalendarAPI.getEventB64(eventIdB64);
   if (!event) {
     GMateError("current task event not found", currentTask);
+    // todo: reconsider this logic. a calendar outage caused the losses of valid tasks
+    // we could always re-enqueue the not found event, and later on add a retry limit
     return nextTaskFireAndForget();
   }
 
@@ -380,10 +384,6 @@ function removeTask(taskId) {
   const oldLength = toBeFulfilled.length;
   toBeFulfilled = toBeFulfilled.filter(task => task.id !== taskId);
   saveGlobalVarNoBlock();
-
-  if (getAllEventTasks().length === 0) {
-    unsetPauseIcon();
-  }
 
   const newLength = toBeFulfilled.length;
   if (newLength === oldLength - 1) {
