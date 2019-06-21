@@ -6,8 +6,23 @@
  * g<Name> can be used within this namespace, returned objects MUST either be primitives or internal entities
  */
 function buildCalendarAPI() {
+  function toCalendarId(ownerEmail) {
+    if (!ownerEmail) {
+      return 'primary';
+    }
+
+    // possible calendar id suffixes: https://webapps.stackexchange.com/questions/116392/how-to-get-a-link-to-add-a-google-calendar
+    // it's observed that sometimes the b64 event id gets the suffix cut off after @g with unclear reasons
+    // since @group.calendar.google.com is the most common calendar id suffix that starts with a "g", assume that for now
+    if (ownerEmail.endsWith('@g')) {
+      return ownerEmail.replace('@g', '@group.calendar.google.com')
+    }
+
+    return ownerEmail;
+  }
+
   async function getGEvent(eventId, ownerEmail) {
-    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${ownerEmail || 'primary'}/events/${eventId}`);
+    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${toCalendarId(ownerEmail)}/events/${eventId}`);
     return result.error ? null : result;
   }
 
@@ -29,7 +44,7 @@ function buildCalendarAPI() {
     }
 
     const result = await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/calendars/${ownerEmail || 'primary'}/events/${
+      `https://www.googleapis.com/calendar/v3/calendars/${toCalendarId(ownerEmail)}/events/${
         recurringEventId
         }/instances?timeMin=${
         start.toISOString()
