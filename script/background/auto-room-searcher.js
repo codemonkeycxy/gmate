@@ -211,8 +211,9 @@ async function nextTask() {
   const event = await CalendarAPI.getEventB64(eventIdB64);
   if (!event) {
     GMateError("current task event not found", currentTask);
-    // todo: reconsider this logic. a calendar outage caused the losses of valid tasks
-    // we could always re-enqueue the not found event, and later on add a retry limit
+    // sometimes an event can't be fetched due to obscure reasons (Calendar API outage), reinsert the task to try again later
+    // retrying won't solve the client errors (e.g. wrong params passed in, missing auth), but we have error logging and monitoring for those
+    enqueue(currentTask);
     return nextTaskFireAndForget();
   }
 
