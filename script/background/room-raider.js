@@ -1,3 +1,7 @@
+/**
+ * Room Raider searches for available rooms that matches with the searching criteria and snatch them
+ */
+
 // ==================== global variable management ======================
 const GLOBAL_VARIABLE_KEY = 'background-global-variables';
 const FULL_ROOM_LIST_KEY = 'full-room-list';

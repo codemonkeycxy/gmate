@@ -35,8 +35,8 @@
       "script/background/index.js",
       "script/background/announcement.js",
       "script/background/edit-page-actions.js",
-      "script/background/room-searcher.js",
-      "script/background/room-negotiator.js"
+      "script/background/room-raider.js",
+      "script/background/room-radar.js"
     ]
   },
   "content_scripts": [

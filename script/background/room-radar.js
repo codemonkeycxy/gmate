@@ -1,3 +1,6 @@
+/**
+ * Room Radar searches for occupied rooms that matches with the searching criteria and display potentially underutilized rooms
+ */
 (async () => {
   // const eventFilters = {
   //   flexFilters: {
@@ -23,5 +26,5 @@
   // const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
   // console.log(events);
   // const candidates = events.filter(event => event.name && event.name.includes('1:1'));
-  chrome.tabs.create({url: chrome.extension.getURL('template/room-negotiator.html')});
+  chrome.tabs.create({url: chrome.extension.getURL('template/room-radar.html')});
 })();
