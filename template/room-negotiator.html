@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>gmate Options</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        html, body {
+            width: 350px;
+            margin: 1%;
+            padding: 1%;
+        }
+    </style>
+</head>
+<body>
+
+<label>
+    <input type="checkbox" id="zero-invitee-reminder">
+    Remind me if no invitee is selected
+</label>
+<br>
+
+<label>
+    <input type="checkbox" id="generate-zoom-id">
+    Automatically make all meetings over zoom
+</label>
+<br>
+
+<hr>
+<label>
+    <input type="checkbox" id="auto-room-booking">
+    Automatically book meeting room
+</label>
+
+<div id="room-booking-filter-ui-group">
+    <!--to be injected dynamically via code-->
+</div>
+
+<div id="task-queue-ui-group">
+    <br>
+    <div>We are currently searching rooms for the following event(s):</div>
+    <div id="to-be-fulfilled-queue"></div>  <!-- the content will be programmatically filled -->
+</div>
+
+<hr>
+<div>Encountered an issue? <a href="https://github.com/codemonkeycxy/gmate/issues" target="_blank">Report here</a></div>
+
+<!--make sure to load the common and settings script first-->
+<script src="../script/shared/common.js"></script>
+<script src="../script/shared/storage.js"></script>
+<script src="../script/shared/auth.js"></script>
+<script src="../script/shared/room.js"></script>
+<script src="../script/settings/room-filters.js"></script>
+<script src="../script/shared/ui/index.js"></script>
+<script src="../script/shared/ui/modal.js"></script>
+<script src="../script/shared/ui/icon.js"></script>
+<script src="../script/shared/ui/button.js"></script>
+<script src="../script/shared/ui/room-booking-filters.js"></script>
+<script src="../script/popup/render-room-filters.js"></script>
+<script src="../script/popup/render-task-queue.js"></script>
+<script src="../script/popup/set-feature-toggles.js"></script>
+</body>
+</html>
