@@ -98,10 +98,6 @@ function buildCalendarAPI() {
   }
 
   async function pickFreeRooms(startTsStr, endTsStr, roomEmails) {
-    if (isEmpty(roomEmails)) {
-      return [];
-    }
-
     const availabilities = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
     return roomEmails.filter(email => {
       const avail = availabilities[email];
@@ -109,8 +105,20 @@ function buildCalendarAPI() {
     });
   }
 
+  async function pickBusyRooms(startTsStr, endTsStr, roomEmails) {
+    const availabilities = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
+    return roomEmails.filter(email => {
+      const avail = availabilities[email];
+      // todo: maybe match busy start/end ts with the input ts
+      return avail && isEmpty(avail.errors) && !isEmpty(avail.busy);
+    });
+  }
+
   async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
     let result = {};
+    if (isEmpty(roomEmails)) {
+      return result;
+    }
 
     // freeBusy api has a 50 item size limit
     const emailChunks = chunk(roomEmails, 50);
@@ -254,6 +262,7 @@ function buildCalendarAPI() {
     getAllRooms,
     eventIdToRecurringIdsB64,
     pickFreeRooms,
+    pickBusyRooms,
 
     addRoomB64,
   }
