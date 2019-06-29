@@ -6,7 +6,7 @@
   "description": "Smart Google Calendar Manager",
   "browser_action": {
     "default_title": "gmate",
-    "default_popup": "options.html"
+    "default_popup": "template/control-panel.html"
   },
   "icons": {
     "128": "icon.png"
