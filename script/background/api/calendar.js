@@ -97,7 +97,7 @@ function buildCalendarAPI() {
     return await addRoom(id, ownerEmail, roomEmail);
   }
 
-  async function pickFreeRooms(startStr, endStr, roomEmails) {
+  async function pickFreeRooms(startTsStr, endTsStr, roomEmails) {
     if (isEmpty(roomEmails)) {
       return [];
     }
@@ -108,16 +108,16 @@ function buildCalendarAPI() {
     for (let i = 0; i < emailChunks.length; i++) {
       const emailChunk = emailChunks[i];
       console.log(`check room availability batch ${i + 1}; count: ${emailChunk.length}`);
-      const freeRooms = await _pickFreeRooms(startStr, endStr, emailChunk);
+      const freeRooms = await _pickFreeRooms(startTsStr, endTsStr, emailChunk);
       freeRooms.forEach(roomEmail => result.push(roomEmail));
     }
     return result;
   }
 
-  async function _pickFreeRooms(startStr, endStr, roomEmails) {
+  async function _pickFreeRooms(startTsStr, endTsStr, roomEmails) {
     const params = {
-      timeMin: startStr,
-      timeMax: endStr,
+      timeMin: startTsStr,
+      timeMax: endTsStr,
       items: roomEmails.map(email => ({id: email})),
       calendarExpansionMax: 50
     };
