@@ -33,9 +33,9 @@
       "script/background/entity/event.js",
       "script/background/api/calendar.js",
       "script/background/index.js",
-      "script/background/show-announcement.js",
+      "script/background/announcement.js",
       "script/background/edit-page-actions.js",
-      "script/background/auto-room-searcher.js"
+      "script/background/room-searcher.js"
     ]
   },
   "content_scripts": [
