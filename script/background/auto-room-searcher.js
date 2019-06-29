@@ -88,7 +88,7 @@ async function bootstrap() {
 // todo: race condition still observed, need to apply isTaskFresh more aggressively
 // todo: use docs retro as a way to debug recurring event booking (exclude deleted?)
 // todo: allow user to choose whether to notify participants
-// todo: users are still getting room booking notifications (spam for recurring meetings)
+// todo: (maybe) support email subscription
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
