@@ -115,17 +115,7 @@ function buildCalendarAPI() {
   }
 
   async function _pickFreeRooms(startTsStr, endTsStr, roomEmails) {
-    const params = {
-      timeMin: startTsStr,
-      timeMax: endTsStr,
-      items: roomEmails.map(email => ({id: email})),
-      calendarExpansionMax: 50
-    };
-    const freeBusy = await _callCalendarAPI(
-      `https://www.googleapis.com/calendar/v3/freeBusy`,
-      'POST',
-      params
-    );
+    const freeBusy = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
     if (isEmpty(freeBusy.calendars)) {
       return [];
     }
@@ -134,6 +124,21 @@ function buildCalendarAPI() {
       const roomAvailability = freeBusy.calendars[email];
       return roomAvailability && isEmpty(roomAvailability.errors) && isEmpty(roomAvailability.busy);
     });
+  }
+
+  async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
+    const params = {
+      timeMin: startTsStr,
+      timeMax: endTsStr,
+      items: roomEmails.map(email => ({id: email})),
+      calendarExpansionMax: 50
+    };
+
+    return await _callCalendarAPI(
+      `https://www.googleapis.com/calendar/v3/freeBusy`,
+      'POST',
+      params
+    );
   }
 
   /**
