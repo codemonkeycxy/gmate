@@ -75,5 +75,8 @@
     "storage",
     "notifications",
     "identity"
+  ],
+  "web_accessible_resources": [
+    "template/*"
   ]
 }
