@@ -116,15 +116,15 @@ function buildCalendarAPI() {
 
   async function getEventsForRooms(startTsStr, endTsStr, roomEmails) {
     let results = [];
-    // todo: batch up in groups of 5
-    for (let i = 0; i < roomEmails.length; i++) {
-      const roomEmail = roomEmails[i];
 
-      let events = await _getEventsForRoom(startTsStr, endTsStr, roomEmails[i]);
-      events = events.filter(event => event.rooms.some(room => room.email === roomEmail && room.isAccepted()));
+    await Promise.all(roomEmails.map(roomEmail =>
+      (async () => {
+        let events = await _getEventsForRoom(startTsStr, endTsStr, roomEmail);
+        events = events.filter(event => event.rooms.some(room => room.email === roomEmail && room.isAccepted()));
 
-      results = results.concat(events);
-    }
+        results = results.concat(events);
+      })()
+    ));
 
     return results;
   }

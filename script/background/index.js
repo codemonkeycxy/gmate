@@ -42,6 +42,7 @@ onMessage((msg, sender, cb) => {
 
   const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
   console.log(busyRooms);
+  // todo: add sane limit for busy rooms
   const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
   console.log(events);
 })();
