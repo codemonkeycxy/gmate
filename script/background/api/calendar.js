@@ -245,6 +245,7 @@ function buildCalendarAPI() {
     return new Event({
       id: gEvent.id,
       name: gEvent.summary,
+      htmlLink: gEvent.htmlLink,
       status: gEvent.status,
       start: new Date(gEvent.start.dateTime),
       startStr: gEvent.start.dateTime,

@@ -45,4 +45,5 @@ onMessage((msg, sender, cb) => {
   // todo: add sane limit for busy rooms
   const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
   console.log(events);
+  console.log(events.filter(event => event.name && event.name.includes('1:1')));
 })();
