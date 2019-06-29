@@ -102,43 +102,42 @@ function buildCalendarAPI() {
       return [];
     }
 
-    // freeBusy api has a 50 item size limit
-    const emailChunks = chunk(roomEmails, 50);
-    const result = [];
-    for (let i = 0; i < emailChunks.length; i++) {
-      const emailChunk = emailChunks[i];
-      console.log(`check room availability batch ${i + 1}; count: ${emailChunk.length}`);
-      const freeRooms = await _pickFreeRooms(startTsStr, endTsStr, emailChunk);
-      freeRooms.forEach(roomEmail => result.push(roomEmail));
-    }
-    return result;
-  }
-
-  async function _pickFreeRooms(startTsStr, endTsStr, roomEmails) {
-    const freeBusy = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
-    if (isEmpty(freeBusy.calendars)) {
-      return [];
-    }
-
+    const availabilities = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
     return roomEmails.filter(email => {
-      const roomAvailability = freeBusy.calendars[email];
-      return roomAvailability && isEmpty(roomAvailability.errors) && isEmpty(roomAvailability.busy);
+      const avail = availabilities[email];
+      return avail && isEmpty(avail.errors) && isEmpty(avail.busy);
     });
   }
 
   async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
+    let result = {};
+
+    // freeBusy api has a 50 item size limit
+    const emailChunks = chunk(roomEmails, 50);
+    for (let i = 0; i < emailChunks.length; i++) {
+      const emailChunk = emailChunks[i];
+      console.log(`check room availability batch ${i + 1}; count: ${emailChunk.length}`);
+      const availability = await _checkRoomAvailability(startTsStr, endTsStr, emailChunk);
+      result = Object.assign(result, availability);
+    }
+
+    return result;
+  }
+
+  async function _checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
     const params = {
       timeMin: startTsStr,
       timeMax: endTsStr,
       items: roomEmails.map(email => ({id: email})),
       calendarExpansionMax: 50
     };
-
-    return await _callCalendarAPI(
+    const res = await _callCalendarAPI(
       `https://www.googleapis.com/calendar/v3/freeBusy`,
       'POST',
       params
     );
+
+    return res.calendars;
   }
 
   /**
