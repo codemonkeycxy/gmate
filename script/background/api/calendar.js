@@ -114,6 +114,10 @@ function buildCalendarAPI() {
     });
   }
 
+  async function getEventsForRoom(startTsStr, endTsStr, roomEmail) {
+    return await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${roomEmail}/events?timeMin=${startTsStr}&timeMax=${endTsStr}`);
+  }
+
   async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
     let result = {};
     if (isEmpty(roomEmails)) {
@@ -263,6 +267,7 @@ function buildCalendarAPI() {
     eventIdToRecurringIdsB64,
     pickFreeRooms,
     pickBusyRooms,
+    getEventsForRoom,
 
     addRoomB64,
   }

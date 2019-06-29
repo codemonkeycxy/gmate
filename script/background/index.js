@@ -22,5 +22,28 @@ onMessage((msg, sender, cb) => {
 });
 
 // (async () => {
-//   console.log(await CalendarAPI.getEventB64('MXZoYThybWsyam1pcmViMXE1MG5mY28zZzcgdWJlci5jb21fbWlhZzY4cWgydWcxN2ExZG5zMmdidHZwbzRAZw'));
+//   const eventFilters = {
+//     flexFilters: {
+//       'room-booking-filter-negative': "",
+//       'room-booking-filter-positive-1': "",
+//       'room-booking-filter-uber-floor': "4,5",
+//       'room-booking-filter-uber-location': "SFO | 1455 Market",
+//       'room-booking-filter-uber-need_vc': true,
+//       'room-booking-filter-uber-room_size': "3-15",
+//     },
+//     negFilter: "",
+//     posFilter: "",
+//   };
+//   const {posFilter, negFilter, flexFilters} = eventFilters;
+//
+//   const event = await CalendarAPI.getEventB64('N2owYXM2ZzdxN3N1aDlzdTVpaGM5YmhwYXYgeGlueWlAdWJlci5jb20');
+//   const allRooms = await getFullRoomList();
+//   const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+//
+//   const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
+//   console.log(busyRooms);
+//   busyRooms.forEach(async roomEmail => {
+//     const events = await CalendarAPI.getEventsForRoom(event.startStr, event.endStr, roomEmail);
+//     console.log(events);
+//   });
 // })();
