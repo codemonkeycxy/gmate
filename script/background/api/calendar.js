@@ -115,12 +115,15 @@ function buildCalendarAPI() {
   }
 
   async function getEventsForRooms(startTsStr, endTsStr, roomEmails) {
-    const results = [];
+    let results = [];
     // todo: batch up in groups of 5
     for (let i = 0; i < roomEmails.length; i++) {
-      const events = await _getEventsForRoom(startTsStr, endTsStr, roomEmails[i]);
-      console.log(events);
-      results.concat(events);
+      const roomEmail = roomEmails[i];
+
+      let events = await _getEventsForRoom(startTsStr, endTsStr, roomEmails[i]);
+      events = events.filter(event => event.rooms.some(room => room.email === roomEmail && room.isAccepted()));
+
+      results = results.concat(events);
     }
 
     return results;
@@ -128,7 +131,7 @@ function buildCalendarAPI() {
 
   async function _getEventsForRoom(startTsStr, endTsStr, roomEmail) {
     const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${roomEmail}/events?timeMin=${startTsStr}&timeMax=${endTsStr}&singleEvents=true`);
-    return result.items;
+    return result.items.map(gEvent => toInternalEvent(gEvent));
   }
 
   async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
