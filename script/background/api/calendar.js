@@ -117,9 +117,12 @@ function buildCalendarAPI() {
   async function getEventsForRooms(startTsStr, endTsStr, roomEmails) {
     let results = [];
 
+    // run event searching in parallel for max performance
     await Promise.all(roomEmails.map(roomEmail =>
+      // prepare operations to be run in parallel
       (async () => {
         let events = await _getEventsForRoom(startTsStr, endTsStr, roomEmail);
+        // discard events that the given room has declined
         events = events.filter(event => event.rooms.some(room => room.email === roomEmail && room.isAccepted()));
 
         results = results.concat(events);
