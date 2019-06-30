@@ -33,18 +33,12 @@
   console.log(events);
   const candidates = events.filter(event => event.name && event.name.includes('1:1'));
 
-  const list = dom.createElement('ul');
-  candidates.forEach(event => {
-    const htmlStr = `
-        <li>
-            <a href=${event.htmlLink} target="_blank">
-                ${event.name || "unnamed event"}
-            </a>
-        </li>
-    `;
-    const item = htmlToElement(htmlStr);
-    console.log(item);
-    list.appendChild(item);
-  });
+  const list = newList(candidates.map(event =>
+    `<li>
+        <a href=${event.htmlLink} target="_blank">
+            ${event.name || "unnamed event"}
+        </a>
+    </li>`
+  ));
   dom.getElementById('to-inject').appendChild(list);
 })();
