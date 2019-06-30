@@ -18,7 +18,6 @@
     const {posFilter, negFilter, flexFilters} = eventFilters;
     const event = await CalendarAPI.getEventB64(eventId);
 
-    // this breaks encapsulation by calling a room-raider function. todo: remove this hack
     const allRooms = await getFullRoomList();
     const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
 

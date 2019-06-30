@@ -94,7 +94,7 @@ async function bootstrap() {
 // todo: allow user to choose whether to notify participants
 // todo: (maybe) support email subscription
 // todo: potentially replace code based UI with html template https://stackoverflow.com/questions/16334054/inject-html-into-a-page-from-a-content-script
-// todo: replace code generated UI with html template (see room-radar.js example)
+// todo: replace code generated UI with html template (see radar.js example)
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -325,28 +325,6 @@ function saveGlobalVarNoBlock() {
   console.log(`taking a snapshot of the current global variables`);
   // purposefully no await here in order not to block
   persistPairLocal(GLOBAL_VARIABLE_KEY, snapshot);
-}
-
-async function refreshFullRoomList() {
-  console.log('refreshing full room list...');
-  const rooms = await CalendarAPI.getAllRooms();
-  if (isEmpty(rooms)) {
-    throw GMateError("received empty full room list from API");
-  }
-
-  console.log(`saving ${rooms.length} rooms to local storage...`);
-  await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
-
-  return rooms;
-}
-
-async function getFullRoomList() {
-  const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
-  if (!isEmpty(rooms)) {
-    return rooms;
-  }
-
-  return await refreshFullRoomList();
 }
 
 function _enqueue(task) {
