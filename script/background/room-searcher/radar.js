@@ -14,6 +14,7 @@
   const task = eventTasks[0];
   const event = await CalendarAPI.getEventB64(task.data.eventId);
   dom.getElementById('owner-event-name').innerText = event.name || 'unnamed event';
+  // todo: switch to more readable ts
   dom.getElementById('owner-event-start').innerText = event.startStr;
   dom.getElementById('owner-event-end').innerText = event.endStr;
 
@@ -28,6 +29,7 @@
 
     const allRooms = await getFullRoomList();
     const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+    // todo: sanity check array size and fail on too many candidates
 
     const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
@@ -43,4 +45,7 @@
       htmlToElement('<br/>'),
     ])));
   }
+
+  // todo: no invitee &/ hold
+  // todo: large room with few people
 })();
