@@ -2,6 +2,12 @@
  * Room Radar searches for occupied rooms that matches with the searching criteria and display potentially underutilized rooms
  */
 (async () => {
+  const newTab = window.open();
+  const dom = newTab.document;
+  dom.write(await loadHTML('template/room-radar.html'));
+  // todo: add a loader while the async call happens https://www.w3schools.com/howto/howto_css_loader.asp
+  // todo: inject icon
+
   const eventFilters = {
     flexFilters: {
       'room-booking-filter-negative': "",
@@ -27,7 +33,11 @@
   console.log(events);
   const candidates = events.filter(event => event.name && event.name.includes('1:1'));
 
-  const newTab = window.open();
-  newTab.document.write(await loadHTML('template/room-radar.html'));
-  newTab.document.getElementById('to-inject').innerText = "injected!";
+  const list = dom.createElement('ul');
+  candidates.forEach(event => {
+    const item = htmlToElement('<li><a href="https://www.google.com" target="_blank">${event.name}</li>');
+    console.log(item);
+    list.appendChild(item);
+  });
+  dom.getElementById('to-inject').appendChild(list);
 })();
