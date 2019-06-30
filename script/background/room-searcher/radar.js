@@ -30,13 +30,11 @@
     // todo: add sane limit for busy rooms
     const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
     const candidates = events.filter(event => event.name && event.name.includes('1:1'));
-
-    return newList(candidates.map(event =>
-      `<li>
-        <a href=${event.htmlLink} target="_blank">
-            ${event.name || 'unnamed event'}
-        </a>
-    </li>`
-    ));
+    return wrapUIComponents(candidates.map(event => wrapUIComponents([
+      htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
+      htmlToElement(`<div>Start: ${event.startStr}</div>`),
+      htmlToElement(`<div>End: ${event.endStr}</div>`),
+      htmlToElement('<br/>'),
+    ])));
   }
 })();
