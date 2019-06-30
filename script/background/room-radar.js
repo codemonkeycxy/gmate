@@ -26,5 +26,18 @@
   // const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
   // console.log(events);
   // const candidates = events.filter(event => event.name && event.name.includes('1:1'));
+  var newWindow = window.open();
   chrome.tabs.create({url: chrome.extension.getURL('template/room-radar.html')});
+  // reference: https://stackoverflow.com/questions/16334054/inject-html-into-a-page-from-a-content-script
+  fetch(chrome.extension.getURL('template/room-radar.html'))
+    .then(response => response.text())
+    .then(data => {
+      // reference: https://stackoverflow.com/questions/10573404/open-a-new-tab-with-custom-html-instead-of-a-url
+      var newWindow = window.open();
+      newWindow.document.write(data);
+      newWindow.document.getElementById('to-inject').innerText = "injected!";
+      // other code
+      // eg update injected elements,
+      // add event listeners or logic to connect to other parts of the app
+  });
 })();
