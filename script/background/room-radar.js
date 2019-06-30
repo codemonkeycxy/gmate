@@ -10,24 +10,15 @@
 
   // todo: put a sane limit (maybe 5)
   const container = dom.getElementById('underutilized-rooms');
-  container.appendChild(await buildResultForEvent());
+  // this breaks encapsulation by calling a room-raider function. todo: remove this hack
+  const eventTasks = getAllEventTasks();
+  container.appendChild(await buildResultForEvent(eventTasks[0].data.eventId, eventTasks[0].data.eventFilters));
 
-  async function buildResultForEvent() {
-    const eventFilters = {
-      flexFilters: {
-        'room-booking-filter-negative': "",
-        'room-booking-filter-positive-1': "",
-        'room-booking-filter-uber-floor': "4,5",
-        'room-booking-filter-uber-location': "SFO | 1455 Market",
-        'room-booking-filter-uber-need_vc': true,
-        'room-booking-filter-uber-room_size': "3-15",
-      },
-      negFilter: "",
-      posFilter: "",
-    };
+  async function buildResultForEvent(eventId, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
+    const event = await CalendarAPI.getEventB64(eventId);
 
-    const event = await CalendarAPI.getEventB64('N2owYXM2ZzdxN3N1aDlzdTVpaGM5YmhwYXYgeGlueWlAdWJlci5jb20');
+    // this breaks encapsulation by calling a room-raider function. todo: remove this hack
     const allRooms = await getFullRoomList();
     const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
 
