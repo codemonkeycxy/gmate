@@ -36,6 +36,7 @@ const PROMPT_AUTH = "prompt-auth";
 // settings panel actions
 const GET_QUEUE = "get-queue";
 const REMOVE_TASK = "remove-task";
+const ROOM_RADAR = "room-radar";
 
 // room status
 const ACCEPTED = "accepted";

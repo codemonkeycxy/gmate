@@ -19,6 +19,17 @@
     }, null, injectTaskQueueUI);
   }
 
+  function openRoomRadar(task) {
+    chrome.runtime.sendMessage(null, {
+      type: ROOM_RADAR,
+      data: {
+        eventId: task.data.eventId,
+        eventName: task.data.eventName,
+        eventFilters: task.data.eventFilters
+      }
+    });
+  }
+
   function injectTaskQueueUI(payload) {
     const eventTasks = payload.data.eventTasks;
     const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
@@ -39,9 +50,14 @@
       const delBtn = htmlToElement(`<i class="fa fa-trash"></i>`);
       delBtn.onclick = () => removeTask(task.id);
 
+      const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
+      handshakeBtn.onclick = () => openRoomRadar(task);
+
       const item = document.createElement('li');
       item.appendChild(htmlToElement(`<a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a>`));
       item.appendChild(htmlToElement('&nbsp;'));
+      item.appendChild(handshakeBtn);
+      item.appendChild(htmlToElement('&nbsp;&nbsp;'));
       item.appendChild(delBtn);
 
       return item;
