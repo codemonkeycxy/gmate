@@ -31,15 +31,15 @@
     const theirEvents = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
     // todo: add "report a problem" for users to report incorrectly identified candidate
     const lowUtilEvents = theirEvents
-      .filter(event => blah(event))
-      .sort((event1, event2) => blah(event1).localeCompare(blah(event2)));
+      .filter(event => lowUtilReason(event))
+      .sort((event1, event2) => lowUtilReason(event1).localeCompare(lowUtilReason(event2)));
 
     const components = lowUtilEvents.map(event =>
       wrapUIComponents([
         htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
         htmlToElement(`<div>Start: ${prettyDate(event.start)}</div>`),
         htmlToElement(`<div>End: ${prettyDate(event.end)}</div>`),
-        htmlToElement(`<div>Reason: ${blah(event)}</div>`),
+        htmlToElement(`<div>Reason: ${lowUtilReason(event)}</div>`),
         htmlToElement('<br/>'),
       ])
     );
@@ -49,7 +49,7 @@
     return wrapUIComponents(components);
   }
 
-  function blah(event) {
+  function lowUtilReason(event) {
     // todo: think about private meetings
     // todo: large room with few people. make sure to exclude declined. think about maybe and no responded
     // to do the ^ comparison, need to know the room capacity, need to parse info from g suite response and standardize
