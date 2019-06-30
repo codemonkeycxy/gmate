@@ -5,7 +5,6 @@
   const newTab = window.open();
   const dom = newTab.document;
   dom.write(await loadHTML('template/room-radar.html'));
-  // todo: add a loader while the async call happens https://www.w3schools.com/howto/howto_css_loader.asp
   // todo: inject icon
 
   // todo: put a sane limit (maybe 5)
@@ -18,7 +17,11 @@
   dom.getElementById('owner-event-start').innerText = event.startStr;
   dom.getElementById('owner-event-end').innerText = event.endStr;
 
-  container.appendChild(await buildResultForEvent(event, task.data.eventFilters));
+  const results = await buildResultForEvent(event, task.data.eventFilters);
+  // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
+  const loader = dom.getElementById('loading');
+  hide(loader);
+  container.appendChild(results);
 
   async function buildResultForEvent(event, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
