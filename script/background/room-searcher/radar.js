@@ -10,7 +10,7 @@
   }
 
   async function renderTheirEventInfo(dom, event, eventFilters) {
-    const theirEventInfo = await buildResultForEvent(event, eventFilters);
+    const theirEventInfo = await getLowUtilEvents(event, eventFilters);
 
     // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
     const loader = dom.getElementById('loading');
@@ -19,7 +19,7 @@
     dom.getElementById('underutilized-rooms').appendChild(theirEventInfo);
   }
 
-  async function buildResultForEvent(event, eventFilters) {
+  async function getLowUtilEvents(event, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
 
     const allRooms = await getFullRoomList();
@@ -28,27 +28,25 @@
 
     const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
-    const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
+    const theirEvents = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
     // todo: add "report a problem" for users to report incorrectly identified candidate
-    const results = [];
+    const lowUtilEvents = theirEvents
+      .filter(event => blah(event))
+      .sort((event1, event2) => blah(event1).localeCompare(blah(event2)));
 
-    events.forEach(event => {
-      const reason = blah(event);
-      if (reason) {
-        results.push(wrapUIComponents([
-          htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
-          htmlToElement(`<div>Start: ${prettyDate(event.start)}</div>`),
-          htmlToElement(`<div>End: ${prettyDate(event.end)}</div>`),
-          htmlToElement(`<div>Reason: ${reason}</div>`),
-          htmlToElement('<br/>'),
-        ]));
-      }
-    });
+    const components = lowUtilEvents.map(event =>
+      wrapUIComponents([
+        htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
+        htmlToElement(`<div>Start: ${prettyDate(event.start)}</div>`),
+        htmlToElement(`<div>End: ${prettyDate(event.end)}</div>`),
+        htmlToElement(`<div>Reason: ${blah(event)}</div>`),
+        htmlToElement('<br/>'),
+      ])
+    );
 
-    // todo: sort by reason
     // todo: prefer exact time match
     // todo: expand wrapUIComponents to support multiple columns
-    return wrapUIComponents(results);
+    return wrapUIComponents(components);
   }
 
   function blah(event) {
