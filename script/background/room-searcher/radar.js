@@ -58,6 +58,7 @@
   }
 
   function blah(event) {
+    // todo: think about private meetings
     // todo: large room with few people. make sure to exclude declined. think about maybe and no responded
     if (event.likelyOneOnOne()) {
       return 'likely 1:1';
