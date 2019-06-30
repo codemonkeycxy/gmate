@@ -1,28 +1,23 @@
 /**
  * Room Radar searches for occupied rooms that matches with the searching criteria and display potentially underutilized rooms
  */
+// self-invoking function to avoid name collision
 (async () => {
-  const newTab = window.open();
-  const dom = newTab.document;
-  dom.write(await loadHTML('template/room-radar.html'));
-  // todo: inject icon
+  function renderMyEventInfo(dom, event) {
+    dom.getElementById('owner-event-name').innerText = event.name || 'unnamed event';
+    dom.getElementById('owner-event-start').innerText = prettyDate(event.start);
+    dom.getElementById('owner-event-end').innerText = prettyDate(event.end);
+  }
 
-  // todo: put a sane limit (maybe 5)
-  const container = dom.getElementById('underutilized-rooms');
-  // this breaks encapsulation by calling a room-raider function. todo: remove this hack
-  const eventTasks = getAllEventTasks();
-  const task = eventTasks[0];
-  const event = await CalendarAPI.getEventB64(task.data.eventId);
-  dom.getElementById('owner-event-name').innerText = event.name || 'unnamed event';
-  // todo: switch to more readable ts
-  dom.getElementById('owner-event-start').innerText = prettyDate(event.start);
-  dom.getElementById('owner-event-end').innerText = prettyDate(event.end);
+  async function renderTheirEventInfo(dom, event, eventFilters) {
+    const theirEventInfo = await buildResultForEvent(event, eventFilters);
 
-  const results = await buildResultForEvent(event, task.data.eventFilters);
-  // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
-  const loader = dom.getElementById('loading');
-  hide(loader);
-  container.appendChild(results);
+    // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
+    const loader = dom.getElementById('loading');
+    hide(loader);
+
+    dom.getElementById('underutilized-rooms').appendChild(theirEventInfo);
+  }
 
   async function buildResultForEvent(event, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
@@ -34,7 +29,6 @@
     const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
     const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
-    console.log(events);
     // todo: add "report a problem" for users to report incorrectly identified candidate
     const results = [];
 
@@ -74,4 +68,19 @@
 
     return null;
   }
+
+  (async function main() {
+    const newTab = window.open();
+    const dom = newTab.document;
+    dom.write(await loadHTML('template/room-radar.html'));
+    // todo: inject icon
+
+    // this breaks encapsulation by calling a room-raider function. todo: remove this hack
+    const eventTasks = getAllEventTasks();
+    const task = eventTasks[0];
+    const event = await CalendarAPI.getEventB64(task.data.eventId);
+
+    renderMyEventInfo(dom, event);
+    await renderTheirEventInfo(dom, event, task.data.eventFilters);
+  })();
 })();
