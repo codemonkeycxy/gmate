@@ -35,7 +35,14 @@
 
   const list = dom.createElement('ul');
   candidates.forEach(event => {
-    const item = htmlToElement('<li><a href="https://www.google.com" target="_blank">${event.name}</li>');
+    const htmlStr = `
+        <li>
+            <a href=${event.htmlLink} target="_blank">
+                ${event.name || "unnamed event"}
+            </a>
+        </li>
+    `;
+    const item = htmlToElement(htmlStr);
     console.log(item);
     list.appendChild(item);
   });
