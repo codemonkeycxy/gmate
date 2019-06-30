@@ -43,7 +43,7 @@
       "script/background/edit-page-actions.js",
       "script/background/room-searcher/index.js",
       "script/background/room-searcher/raider.js",
-      "script/background/room-searcher/radar.js",
+      "script/background/room-searcher/radar.js"
     ]
   },
   "content_scripts": [

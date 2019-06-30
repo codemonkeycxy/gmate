@@ -12,31 +12,31 @@
   const container = dom.getElementById('underutilized-rooms');
   // this breaks encapsulation by calling a room-raider function. todo: remove this hack
   const eventTasks = getAllEventTasks();
-  container.appendChild(await buildResultForEvent(eventTasks[0].data.eventId, eventTasks[0].data.eventFilters));
+  const task = eventTasks[0];
+  const event = await CalendarAPI.getEventB64(task.data.eventId);
+  dom.getElementById('owner-event-name').innerText = event.name || 'unnamed event';
+  dom.getElementById('owner-event-start').innerText = event.startStr;
+  dom.getElementById('owner-event-end').innerText = event.endStr;
 
-  async function buildResultForEvent(eventId, eventFilters) {
+  container.appendChild(await buildResultForEvent(event, task.data.eventFilters));
+
+  async function buildResultForEvent(event, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
-    const event = await CalendarAPI.getEventB64(eventId);
 
     const allRooms = await getFullRoomList();
     const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
 
     const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
-    console.log(busyRooms);
     // todo: add sane limit for busy rooms
     const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
-    console.log(events);
     const candidates = events.filter(event => event.name && event.name.includes('1:1'));
 
-    const myEvent = htmlToElement(`<p>${event.name}</p>`);
-    const theirEvents = newList(candidates.map(event =>
+    return newList(candidates.map(event =>
       `<li>
         <a href=${event.htmlLink} target="_blank">
             ${event.name || 'unnamed event'}
         </a>
     </li>`
     ));
-
-    return wrapUIComponents([myEvent, theirEvents]);
   }
 })();
