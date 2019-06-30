@@ -96,8 +96,10 @@ class Attendee {
 }
 
 class HumanAttendee extends Attendee {
-  constructor({email, status}) {
+  constructor({email, status, isOrganizer}) {
     super({email, status});
+
+    this.isOrganizer = isOrganizer;
   }
 }
 

@@ -52,6 +52,7 @@
     });
 
     // todo: sort by reason
+    // todo: prefer exact time match
     // todo: expand wrapUIComponents to support multiple columns
     return wrapUIComponents(results);
   }
@@ -62,10 +63,13 @@
       return 'likely 1:1';
     }
 
-    // todo: check only the accepted ones? maybe?
-    // todo: only return when the creator is the only invitee
-    if (event.humanAttendees.length === 1) {
+    const attendeeCnt = event.humanAttendees.length;
+    const noInvitee = attendeeCnt === 0;
+    const organizerOnly = attendeeCnt === 1 && event.humanAttendees[0].isOrganizer;
+    if (noInvitee || organizerOnly) {
       return 'no invitee';
     }
+
+    return null;
   }
 })();

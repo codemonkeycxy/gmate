@@ -278,6 +278,7 @@ function buildCalendarAPI() {
     return new HumanAttendee({
       email: gAttendee.email,
       status: gAttendee.responseStatus,
+      isOrganizer: gAttendee.organizer,
     });
   }
 

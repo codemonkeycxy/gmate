@@ -95,6 +95,7 @@ async function bootstrap() {
 // todo: (maybe) support email subscription
 // todo: potentially replace code based UI with html template https://stackoverflow.com/questions/16334054/inject-html-into-a-page-from-a-content-script
 // todo: replace code generated UI with html template (see radar.js example)
+// todo: measure room utilization impact (e.g. large room with small invitees, room hold, etc.)
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
