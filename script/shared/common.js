@@ -729,3 +729,7 @@ function chunk(array, size) {
   }
   return chunked_arr;
 }
+
+function prettyDate(date) {
+  return date.toString().replace(/(:00)?\s*GMT.*$/, '').trim();
+}

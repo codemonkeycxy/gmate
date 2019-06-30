@@ -15,8 +15,8 @@
   const event = await CalendarAPI.getEventB64(task.data.eventId);
   dom.getElementById('owner-event-name').innerText = event.name || 'unnamed event';
   // todo: switch to more readable ts
-  dom.getElementById('owner-event-start').innerText = event.startStr;
-  dom.getElementById('owner-event-end').innerText = event.endStr;
+  dom.getElementById('owner-event-start').innerText = prettyDate(event.start);
+  dom.getElementById('owner-event-end').innerText = prettyDate(event.end);
 
   const results = await buildResultForEvent(event, task.data.eventFilters);
   // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
@@ -43,8 +43,8 @@
       if (reason) {
         results.push(wrapUIComponents([
           htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
-          htmlToElement(`<div>Start: ${event.startStr}</div>`),
-          htmlToElement(`<div>End: ${event.endStr}</div>`),
+          htmlToElement(`<div>Start: ${prettyDate(event.start)}</div>`),
+          htmlToElement(`<div>End: ${prettyDate(event.end)}</div>`),
           htmlToElement(`<div>Reason: ${reason}</div>`),
           htmlToElement('<br/>'),
         ]));
@@ -60,6 +60,7 @@
   function blah(event) {
     // todo: think about private meetings
     // todo: large room with few people. make sure to exclude declined. think about maybe and no responded
+    // to do the ^ comparison, need to know the room capacity, need to parse info from g suite response and standardize
     if (event.likelyOneOnOne()) {
       return 'likely 1:1';
     }

@@ -20,3 +20,7 @@ onMessage((msg, sender, cb) => {
     return true;
   }
 });
+
+// (async () => {
+//   console.log(await CalendarAPI.getAllRooms());
+// })();
