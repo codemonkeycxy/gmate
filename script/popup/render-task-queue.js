@@ -10,14 +10,6 @@
     chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
   }
 
-  function addTaskRemovalListener() {
-    const trashes = document.getElementsByClassName('fa fa-trash');
-    for (let i = 0; i < trashes.length; i++) {
-      const trash = trashes[i];
-      trash.addEventListener("click", () => removeTask(parseInt(trash.getAttribute('data-id'))));
-    }
-  }
-
   function removeTask(taskId) {
     chrome.runtime.sendMessage(null, {
       type: REMOVE_TASK,
@@ -40,14 +32,19 @@
   }
 
   function populateTasks(eventTasks) {
-    document.getElementById(TO_BE_FULFILLED_QUEUE).innerHTML = `${
-      eventTasks.map(
-        task => `<li><a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${
-          task.data.eventName
-          }</a>&nbsp;<i data-id=${task.id} class="fa fa-trash"></i></li>`
-      ).join('')
-      }`;
+    const taskUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
 
-    addTaskRemovalListener();
+    taskUI.innerHTML = '';  // wipe out the existing UI
+    taskUI.appendChild(wrapUIComponents(eventTasks.map(task => {
+      const delBtn = htmlToElement(`<i class="fa fa-trash"></i>`);
+      delBtn.onclick = () => removeTask(task.id);
+
+      const item = document.createElement('li');
+      item.appendChild(htmlToElement(`<a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a>`));
+      item.appendChild(htmlToElement('&nbsp;'));
+      item.appendChild(delBtn);
+
+      return item;
+    })));
   }
 })();
