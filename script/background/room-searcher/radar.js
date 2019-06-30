@@ -36,6 +36,7 @@
       htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
       htmlToElement(`<div>Start: ${event.startStr}</div>`),
       htmlToElement(`<div>End: ${event.endStr}</div>`),
+      htmlToElement(`<div>Reason: likely 1:1</div>`),
       htmlToElement('<br/>'),
     ])));
   }

@@ -14,7 +14,7 @@ const ATTENDEE_STATUS = {
 class Event {
   constructor({id, name, htmlLink, status, start, startStr, end, endStr, rooms, humanAttendees}) {
     this.id = id;
-    this.name = name;
+    this.name = name || '';
     this.htmlLink = htmlLink;
     this.status = status;
     this.start = start;
