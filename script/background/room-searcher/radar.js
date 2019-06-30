@@ -36,16 +36,34 @@
     const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
     console.log(events);
     // todo: add "report a problem" for users to report incorrectly identified candidate
-    const candidates = events.filter(event => event.likelyOneOnOne());
-    return wrapUIComponents(candidates.map(event => wrapUIComponents([
-      htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
-      htmlToElement(`<div>Start: ${event.startStr}</div>`),
-      htmlToElement(`<div>End: ${event.endStr}</div>`),
-      htmlToElement(`<div>Reason: likely 1:1</div>`),
-      htmlToElement('<br/>'),
-    ])));
+    const results = [];
+
+    events.forEach(event => {
+      const reason = blah(event);
+      if (reason) {
+        results.push(wrapUIComponents([
+          htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
+          htmlToElement(`<div>Start: ${event.startStr}</div>`),
+          htmlToElement(`<div>End: ${event.endStr}</div>`),
+          htmlToElement(`<div>Reason: ${reason}</div>`),
+          htmlToElement('<br/>'),
+        ]));
+      }
+    });
+
+    return wrapUIComponents(results);
   }
 
-  // todo: no invitee &/ hold
-  // todo: large room with few people
+  function blah(event) {
+    // todo: large room with few people. make sure to exclude declined. think about maybe and no responded
+    if (event.likelyOneOnOne()) {
+      return 'likely 1:1';
+    }
+
+    // todo: check only the accepted ones? maybe?
+    // todo: only return when the creator is the only invitee
+    if (event.humanAttendees.length === 1) {
+      return 'no invitee';
+    }
+  }
 })();
