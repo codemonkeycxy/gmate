@@ -29,7 +29,9 @@
     const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
     const events = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
-    const candidates = events.filter(event => event.name && event.name.includes('1:1'));
+    console.log(events);
+    // todo: add "report a problem" for users to report incorrectly identified candidate
+    const candidates = events.filter(event => event.likelyOneOnOne());
     return wrapUIComponents(candidates.map(event => wrapUIComponents([
       htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
       htmlToElement(`<div>Start: ${event.startStr}</div>`),

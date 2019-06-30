@@ -34,6 +34,42 @@ class Event {
     return this.status === EVENT_STATUS.CANCELLED;
   }
 
+  likelyOneOnOne() {
+    if (this.humanAttendees.length !== 2) {
+      return false;
+    }
+
+    if (!this.name.trim()) {
+      return true;
+    }
+
+    if (this.name.includes('1:1')) {
+      return true;
+    }
+
+    if (this.name.includes('/')) {
+      return true;
+    }
+
+    if (this.name.includes('|')) {
+      return true;
+    }
+
+    if (this.name.includes(':')) {
+      return true;
+    }
+
+    if (this.name.includes('&')) {
+      return true;
+    }
+
+    if (this.name.includes(' x ')) {
+      return true;
+    }
+
+    return false;
+  }
+
   hasRoomAccepted(roomEmail) {
     if (isEmpty(this.rooms)) {
       return false;
