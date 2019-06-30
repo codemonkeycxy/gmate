@@ -729,3 +729,14 @@ function chunk(array, size) {
   }
   return chunked_arr;
 }
+
+async function loadHTML(fileName) {
+  return await new Promise(
+    resolve => fetch(chrome.extension.getURL(fileName))
+      .then(response => response.text())
+      .then(htmlStr => resolve(htmlStr))
+      .catch(error => {
+        throw GMateError(error.message);
+      })
+  );
+}
