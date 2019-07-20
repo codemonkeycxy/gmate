@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.0.0
+- [feature] Add "Room Radar" - a view that shows users potentially underutilized rooms
+- [maintenance] Add dedicated support email
+
 ## 4.1.0
 - [fix] Allow room booking for someone else's calendar
 - [enhancement] Add retry for room booking tasks in case of Calendar API outage
