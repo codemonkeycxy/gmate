@@ -51,7 +51,10 @@
       delBtn.onclick = () => removeTask(task.id);
 
       const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
-      handshakeBtn.onclick = () => openRoomRadar(task);
+      handshakeBtn.onclick = () => {
+        track('room-radar-button-clicked');
+        openRoomRadar(task);
+      };
 
       const item = document.createElement('li');
       item.appendChild(htmlToElement(`<a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a>`));

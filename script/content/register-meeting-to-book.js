@@ -13,6 +13,7 @@
     const searchRoomBtn = insertSearchRoomBtn();
 
     searchRoomBtn.addEventListener("click", async () => {
+      track('find-room-button-clicked');
       searchRoomBtn.showSpinner();
       const token = await promptAuth();  // block until user gives permission
       searchRoomBtn.hideSpinner();
