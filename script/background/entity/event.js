@@ -47,6 +47,10 @@ class Event {
       return true;
     }
 
+    if (this.name.includes('1-1')) {
+      return true;
+    }
+
     if (this.name.includes('/')) {
       return true;
     }
@@ -60,6 +64,10 @@ class Event {
     }
 
     if (this.name.includes('&')) {
+      return true;
+    }
+
+    if (this.name.includes('-')) {
       return true;
     }
 

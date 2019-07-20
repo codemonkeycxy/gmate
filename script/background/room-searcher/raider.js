@@ -96,6 +96,10 @@ async function bootstrap() {
 // todo: potentially replace code based UI with html template https://stackoverflow.com/questions/16334054/inject-html-into-a-page-from-a-content-script
 // todo: replace code generated UI with html template (see radar.js example)
 // todo: measure room utilization impact (e.g. large room with small invitees, room hold, etc.) and send out monthly newsletter
+// todo: when someone books for recurring meetings for the event owner, the owner gets bombarded with notifications
+// ^ tested when the owners books recurring meetings for self, no notifications
+// todo: detect rooms that keep on rejecting a user and auto exclude them (https://github.com/codemonkeycxy/gmate/issues/2)
+// todo: (maybe) create team dot page
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
