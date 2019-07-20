@@ -42,6 +42,11 @@
     populateTasks(eventTasks);
   }
 
+  async function logBtnClick() {
+    track(ROOM_RADAR_BTN_CLICKED);
+    await incrementSync(ROOM_RADAR_BTN_CLICKED);
+  }
+
   function populateTasks(eventTasks) {
     const taskUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
 
@@ -51,8 +56,8 @@
       delBtn.onclick = () => removeTask(task.id);
 
       const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
-      handshakeBtn.onclick = () => {
-        track('room-radar-button-clicked');
+      handshakeBtn.onclick = async () => {
+        await logBtnClick();
         openRoomRadar(task);
       };
 

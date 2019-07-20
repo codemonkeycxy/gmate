@@ -13,7 +13,7 @@ const ZERO_INVITEE_REMINDER = "zero-invitee-reminder";
 const GENERATE_ZOOM_ID = "generate-zoom-id";
 
 // room booking related actions
-const FAVORIATE_ROOMS = "favorite-rooms";
+const FAVORITE_ROOMS = "favorite-rooms";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
@@ -57,6 +57,8 @@ const LEFT = "left";
 const RIGHT = "right";
 
 const SEARCH_ROOM_BTN_MSG = "Find a room with GMate";
+const SEARCH_ROOM_BTN_CLICKED = "find-room-button-clicked";
+const ROOM_RADAR_BTN_CLICKED = "room-radar-button-clicked";
 
 const DEFAULT_FEATURE_TOGGLES = {};
 DEFAULT_FEATURE_TOGGLES[ZERO_INVITEE_REMINDER] = true;

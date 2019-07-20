@@ -76,7 +76,7 @@ async function pickFavoriteRoom(roomEmails) {
     return null;
   }
 
-  const favRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
+  const favRooms = await getKeyFromSync(FAVORITE_ROOMS, {});
   let favoriteRoom = roomEmails[0];  // default to pick the first item from the list
   let favorability = -1;
 

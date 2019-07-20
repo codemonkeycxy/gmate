@@ -170,10 +170,10 @@
   }
 
   async function updateFavorability(selectedRooms) {
-    const favoriteRooms = await getKeyFromSync(FAVORIATE_ROOMS, {});
+    const favoriteRooms = await getKeyFromSync(FAVORITE_ROOMS, {});
     selectedRooms.forEach(room => updateFavorabilityForOne(room, favoriteRooms));
 
-    persistPairSync(FAVORIATE_ROOMS, favoriteRooms);
+    persistPairSync(FAVORITE_ROOMS, favoriteRooms);
   }
 
   function updateFavorabilityForOne(newRoom, favoriteRooms) {

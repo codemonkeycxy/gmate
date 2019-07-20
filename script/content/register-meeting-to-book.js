@@ -9,11 +9,16 @@
     listenToEventSave();
   }
 
+  async function logBtnClick() {
+    track(SEARCH_ROOM_BTN_CLICKED);
+    await incrementSync(SEARCH_ROOM_BTN_CLICKED);
+  }
+
   function renderSearchRoomBtn() {
     const searchRoomBtn = insertSearchRoomBtn();
 
     searchRoomBtn.addEventListener("click", async () => {
-      track('find-room-button-clicked');
+      await logBtnClick();
       searchRoomBtn.showSpinner();
       const token = await promptAuth();  // block until user gives permission
       searchRoomBtn.hideSpinner();

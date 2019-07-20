@@ -33,3 +33,11 @@ async function persistSync(items) {
 async function persistPairSync(key, val) {
   await persistSync({[key]: val});
 }
+
+async function incrementSync(key) {
+  const oldVal = await getKeyFromSync(key, 0);
+  const newVal = oldVal + 1;
+  await persistPairSync(key, newVal);
+
+  return newVal;
+}
