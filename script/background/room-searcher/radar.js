@@ -21,44 +21,55 @@
     dom.getElementById('owner-event-end').innerText = prettyDate(event.end);
   }
 
-  async function renderTheirEventInfo(dom, event, eventFilters) {
-    const theirEventInfo = await getLowUtilEvents(event, eventFilters);
+  async function renderTheirEventInfo(dom, myEvent, eventFilters) {
+    const {fullMatch, partialMatch} = await getLowUtilEvents(myEvent, eventFilters);
 
     // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
     const loader = dom.getElementById('loading');
     hide(loader);
 
-    dom.getElementById('underutilized-rooms').appendChild(theirEventInfo);
+    dom.getElementById('underutilized-rooms-full-match').appendChild(fullMatch);
+    dom.getElementById('underutilized-rooms-partial-match').appendChild(partialMatch);
   }
 
-  async function getLowUtilEvents(event, eventFilters) {
+  async function getLowUtilEvents(myEvent, eventFilters) {
     const {posFilter, negFilter, flexFilters} = eventFilters;
 
     const allRooms = await getFullRoomList();
     const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
     // todo: sanity check array size and fail on too many candidates
 
-    const busyRooms = await CalendarAPI.pickBusyRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
+    const busyRooms = await CalendarAPI.pickBusyRooms(myEvent.startStr, myEvent.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
-    const theirEvents = await CalendarAPI.getEventsForRooms(event.startStr, event.endStr, busyRooms);
-    // todo: add "report a problem" for users to report incorrectly identified candidate
+    const theirEvents = await CalendarAPI.getEventsForRooms(myEvent.startStr, myEvent.endStr, busyRooms);
     const lowUtilEvents = theirEvents
       .filter(event => lowUtilReason(event))
       .sort((event1, event2) => lowUtilReason(event1).localeCompare(lowUtilReason(event2)));
 
-    const components = lowUtilEvents.map(event =>
-      wrapUIComponents([
-        htmlToElement(`<div><a href=${event.htmlLink} target="_blank">Name: ${event.name || 'unnamed event'}</a></div>`),
-        htmlToElement(`<div>Start: ${prettyDate(event.start)}</div>`),
-        htmlToElement(`<div>End: ${prettyDate(event.end)}</div>`),
-        htmlToElement(`<div>Reason: ${lowUtilReason(event)}</div>`),
-        htmlToElement('<br/>'),
-      ])
-    );
+    const fullMatch = [];
+    const partialMatch = [];
 
-    // todo: prefer exact time match
+    lowUtilEvents.forEach(theirEvent => {
+      const theirEventUI = wrapUIComponents([
+        htmlToElement(`<div><a href=${theirEvent.htmlLink} target="_blank">Name: ${theirEvent.name || 'unnamed event'}</a></div>`),
+        htmlToElement(`<div>Start: ${prettyDate(theirEvent.start)}</div>`),
+        htmlToElement(`<div>End: ${prettyDate(theirEvent.end)}</div>`),
+        htmlToElement(`<div>Reason: ${lowUtilReason(theirEvent)}</div>`),
+        htmlToElement('<br/>'),
+      ]);
+
+      if (theirEvent.start <= myEvent.start && theirEvent.end >= myEvent.end) {
+        fullMatch.push(theirEventUI);
+      } else {
+        partialMatch.push(theirEventUI);
+      }
+    });
+
     // todo: expand wrapUIComponents to support multiple columns
-    return wrapUIComponents(components);
+    return {
+      fullMatch: wrapUIComponents(fullMatch),
+      partialMatch: wrapUIComponents(partialMatch)
+    }
   }
 
   function lowUtilReason(event) {
