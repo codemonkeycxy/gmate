@@ -14,7 +14,7 @@
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
-    const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
+    const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
     if (!isEmpty(matchingRooms)) {
       // a qualified room is already booked
       return;
@@ -27,7 +27,7 @@
       }
 
       let {roomList, roomIdToElement} = getRoomOptions();
-      const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
+      const filteredRooms = filterRooms(roomList, posFilter, negFilter, flexFilters);
       const selectedRoomEmail = await pickFavoriteRoom(filteredRooms.map(room => room.id));
 
       if (selectedRoomEmail) {
@@ -102,7 +102,7 @@
     return result;
   }
 
-  async function filterRooms(rooms, posFilter, negFilter, flexFilters) {
+  function filterRooms(rooms, posFilter, negFilter, flexFilters) {
     rooms = rooms.filter(room => room.status !== DECLINED);
     return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
   }

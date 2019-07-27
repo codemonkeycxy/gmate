@@ -100,6 +100,12 @@ async function bootstrap() {
 // ^ tested when the owners books recurring meetings for self, no notifications
 // todo: detect rooms that keep on rejecting a user and auto exclude them (https://github.com/codemonkeycxy/gmate/issues/2)
 // todo: (maybe) create team dot page
+// todo: create a more user-friendly "name exclude" input box
+// todo: migrate room list into an online key value store for faster configuration
+// todo: room radar split full cover vs partial cover view
+// todo: for some people, the control panel UI doesn't update until they click somewhere else (change only happens onExit)
+// todo: test gmate on chromium and see why search room button doesn't respond
+// todo: build a community with redit
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {

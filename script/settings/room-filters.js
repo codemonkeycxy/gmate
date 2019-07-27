@@ -70,7 +70,7 @@ const COMPANY_SPECIFIC_FILTERS = {
       });
     }
   }, {
-    key: 'need_vc',
+    key: 'need_vc',  // CAUTION: updating key will invalidate user's current settings
     displayName: 'Must have VC',
     type: CHECKBOX,
     default: false,
@@ -81,6 +81,19 @@ const COMPANY_SPECIFIC_FILTERS = {
 
       const re = new RegExp('.*-.*\\(.*VC.*\\)');
       return !!roomStr.match(re);  // convert to boolean
+    }
+  }, {
+    key: 'exclude_cart',  // CAUTION: updating key will invalidate user's current settings
+    displayName: 'Exclude Cart',
+    type: CHECKBOX,
+    default: true,
+    match: (roomStr, excludeCart) => {
+      if (!excludeCart) {
+        return true;
+      }
+
+      const re = new RegExp('\\b(Cart|cart)\\b');
+      return !roomStr.match(re);  // name contains "cart" => no match
     }
   }]
 };

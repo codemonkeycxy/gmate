@@ -18,6 +18,10 @@ function buildCalendarAPI() {
       return ownerEmail.replace('@g', '@group.calendar.google.com')
     }
 
+    if (ownerEmail.endsWith('@m')) {
+      return ownerEmail.replace('@m', '@gmail.com')
+    }
+
     return ownerEmail;
   }
 
