@@ -44,7 +44,8 @@
     const theirEvents = await CalendarAPI.getEventsForRooms(myEvent.startStr, myEvent.endStr, busyRooms);
     const lowUtilEvents = theirEvents
       .filter(event => lowUtilReason(event))
-      .sort((event1, event2) => lowUtilReason(event1).localeCompare(lowUtilReason(event2)));
+      // sort precedence: start time, end time, selection reason
+      .sort((event1, event2) => event1.start - event2.start || event1.end - event2.end || lowUtilReason(event1).localeCompare(lowUtilReason(event2)));
 
     const fullMatch = [];
     const partialMatch = [];

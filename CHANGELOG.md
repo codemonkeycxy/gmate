@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - [feature] Add "exclude cart" room filter
 - [enhancement] Add user survey on the room radar page
 - [enhancement] Split room radar results into "full" and "partial" matches
+- [enhancement] Sort room radar results by timestamp
 
 ## 5.1.0
 - [enhancement] Intelligently suggest potentially unnoticed features according to user actions
