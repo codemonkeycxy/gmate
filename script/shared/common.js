@@ -72,6 +72,11 @@ DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
 const CALENDAR_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r';
 const EDIT_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r/eventedit';
 
+// room filter UI options
+const SINGLE_OPTION = 'single-option';
+const NUM_RANGE = 'num-range';
+const CHECKBOX = 'checkbox';
+
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
 // test results
 //---------------
