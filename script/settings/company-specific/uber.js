@@ -60,7 +60,7 @@ const UBER_ROOM_FILTERS = [{
     }
 
     return roomSizes.some(roomSize => {
-      const re = new RegExp(`.*-.*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
+      const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
       return !!roomStr.match(re);  // convert to boolean
     });
   }
@@ -91,3 +91,11 @@ const UBER_ROOM_FILTERS = [{
     return !roomStr.match(re);  // name contains "cart" => no match
   }
 }];
+
+function extractUberRoomCapacity(roomName) {
+  const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
+  const matches = roomName.match(re);
+  if (matches && matches.length >= 2 && matches[1]) {
+    return Number(matches[1]);
+  }
+}

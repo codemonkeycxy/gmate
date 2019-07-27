@@ -1,3 +1,0 @@
-const COMPANY_SPECIFIC_FILTERS = {
-  uber: UBER_ROOM_FILTERS,
-};

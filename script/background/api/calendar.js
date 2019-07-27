@@ -193,10 +193,16 @@ function buildCalendarAPI() {
       pageToken = result.nextPageToken;
       hasNext = Boolean(result.nextPageToken);
 
-      result.items.forEach(item => rooms.push({
-        email: item.resourceEmail,
-        name: item.generatedResourceName,
-      }));
+      result.items.forEach(item => {
+        const roomName = item.generatedResourceName;
+        const roomEmail = item.resourceEmail;
+
+        rooms.push({
+          email: roomEmail,
+          name: roomName,
+          capacity: item.capacity || extractRoomCapacity(roomName, roomEmail),
+        })
+      });
     }
 
     if (countdown === 0) {
