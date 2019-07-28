@@ -45,7 +45,7 @@ function buildCalendarAPI() {
       return null;
     }
 
-    return toInternalEvent(gEvent);
+    return await toInternalEvent(gEvent);
   }
 
   async function getRecurringGEvents(eventId, ownerEmail, start, end) {
@@ -118,14 +118,14 @@ function buildCalendarAPI() {
     });
   }
 
-  async function getEventsForRooms(startTsStr, endTsStr, roomEmails) {
+  async function getOwningEventsOfRooms(startTsStr, endTsStr, roomEmails) {
     let results = [];
 
     // run event searching in parallel for max performance
     await Promise.all(roomEmails.map(roomEmail =>
       // prepare operations to be run in parallel
       (async () => {
-        let events = await _getEventsForRoom(startTsStr, endTsStr, roomEmail);
+        let events = await _getOwningEventsOfRoom(startTsStr, endTsStr, roomEmail);
         // discard events that the given room has declined
         events = events.filter(event => event.rooms.some(room => room.email === roomEmail && room.isAccepted()));
 
@@ -136,9 +136,16 @@ function buildCalendarAPI() {
     return results;
   }
 
-  async function _getEventsForRoom(startTsStr, endTsStr, roomEmail) {
-    const result = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${roomEmail}/events?timeMin=${startTsStr}&timeMax=${endTsStr}&singleEvents=true`);
-    return result.items.map(gEvent => toInternalEvent(gEvent));
+  async function _getOwningEventsOfRoom(startTsStr, endTsStr, roomEmail) {
+    const resp = await _callCalendarAPI(`https://www.googleapis.com/calendar/v3/calendars/${roomEmail}/events?timeMin=${startTsStr}&timeMax=${endTsStr}&singleEvents=true`);
+    const result = [];
+
+    for (let i = 0; i < resp.items.length; i++) {
+      const gEvent = resp.items[i];
+      result.push(await toInternalEvent(gEvent));
+    }
+
+    return result;
   }
 
   async function checkRoomAvailability(startTsStr, endTsStr, roomEmails) {
@@ -246,12 +253,15 @@ function buildCalendarAPI() {
   }
 
   // gEvent - google api event defined here: https://developers.google.com/calendar/v3/reference/events#resource
-  function toInternalEvent(gEvent) {
+  async function toInternalEvent(gEvent) {
     if (!Object.values(EVENT_STATUS).includes(gEvent.status)) {
       throw GMateError(`unrecognized event status ${gEvent.status}`);
     }
 
     const attendees = gEvent.attendees || [];
+    const gRooms = attendees.filter(gAttendee => gAttendee.resource);
+    const gHuman = attendees.filter(gAttendee => !gAttendee.resource);
+
     return new Event({
       id: gEvent.id,
       name: gEvent.summary,
@@ -261,8 +271,8 @@ function buildCalendarAPI() {
       startStr: gEvent.start.dateTime,
       end: new Date(gEvent.end.dateTime),
       endStr: gEvent.end.dateTime,
-      rooms: attendees.filter(gAttendee => gAttendee.resource).map(gAttendee => toInternalRoom(gAttendee)),
-      humanAttendees: attendees.filter(gAttendee => !gAttendee.resource).map(gAttendee => toInternalHumanAttendee(gAttendee)),
+      rooms: gRooms.map(gAttendee => toInternalRoom(gAttendee)),
+      humanAttendees: gHuman.map(gAttendee => toInternalHumanAttendee(gAttendee)),
     });
   }
 
@@ -298,7 +308,7 @@ function buildCalendarAPI() {
     eventIdToRecurringIdsB64,
     pickFreeRooms,
     pickBusyRooms,
-    getEventsForRooms,
+    getOwningEventsOfRooms,
 
     addRoomB64,
   }

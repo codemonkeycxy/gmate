@@ -21,6 +21,54 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-(async () => {
-  console.log(await CalendarAPI.getAllRooms());
-})();
+async function refreshFullRoomList() {
+  console.log('refreshing full room list...');
+  const rooms = await CalendarAPI.getAllRooms();
+  if (isEmpty(rooms)) {
+    throw GMateError("received empty full room list from API");
+  }
+
+  console.log(`saving ${rooms.length} rooms to local storage...`);
+  await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+
+  return rooms;
+}
+
+async function getFullRoomList() {
+  const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
+  if (!isEmpty(rooms)) {
+    return rooms;
+  }
+
+  return await refreshFullRoomList();
+}
+
+async function getRoomDetailByEmail(roomEmail) {
+  const allRooms = await getFullRoomList();
+
+  for (let i = 0; i < allRooms.length; i++) {
+    const room = allRooms[i];
+    if (room.email === roomEmail) {
+      return room;
+    }
+  }
+
+  GMateError("room email not found", {roomEmail});
+}
+
+async function getRoomDetailByName(roomName) {
+  const allRooms = await getFullRoomList();
+
+  for (let i = 0; i < allRooms.length; i++) {
+    const room = allRooms[i];
+    if (room.email === roomName) {
+      return room;
+    }
+  }
+
+  GMateError("room name not found", {roomName});
+}
+
+// (async () => {
+//   console.log(await CalendarAPI.getAllRooms());
+// })();

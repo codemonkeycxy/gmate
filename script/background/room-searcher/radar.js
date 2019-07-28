@@ -41,7 +41,7 @@
 
     const busyRooms = await CalendarAPI.pickBusyRooms(myEvent.startStr, myEvent.endStr, roomCandidates.map(room => room.email));
     // todo: add sane limit for busy rooms
-    const theirEvents = await CalendarAPI.getEventsForRooms(myEvent.startStr, myEvent.endStr, busyRooms);
+    const theirEvents = await CalendarAPI.getOwningEventsOfRooms(myEvent.startStr, myEvent.endStr, busyRooms);
     const lowUtilEvents = theirEvents
       .filter(event => lowUtilReason(event))
       // sort precedence: start time, end time, selection reason
