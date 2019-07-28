@@ -70,5 +70,5 @@ async function getRoomDetailByName(roomName) {
 }
 
 // (async () => {
-//   console.log(await CalendarAPI.getAllRooms());
+//   console.log(await CalendarAPI.getEventB64('M2tmdWliMGFkZmlzY2JhaDZ0aTBtc2RtNDAgeGlueWlAdWJlci5jb20'));
 // })();

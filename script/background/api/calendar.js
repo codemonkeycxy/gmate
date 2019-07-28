@@ -259,8 +259,13 @@ function buildCalendarAPI() {
     }
 
     const attendees = gEvent.attendees || [];
-    const gRooms = attendees.filter(gAttendee => gAttendee.resource);
     const gHuman = attendees.filter(gAttendee => !gAttendee.resource);
+    const gRooms = attendees.filter(gAttendee => gAttendee.resource);
+    const internalRooms = [];
+    for (let i = 0; i < gRooms.length; i++) {
+      const gRoom = gRooms[i];
+      internalRooms.push(await toInternalRoom(gRoom));
+    }
 
     return new Event({
       id: gEvent.id,
@@ -271,13 +276,13 @@ function buildCalendarAPI() {
       startStr: gEvent.start.dateTime,
       end: new Date(gEvent.end.dateTime),
       endStr: gEvent.end.dateTime,
-      rooms: gRooms.map(gAttendee => toInternalRoom(gAttendee)),
+      rooms: internalRooms,
       humanAttendees: gHuman.map(gAttendee => toInternalHumanAttendee(gAttendee)),
     });
   }
 
   // gAttendee - google api attendee defined here: https://developers.google.com/calendar/v3/reference/events#resource
-  function toInternalRoom(gAttendee) {
+  async function toInternalRoom(gAttendee) {
     if (!Object.values(ATTENDEE_STATUS).includes(gAttendee.responseStatus)) {
       throw GMateError(`unrecognized attendee status ${gAttendee.responseStatus}`);
     }
@@ -286,6 +291,7 @@ function buildCalendarAPI() {
       email: gAttendee.email,
       status: gAttendee.responseStatus,
       name: gAttendee.displayName,
+      capacity: await _getRoomCapacity(gAttendee.email),
     });
   }
 
@@ -300,6 +306,15 @@ function buildCalendarAPI() {
       status: gAttendee.responseStatus,
       isOrganizer: gAttendee.organizer,
     });
+  }
+
+  async function _getRoomCapacity(roomEmail) {
+    const roomDetail = await getRoomDetailByEmail(roomEmail);
+    if (!roomDetail || !roomDetail.capacity) {
+      return null;
+    }
+
+    return roomDetail.capacity;
   }
 
   return {

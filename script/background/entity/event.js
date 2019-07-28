@@ -112,9 +112,10 @@ class HumanAttendee extends Attendee {
 }
 
 class Room extends Attendee {
-  constructor({email, status, name}) {
+  constructor({email, status, name, capacity}) {
     super({email, status});
 
     this.name = name;
+    this.capacity = capacity;
   }
 }
