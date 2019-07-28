@@ -92,19 +92,15 @@ function extractUberRoomFloor(gResource) {
   const fromDesc = () => {
     try {
       const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+      const version = JSON.parse(gResource.resourceDescription).version;
 
-      if (uberSetting.version === '1.0') {
+      if (version === '1.0') {
         if (!isEmpty(uberSetting.room_floor) && !isNaN(uberSetting.room_floor)) {
           return uberSetting.room_floor;
-        } else {
-          GMateError('uber room capacity misconfiguration', {
-            desc: gResource.resourceDescription,
-            name: gResource.generatedResourceName
-          });
         }
-      } else if (!isEmpty(uberSetting.version)) {
+      } else if (!isEmpty(version)) {
         GMateError('uber room version updated', {
-          v: uberSetting.version,
+          v: version,
           desc: gResource.resourceDescription,
           name: gResource.generatedResourceName
         });
@@ -130,19 +126,15 @@ function extractUberRoomCapacity(gResource) {
   const fromDesc = () => {
     try {
       const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+      const version = JSON.parse(gResource.resourceDescription).version;
 
-      if (uberSetting.version === '1.0') {
+      if (version === '1.0') {
         if (!isEmpty(uberSetting.room_capacity) && !isNaN(uberSetting.room_capacity)) {
           return uberSetting.room_capacity;
-        } else {
-          GMateError('uber room capacity misconfiguration', {
-            desc: gResource.resourceDescription,
-            name: gResource.generatedResourceName
-          });
         }
-      } else if (!isEmpty(uberSetting.version)) {
+      } else if (!isEmpty(version)) {
         GMateError('uber room version updated', {
-          v: uberSetting.version,
+          v: version,
           desc: gResource.resourceDescription,
           name: gResource.generatedResourceName
         });
