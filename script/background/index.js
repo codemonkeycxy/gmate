@@ -21,6 +21,6 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-(async () => {
-  console.log(await CalendarAPI.refreshAllRoomsCache());
-})();
+// (async () => {
+//   console.log(await CalendarAPI.getAllRoomsWithCache());
+// })();

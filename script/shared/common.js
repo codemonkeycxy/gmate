@@ -77,6 +77,8 @@ const SINGLE_OPTION = 'single-option';
 const NUM_RANGE = 'num-range';
 const CHECKBOX = 'checkbox';
 
+const FULL_ROOM_LIST_KEY = 'full-room-list';
+
 // ref: https://stackoverflow.com/questions/4597900/checking-something-isempty-in-javascript
 // test results
 //---------------

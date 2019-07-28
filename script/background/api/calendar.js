@@ -224,6 +224,13 @@ function buildCalendarAPI() {
   async function getAllRoomsWithCache() {
     const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
     if (!isEmpty(rooms)) {
+      // todo: remove the following block after the tracking flatlines
+      if (!rooms.some(room => room.floor)) {
+        track('migrating to extended full room list');
+        return await refreshAllRoomsCache();
+      }
+
+      track('migrated to extended full room list');
       return rooms;
     }
 

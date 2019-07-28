@@ -4,7 +4,6 @@
 
 // ==================== global variable management ======================
 const GLOBAL_VARIABLE_KEY = 'background-global-variables';
-const FULL_ROOM_LIST_KEY = 'full-room-list';
 
 (async () => await bootstrap())();
 
