@@ -128,10 +128,11 @@ class HumanAttendee extends Attendee {
 }
 
 class Room extends Attendee {
-  constructor({email, status, name, capacity}) {
+  constructor({email, status, name, capacity, features}) {
     super({email, status});
 
     this.name = name;
     this.capacity = capacity;
+    this.features = features;
   }
 }

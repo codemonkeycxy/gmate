@@ -93,6 +93,11 @@ const UBER_ROOM_FILTERS = [{
 }];
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function isUberRoom(gResource) {
+  return gResource.resourceEmail && gResource.resourceEmail.includes('uber');
+}
+
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
 function extractUberRoomCapacity(gResource) {
   const fallback = () => {
     const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
@@ -125,5 +130,16 @@ function extractUberRoomCapacity(gResource) {
     return fallback();
   } catch (e) {
     return fallback();
+  }
+}
+
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function extractUberRoomFeatures(gResource) {
+  const gRoomFeatures = gResource.featureInstances;
+  if (!isEmpty(gRoomFeatures)) {
+    return gRoomFeatures
+      .filter(gFeature => gFeature.feature.name && gFeature.feature.name.trim())
+      // todo: handle zoom vs vc split
+      .map(gFeature => gFeature.feature.name && gFeature.feature.name.trim())
   }
 }

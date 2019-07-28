@@ -208,6 +208,7 @@ function buildCalendarAPI() {
           email: roomEmail,
           name: roomName,
           capacity: item.capacity || extractRoomCapacity(item),
+          features: extractRoomFeatures(item),
         })
       });
     }
@@ -314,6 +315,7 @@ function buildCalendarAPI() {
       status: gAttendee.responseStatus,
       name: gAttendee.displayName,
       capacity: await _getRoomCapacity(gAttendee.email),
+      features: await _getRoomFeatures(gAttendee.email),
     });
   }
 
@@ -337,6 +339,15 @@ function buildCalendarAPI() {
     }
 
     return roomDetail.capacity;
+  }
+
+  async function _getRoomFeatures(roomEmail) {
+    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    if (!roomDetail || isEmpty(roomDetail.features)) {
+      return null;
+    }
+
+    return roomDetail.features;
   }
 
   async function _getRoomDetailByEmail(roomEmail) {
