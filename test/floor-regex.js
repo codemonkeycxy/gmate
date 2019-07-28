@@ -28,7 +28,7 @@ rooms.forEach(room => {
   const floorSimple = getFloorSimple(room);
   let floor;
 
-  const re = new RegExp(`.*[-–].*[^\\d][0]?(\\d+)(st|nd|rd|th)`);
+  const re = new RegExp(`.*[-–][^\\d]*[0]?(\\d+)(st|nd|rd|th)`);
   const matches = room.match(re);
   if (matches && matches.length >= 2 && matches[1]) {
     floor = Number(matches[1]);

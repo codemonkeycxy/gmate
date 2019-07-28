@@ -111,7 +111,7 @@ function extractUberRoomFloor(gResource) {
   };
   const fromFloorName = () => gResource.floorName && Number(gResource.floorName.toLowerCase().trim().replace(/(st|nd|rd|th)/));
   const fromRoomName = () => {
-    const re = new RegExp(`.*[-–].*[^\\d][0]?(\\d+)(st|nd|rd|th)`);
+    const re = new RegExp(`.*[-–][^\\d]*[0]?(\\d+)(st|nd|rd|th)`);
     const matches = gResource.generatedResourceName.match(re);
     if (matches && matches.length >= 2 && matches[1]) {
       return Number(matches[1]);
