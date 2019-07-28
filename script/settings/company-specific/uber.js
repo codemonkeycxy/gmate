@@ -106,9 +106,20 @@ function extractUberRoomCapacity(gResource) {
     const uberSetting = JSON.parse(gResource.resourceDescription).recon;
 
     if (uberSetting.version === '1.0') {
-      return uberSetting.room_capacity;
+      if (!isEmpty(uberSetting.room_capacity) && !isNaN(uberSetting.room_capacity)) {
+        return uberSetting.room_capacity;
+      } else {
+        GMateError('uber room capacity misconfiguration', {
+          desc: gResource.resourceDescription,
+          name: gResource.generatedResourceName
+        });
+      }
     } else if (!isEmpty(uberSetting.version)) {
-      GMateError('uber room version updated', {v: uberSetting.version, desc: gResource.resourceDescription});
+      GMateError('uber room version updated', {
+        v: uberSetting.version,
+        desc: gResource.resourceDescription,
+        name: gResource.generatedResourceName
+      });
     }
 
     return fallback();
