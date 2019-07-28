@@ -208,7 +208,7 @@ function buildCalendarAPI() {
           email: roomEmail,
           name: roomName,
           capacity: item.capacity || extractRoomCapacity(item),
-          features: extractRoomFeatures(item),
+          features: extractRoomFeatures(item) || [],
         })
       });
     }

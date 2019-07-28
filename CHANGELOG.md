@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 5.2.0
-- [feature] Add "exclude cart" room filter
 - [enhancement] Add user survey on the room radar page
 - [enhancement] Split room radar results into "full" and "partial" matches
 - [enhancement] Sort room radar results by timestamp

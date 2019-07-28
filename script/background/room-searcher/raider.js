@@ -106,6 +106,7 @@ async function bootstrap() {
 // todo: test gmate on chromium and see why search room button doesn't respond
 // todo: build a community with redit
 // todo: put room radar and raider button on calendar main page
+// todo: exclude cart and other non-meeting rooms
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {

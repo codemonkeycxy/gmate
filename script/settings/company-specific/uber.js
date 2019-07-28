@@ -1,3 +1,6 @@
+const UBER_VC = 'VC';
+const UBER_CART = 'Cart';
+
 const UBER_ROOM_FILTERS = [{
   key: 'location',  // CAUTION: updating key will invalidate user's current settings
   displayName: 'Location',
@@ -74,21 +77,8 @@ const UBER_ROOM_FILTERS = [{
       return true;
     }
 
-    const re = new RegExp('.*-.*\\(.*VC.*\\)');
+    const re = new RegExp('.*[-|–].*\\(.*VC.*\\)');
     return !!roomStr.match(re);  // convert to boolean
-  }
-}, {
-  key: 'exclude_cart',  // CAUTION: updating key will invalidate user's current settings
-  displayName: 'Exclude Cart',
-  type: CHECKBOX,
-  default: true,
-  match: (roomStr, excludeCart) => {
-    if (!excludeCart) {
-      return true;
-    }
-
-    const re = new RegExp('\\b(Cart|cart)\\b');
-    return !roomStr.match(re);  // name contains "cart" => no match
   }
 }];
 
@@ -134,12 +124,39 @@ function extractUberRoomCapacity(gResource) {
 }
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
-function extractUberRoomFeatures(gResource) {
+function _uberRoomHasVC(gResource) {
+  // prefer extraction from gResource feature
   const gRoomFeatures = gResource.featureInstances;
   if (!isEmpty(gRoomFeatures)) {
-    return gRoomFeatures
-      .filter(gFeature => gFeature.feature.name && gFeature.feature.name.trim())
-      // todo: handle zoom vs vc split
-      .map(gFeature => gFeature.feature.name && gFeature.feature.name.trim())
+    const vcKeywords = ['vc', 'zoom'];  // make sure to use lower case
+    if (gRoomFeatures.some(gFeature => gFeature.feature.name && vcKeywords.some(vc => gFeature.feature.name.trim().toLowerCase() === vc))) {
+      return true;
+    }
   }
+
+  // fallback on extraction from gResource name
+  const re = new RegExp('.*[-|–].*\\(.*VC.*\\)');
+  const roomName = gResource.generatedResourceName;
+  const blacklistNames = ['no vc'];  // make sure to use lower case
+  return roomName.match(re) && !blacklistNames.some(blacklist => roomName.toLowerCase().includes(blacklist)) && !_uberRoomIsCart(gResource);
+}
+
+function _uberRoomIsCart(gResource) {
+  const re = new RegExp('\\b(Cart|cart)\\b');
+  return gResource.generatedResourceName.match(re);
+}
+
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function extractUberRoomFeatures(gResource) {
+  const results = [];
+
+  if (_uberRoomHasVC(gResource)) {
+    results.push(UBER_VC);
+  }
+
+  if (_uberRoomIsCart(gResource)) {
+    results.push(UBER_CART);
+  }
+
+  return results;
 }
