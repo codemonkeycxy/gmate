@@ -94,13 +94,25 @@ const UBER_ROOM_FILTERS = [{
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
 function extractUberRoomCapacity(gResource) {
-  try {
-    return JSON.parse(gResource.resourceDescription).recon.room_capacity;
-  } catch (e) {
+  const fallback = () => {
     const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
     const matches = gResource.generatedResourceName.match(re);
     if (matches && matches.length >= 2 && matches[1]) {
       return Number(matches[1]);
     }
+  };
+
+  try {
+    const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+
+    if (uberSetting.version === '1.0') {
+      return uberSetting.room_capacity;
+    } else if (!isEmpty(uberSetting.version)) {
+      GMateError('uber room version updated', {v: uberSetting.version, desc: gResource.resourceDescription});
+    }
+
+    return fallback();
+  } catch (e) {
+    return fallback();
   }
 }
