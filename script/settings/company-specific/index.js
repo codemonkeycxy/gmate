@@ -4,21 +4,45 @@ const COMPANY_SPECIFIC_FILTERS = {
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
 function extractRoomFloor(gResource) {
-  if (isUberRoom(gResource)) {
-    return extractUberRoomFloor(gResource);
+  try {
+    if (isUberRoom(gResource)) {
+      return extractUberRoomFloor(gResource);
+    }
+  } catch (e) {
+    GMateError('extract room floor error', {
+      err: e.message,
+      desc: gResource.resourceDescription,
+      name: gResource.generatedResourceName
+    })
   }
 }
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
 function extractRoomCapacity(gResource) {
-  if (isUberRoom(gResource)) {
-    return extractUberRoomCapacity(gResource);
+  try {
+    if (isUberRoom(gResource)) {
+      return extractUberRoomCapacity(gResource);
+    }
+  } catch (e) {
+    GMateError('extract room capacity error', {
+      err: e.message,
+      desc: gResource.resourceDescription,
+      name: gResource.generatedResourceName
+    })
   }
 }
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
 function extractRoomFeatures(gResource) {
-  if (isUberRoom(gResource)) {
-    return extractUberRoomFeatures(gResource);
+  try {
+    if (isUberRoom(gResource)) {
+      return extractUberRoomFeatures(gResource);
+    }
+  } catch (e) {
+    GMateError('extract room features error', {
+      err: e.message,
+      desc: gResource.resourceDescription,
+      name: gResource.generatedResourceName
+    })
   }
 }
