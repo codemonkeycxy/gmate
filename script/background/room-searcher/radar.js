@@ -45,7 +45,11 @@
     const lowUtilEvents = theirEvents
       .filter(event => lowUtilReason(event))
       // sort precedence: start time, end time, selection reason
-      .sort((event1, event2) => event1.start - event2.start || event1.end - event2.end || lowUtilReason(event1).localeCompare(lowUtilReason(event2)));
+      .sort((event1, event2) => (
+        event1.start - event2.start
+        || event1.end - event2.end
+        || lowUtilReason(event1).localeCompare(lowUtilReason(event2)))
+      );
 
     const fullMatch = [];
     const partialMatch = [];
@@ -76,7 +80,8 @@
   function lowUtilReason(event) {
     // todo: think about private meetings
     // todo: large room with few people. make sure to exclude declined. think about maybe and no responded
-    // to do the ^ comparison, need to know the room capacity, need to parse info from g suite response and standardize
+    // one issue with ^ is calendar api doesn't offer a way to expand group attendee to individuals (https://stackoverflow.com/questions/51315459/google-calendar-api-group-attendee-emails)
+    // that makes it hard to do room size comparison accurately
     if (event.likelyOneOnOne()) {
       return 'likely 1:1';
     }

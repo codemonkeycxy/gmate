@@ -51,6 +51,14 @@ class Event {
       return true;
     }
 
+    if (this.name.includes('1x1')) {
+      return true;
+    }
+
+    if (this.name.toLowerCase().includes('one on one')) {
+      return true;
+    }
+
     if (this.name.includes('/')) {
       return true;
     }
@@ -72,6 +80,10 @@ class Event {
     }
 
     if (this.name.includes(' x ')) {
+      return true;
+    }
+
+    if (this.name.includes('<>')) {
       return true;
     }
 
@@ -100,6 +112,10 @@ class Attendee {
 
   isAccepted() {
     return this.status === ATTENDEE_STATUS.ACCEPTED;
+  }
+
+  isDeclined() {
+    return this.status === ATTENDEE_STATUS.DECLINED;
   }
 }
 
