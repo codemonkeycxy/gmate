@@ -232,7 +232,7 @@ function buildCalendarAPI() {
 
   async function refreshAllRoomsCache() {
     console.log('refreshing full room list...');
-    const rooms = await CalendarAPI.getAllRoomsRaw();
+    const rooms = await getAllRoomsRaw();
     if (isEmpty(rooms)) {
       throw GMateError("received empty full room list from API");
     }
@@ -389,7 +389,6 @@ function buildCalendarAPI() {
 
   return {
     getEventB64,
-    getAllRoomsRaw,
     getAllRoomsWithCache,
     refreshAllRoomsCache,
     eventIdToRecurringIdsB64,
