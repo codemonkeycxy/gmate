@@ -47,7 +47,7 @@ const UBER_ROOM_FILTERS = [{
 
     return floors.some(floor => {
       const ordinalNum = appendOrdinalSuffix(floor);
-      const re = new RegExp(`.*-.*[^\\d][0]?${ordinalNum}.*\\(.*`);
+      const re = new RegExp(`.*([-–]).*[^\\d][0]?${ordinalNum}.*\\(.*`);
       return !!roomStr.match(re);  // convert to boolean
     });
   }
@@ -63,7 +63,7 @@ const UBER_ROOM_FILTERS = [{
     }
 
     return roomSizes.some(roomSize => {
-      const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
+      const re = new RegExp(`.*[-–].*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
       return !!roomStr.match(re);  // convert to boolean
     });
   }
@@ -77,7 +77,7 @@ const UBER_ROOM_FILTERS = [{
       return true;
     }
 
-    const re = new RegExp('.*[-|–].*\\(.*VC.*\\)');
+    const re = new RegExp('.*[-–].*\\(.*VC.*\\)');
     return !!roomStr.match(re);  // convert to boolean
   }
 }];
@@ -88,62 +88,78 @@ function isUberRoom(gResource) {
 }
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
-function extractUberRoomCapacity(gResource) {
-  const fallback = () => {
-    const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
+function extractUberRoomFloor(gResource) {
+  const fromDesc = () => {
+    try {
+      const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+
+      if (uberSetting.version === '1.0') {
+        if (!isEmpty(uberSetting.room_floor) && !isNaN(uberSetting.room_floor)) {
+          return uberSetting.room_floor;
+        } else {
+          GMateError('uber room capacity misconfiguration', {
+            desc: gResource.resourceDescription,
+            name: gResource.generatedResourceName
+          });
+        }
+      } else if (!isEmpty(uberSetting.version)) {
+        GMateError('uber room version updated', {
+          v: uberSetting.version,
+          desc: gResource.resourceDescription,
+          name: gResource.generatedResourceName
+        });
+      }
+    } catch (e) {
+      // intentionally left blank
+    }
+  };
+  const fromFloorName = () => gResource.floorName && Number(gResource.floorName.toLowerCase().trim().replace(/(st|nd|rd|th)/));
+  const fromRoomName = () => {
+    const re = new RegExp(`.*[-–].*[^\\d][0]?(\\d+)(st|nd|rd|th)`);
     const matches = gResource.generatedResourceName.match(re);
     if (matches && matches.length >= 2 && matches[1]) {
       return Number(matches[1]);
     }
   };
 
-  try {
-    const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+  return fromDesc() || fromFloorName() || fromRoomName();
+}
 
-    if (uberSetting.version === '1.0') {
-      if (!isEmpty(uberSetting.room_capacity) && !isNaN(uberSetting.room_capacity)) {
-        return uberSetting.room_capacity;
-      } else {
-        GMateError('uber room capacity misconfiguration', {
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function extractUberRoomCapacity(gResource) {
+  const fromDesc = () => {
+    try {
+      const uberSetting = JSON.parse(gResource.resourceDescription).recon;
+
+      if (uberSetting.version === '1.0') {
+        if (!isEmpty(uberSetting.room_capacity) && !isNaN(uberSetting.room_capacity)) {
+          return uberSetting.room_capacity;
+        } else {
+          GMateError('uber room capacity misconfiguration', {
+            desc: gResource.resourceDescription,
+            name: gResource.generatedResourceName
+          });
+        }
+      } else if (!isEmpty(uberSetting.version)) {
+        GMateError('uber room version updated', {
+          v: uberSetting.version,
           desc: gResource.resourceDescription,
           name: gResource.generatedResourceName
         });
       }
-    } else if (!isEmpty(uberSetting.version)) {
-      GMateError('uber room version updated', {
-        v: uberSetting.version,
-        desc: gResource.resourceDescription,
-        name: gResource.generatedResourceName
-      });
+    } catch (e) {
+      // intentionally left blank
     }
-
-    return fallback();
-  } catch (e) {
-    return fallback();
-  }
-}
-
-// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
-function _uberRoomHasVC(gResource) {
-  // prefer extraction from gResource feature
-  const gRoomFeatures = gResource.featureInstances;
-  if (!isEmpty(gRoomFeatures)) {
-    const vcKeywords = ['vc', 'zoom'];  // make sure to use lower case
-    if (gRoomFeatures.some(gFeature => gFeature.feature.name && vcKeywords.some(vc => gFeature.feature.name.trim().toLowerCase() === vc))) {
-      return true;
+  };
+  const fromRoomName = () => {
+    const re = new RegExp(`.*[-–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
+    const matches = gResource.generatedResourceName.match(re);
+    if (matches && matches.length >= 2 && matches[1]) {
+      return Number(matches[1]);
     }
-  }
+  };
 
-  // fallback on extraction from gResource name
-  const re = new RegExp('.*[-|–].*\\(.*VC.*\\)');
-  const roomName = gResource.generatedResourceName;
-  const blacklistNames = ['no vc'];  // make sure to use lower case
-  return roomName.match(re) && !blacklistNames.some(blacklist => roomName.toLowerCase().includes(blacklist)) && !_uberRoomIsCart(gResource);
-}
-
-function _uberRoomIsCart(gResource) {
-  const re = new RegExp('\\b(Cart|cart)\\b');
-  return gResource.generatedResourceName.match(re);
+  return fromDesc() || fromRoomName();
 }
 
 // gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
@@ -159,4 +175,28 @@ function extractUberRoomFeatures(gResource) {
   }
 
   return results;
+}
+
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function _uberRoomHasVC(gResource) {
+  // prefer extraction from gResource feature
+  const gRoomFeatures = gResource.featureInstances;
+  if (!isEmpty(gRoomFeatures)) {
+    const vcKeywords = ['vc', 'zoom'];  // make sure to use lower case
+    if (gRoomFeatures.some(gFeature => gFeature.feature.name && vcKeywords.some(vc => gFeature.feature.name.trim().toLowerCase() === vc))) {
+      return true;
+    }
+  }
+
+  // fallback on extraction from gResource name
+  const re = new RegExp('.*[-–].*\\(.*VC.*\\)');
+  const roomName = gResource.generatedResourceName;
+  const blacklistNames = ['no vc', 'tv broken'];  // make sure to use lower case
+  return roomName.match(re) && !blacklistNames.some(blacklist => roomName.toLowerCase().includes(blacklist)) && !_uberRoomIsCart(gResource);
+}
+
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function _uberRoomIsCart(gResource) {
+  const re = new RegExp('\\b(Cart|cart)\\b');
+  return gResource.generatedResourceName.match(re);
 }

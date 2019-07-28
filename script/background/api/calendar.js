@@ -207,6 +207,7 @@ function buildCalendarAPI() {
         rooms.push({
           email: roomEmail,
           name: roomName,
+          floor: extractRoomFloor(item),
           capacity: item.capacity || extractRoomCapacity(item),
           features: extractRoomFeatures(item) || [],
         })
@@ -314,6 +315,7 @@ function buildCalendarAPI() {
       email: gAttendee.email,
       status: gAttendee.responseStatus,
       name: gAttendee.displayName,
+      floor: await _getRoomFloor(gAttendee.email),
       capacity: await _getRoomCapacity(gAttendee.email),
       features: await _getRoomFeatures(gAttendee.email),
     });
@@ -330,6 +332,15 @@ function buildCalendarAPI() {
       status: gAttendee.responseStatus,
       isOrganizer: gAttendee.organizer,
     });
+  }
+
+  async function _getRoomFloor(roomEmail) {
+    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    if (!roomDetail || !roomDetail.floor) {
+      return null;
+    }
+
+    return roomDetail.floor;
   }
 
   async function _getRoomCapacity(roomEmail) {

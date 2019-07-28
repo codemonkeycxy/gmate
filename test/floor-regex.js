@@ -13,22 +13,28 @@ function appendOrdinalSuffix(i) {
   return i + "th";
 }
 
-
-rooms.forEach(room => {
-  let matchCnt = 0;
-
+function getFloorSimple(room) {
   for (let i = 1; i <= 50; i++) {
     const ordinalNum = appendOrdinalSuffix(i);
-    const re = new RegExp(`.*-.*[^\\d][0]?${ordinalNum}.*\\(.*`);
+    const re = new RegExp(`.*[-–].*[^\\d][0]?${ordinalNum}`);
 
     if (room.match(re)) {
-      matchCnt++
+      return i;
     }
   }
+}
 
-  if (matchCnt === 0) {
-    console.log(`no match for ${room}`);
-  } else if (matchCnt > 1) {
-    console.log(`multiple match for ${room}`);
+rooms.forEach(room => {
+  const floorSimple = getFloorSimple(room);
+  let floor;
+
+  const re = new RegExp(`.*[-–].*[^\\d][0]?(\\d+)(st|nd|rd|th)`);
+  const matches = room.match(re);
+  if (matches && matches.length >= 2 && matches[1]) {
+    floor = Number(matches[1]);
+  }
+
+  if (floor !== floorSimple) {
+    console.log(`${room}. expected: ${floorSimple}, actual: ${floor}`);
   }
 });
