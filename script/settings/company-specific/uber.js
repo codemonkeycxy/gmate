@@ -92,10 +92,15 @@ const UBER_ROOM_FILTERS = [{
   }
 }];
 
-function extractUberRoomCapacity(roomName) {
-  const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
-  const matches = roomName.match(re);
-  if (matches && matches.length >= 2 && matches[1]) {
-    return Number(matches[1]);
+// gResource - google api resource defined here: https://developers.google.com/admin-sdk/directory/v1/reference/resources/calendars
+function extractUberRoomCapacity(gResource) {
+  try {
+    return JSON.parse(gResource.resourceDescription).recon.room_capacity;
+  } catch (e) {
+    const re = new RegExp(`.*[-|–].*\\([^\\d]*[0]?(\\d+)[^\\d]*\\)`);
+    const matches = gResource.generatedResourceName.match(re);
+    if (matches && matches.length >= 2 && matches[1]) {
+      return Number(matches[1]);
+    }
   }
 }

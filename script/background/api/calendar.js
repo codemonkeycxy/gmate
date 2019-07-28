@@ -207,7 +207,7 @@ function buildCalendarAPI() {
         rooms.push({
           email: roomEmail,
           name: roomName,
-          capacity: item.capacity || extractRoomCapacity(roomName, roomEmail),
+          capacity: item.capacity || extractRoomCapacity(item),
         })
       });
     }

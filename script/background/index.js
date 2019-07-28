@@ -22,5 +22,5 @@ onMessage((msg, sender, cb) => {
 });
 
 // (async () => {
-//   console.log(await CalendarAPI.getEventB64('M2tmdWliMGFkZmlzY2JhaDZ0aTBtc2RtNDAgeGlueWlAdWJlci5jb20'));
+//   console.log(await CalendarAPI.refreshAllRoomsCache());
 // })();
