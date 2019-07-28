@@ -43,32 +43,6 @@ async function getFullRoomList() {
   return await refreshFullRoomList();
 }
 
-async function getRoomDetailByEmail(roomEmail) {
-  const allRooms = await getFullRoomList();
-
-  for (let i = 0; i < allRooms.length; i++) {
-    const room = allRooms[i];
-    if (room.email === roomEmail) {
-      return room;
-    }
-  }
-
-  GMateError("room email not found", {roomEmail});
-}
-
-async function getRoomDetailByName(roomName) {
-  const allRooms = await getFullRoomList();
-
-  for (let i = 0; i < allRooms.length; i++) {
-    const room = allRooms[i];
-    if (room.email === roomName) {
-      return room;
-    }
-  }
-
-  GMateError("room name not found", {roomName});
-}
-
 // (async () => {
 //   console.log(await CalendarAPI.getEventB64('M2tmdWliMGFkZmlzY2JhaDZ0aTBtc2RtNDAgeGlueWlAdWJlci5jb20'));
 // })();
