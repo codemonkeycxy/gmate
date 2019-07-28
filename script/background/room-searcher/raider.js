@@ -145,7 +145,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
     }
   }
 
-  await refreshFullRoomList();
+  await CalendarAPI.refreshAllRoomsCache();
 });
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
@@ -252,7 +252,7 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  const allRooms = await getFullRoomList();
+  const allRooms = await CalendarAPI.getAllRoomsWithCache();
   const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
   console.log(`found ${roomCandidates.length} room candidates`);
   if (isEmpty(roomCandidates)) {

@@ -188,7 +188,7 @@ function buildCalendarAPI() {
    *
    * Note: this function returns a raw dictionary instead of an entity for easier serialization/deserialization
    */
-  async function getAllRooms() {
+  async function getAllRoomsRaw() {
     const rooms = [];
     let hasNext = true;
     let pageToken = "";
@@ -213,8 +213,30 @@ function buildCalendarAPI() {
     }
 
     if (countdown === 0) {
-      GMateError("getAllRooms hits infinite loop");
+      GMateError("getAllRoomsRaw hits infinite loop");
     }
+
+    return rooms;
+  }
+
+  async function getAllRoomsWithCache() {
+    const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
+    if (!isEmpty(rooms)) {
+      return rooms;
+    }
+
+    return await refreshAllRoomsCache();
+  }
+
+  async function refreshAllRoomsCache() {
+    console.log('refreshing full room list...');
+    const rooms = await CalendarAPI.getAllRoomsRaw();
+    if (isEmpty(rooms)) {
+      throw GMateError("received empty full room list from API");
+    }
+
+    console.log(`saving ${rooms.length} rooms to local storage...`);
+    await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
 
     return rooms;
   }
@@ -318,7 +340,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomDetailByEmail(roomEmail) {
-    const allRooms = await getFullRoomList();
+    const allRooms = await getAllRoomsWithCache();
 
     for (let i = 0; i < allRooms.length; i++) {
       const room = allRooms[i];
@@ -331,7 +353,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomDetailByName(roomName) {
-    const allRooms = await getFullRoomList();
+    const allRooms = await getAllRoomsWithCache();
 
     for (let i = 0; i < allRooms.length; i++) {
       const room = allRooms[i];
@@ -345,7 +367,9 @@ function buildCalendarAPI() {
 
   return {
     getEventB64,
-    getAllRooms,
+    getAllRoomsRaw,
+    getAllRoomsWithCache,
+    refreshAllRoomsCache,
     eventIdToRecurringIdsB64,
     pickFreeRooms,
     pickBusyRooms,
