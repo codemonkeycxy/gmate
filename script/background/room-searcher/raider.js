@@ -65,7 +65,6 @@ async function bootstrap() {
 // todo: handle no auth error in case user auth gets somehow revoked. send user a notification to ask for auth. see getAuthToken function
 // todo: tutorial "next" to "next: title"
 // todo: flag for "don't always ask for filters"
-// todo: book consistent rooms for recurring meetings
 // todo: maybe add "I need a room" button to the main calendar page for quicker action
 // todo: automatically/ask manually to send console log crash report
 // todo: enable open meeting url from room booked notification
@@ -77,9 +76,6 @@ async function bootstrap() {
 // todo: button disappears after 1 refresh in the meeting edit page
 // todo: make checkbox text clickable
 // https://stackoverflow.com/questions/6293588/how-to-create-an-html-checkbox-with-a-clickable-label
-// todo: add tricks to book consistent rooms for recurring meetings to power user guide
-// 1) add your favorite room and book recurring for the next 100 wks. gmate skips already booked
-// 2) add your favorite room for recurring meetings 2 wks later, and use gmate to book for the coming 2 wks
 // todo: study this useful link and possibly fetch more matching rooms
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
@@ -106,6 +102,11 @@ async function bootstrap() {
 // todo: build a community with redit
 // todo: put room radar and raider button on calendar main page
 // todo: exclude cart and other non-meeting rooms
+// todo: book consistent rooms for recurring meetings
+// todo: (maybe) when possible, book room with capacity closer to the number of invitees
+// todo: detect the user company and save as a global variable and use that to drive UI
+// https://developer.chrome.com/extensions/identity#method-getProfileUserInfo and need "identity.email" permission
+// todo: address todos in room radar. e.g. safeguard the search with sane limits
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {

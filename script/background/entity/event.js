@@ -113,10 +113,6 @@ class Attendee {
   isAccepted() {
     return this.status === ATTENDEE_STATUS.ACCEPTED;
   }
-
-  isDeclined() {
-    return this.status === ATTENDEE_STATUS.DECLINED;
-  }
 }
 
 class HumanAttendee extends Attendee {
