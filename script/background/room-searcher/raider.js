@@ -87,7 +87,6 @@ async function bootstrap() {
 // todo: race condition still observed, need to apply isTaskFresh more aggressively
 // todo: use docs retro as a way to debug recurring event booking (exclude deleted?)
 // todo: allow user to choose whether to notify participants
-// todo: (maybe) support email subscription
 // todo: potentially replace code based UI with html template https://stackoverflow.com/questions/16334054/inject-html-into-a-page-from-a-content-script
 // todo: replace code generated UI with html template (see radar.js example)
 // todo: measure room utilization impact (e.g. large room with small invitees, room hold, etc.) and send out monthly newsletter
@@ -107,6 +106,8 @@ async function bootstrap() {
 // todo: detect the user company and save as a global variable and use that to drive UI
 // https://developer.chrome.com/extensions/identity#method-getProfileUserInfo and need "identity.email" permission
 // todo: address todos in room radar. e.g. safeguard the search with sane limits
+// todo: (maybe) support email subscription - need "identity.email" permission
+// todo: add an onboarding walkthrough on install to set up default filters
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
