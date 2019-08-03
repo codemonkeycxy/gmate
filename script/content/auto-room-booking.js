@@ -14,7 +14,7 @@
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
-    const matchingRooms = filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
+    const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
     if (!isEmpty(matchingRooms)) {
       // a qualified room is already booked
       return;
@@ -27,7 +27,7 @@
       }
 
       let {roomList, roomIdToElement} = getRoomOptions();
-      const filteredRooms = filterRooms(roomList, posFilter, negFilter, flexFilters);
+      const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
       const selectedRoomEmail = await pickFavoriteRoom(filteredRooms.map(room => room.id));
 
       if (selectedRoomEmail) {
@@ -102,12 +102,23 @@
     return result;
   }
 
-  function filterRooms(rooms, posFilter, negFilter, flexFilters) {
-    rooms = rooms.filter(room => room.status !== DECLINED);
-    // todo: to my future self: before changing the roomStr param to an room object, be careful that some users might not have granted API auth at this point
-    // one alternative is to fetch the full room list directly from the local storage. if nothing is there yet, just take no action
-    // once the user start using GMate, the full room list will be populated and this feature will start working by itself
-    return rooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
+  async function filterRooms(rooms, posFilter, negFilter, flexFilters) {
+    const roomDicts = rooms.filter(room => room.status !== DECLINED);
+    const allRooms = await getAllRoomsFromCache();
+    if (isEmpty(allRooms)) {
+      // this happens when a user first installs GMate and the full room list hasn't been populated yet
+      return [];
+    }
+
+    return roomDicts.filter(dict => {
+      const roomEntity = allRooms.find(room => room.email === dict.id);
+      if (!roomEntity) {
+        GMateError("room email not found", {email: dict.id, name: dict.name});
+        return false;
+      }
+
+      return matchRoom(roomEntity, posFilter, negFilter, flexFilters);
+    });
   }
 
   function getSelectedRooms() {

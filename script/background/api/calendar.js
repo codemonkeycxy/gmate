@@ -370,7 +370,12 @@ function buildCalendarAPI() {
 
   async function _getRoomByEmail(roomEmail) {
     const allRooms = await getAllRoomsWithCache();
-    return getRoomByEmail(roomEmail, allRooms);
+    const match = allRooms.find(room => room.email === roomEmail);
+    if (!match) {
+      GMateError("room email not found", {roomEmail});
+    }
+
+    return match;
   }
 
   return {

@@ -106,25 +106,3 @@ async function putAllRoomsIntoCache(rooms) {
   const roomDicts = rooms.map(room => room.toDict());
   return await persistPairLocal(FULL_ROOM_LIST_KEY, roomDicts);
 }
-
-async function getRoomByEmail(roomEmail, allRooms) {
-  for (let i = 0; i < allRooms.length; i++) {
-    const room = allRooms[i];
-    if (room.email === roomEmail) {
-      return room;
-    }
-  }
-
-  GMateError("room email not found", {roomEmail});
-}
-
-async function getRoomByName(roomName, allRooms) {
-  for (let i = 0; i < allRooms.length; i++) {
-    const room = allRooms[i];
-    if (room.email === roomName) {
-      return room;
-    }
-  }
-
-  GMateError("room name not found", {roomName});
-}
