@@ -222,7 +222,7 @@ function buildCalendarAPI() {
   }
 
   async function getAllRoomsWithCache() {
-    const rooms = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
+    const rooms = await getAllRoomsFromCache();
     if (!isEmpty(rooms)) {
       // todo: remove the following block after the tracking flatlines
       if (!rooms.some(room => room.floor)) {
@@ -245,7 +245,7 @@ function buildCalendarAPI() {
     }
 
     console.log(`saving ${rooms.length} rooms to local storage...`);
-    await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+    await putAllRoomsIntoCache(rooms);
 
     return rooms;
   }
@@ -370,7 +370,7 @@ function buildCalendarAPI() {
 
   async function _getRoomDetailByEmail(roomEmail) {
     const allRooms = await getAllRoomsWithCache();
-    return getRoomDetailByEmail(roomEmail, allRooms);
+    return getRoomByEmail(roomEmail, allRooms);
   }
 
   return {

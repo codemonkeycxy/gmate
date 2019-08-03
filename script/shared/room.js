@@ -96,7 +96,15 @@ async function pickFavoriteRoom(roomEmails) {
   return favoriteRoom;
 }
 
-async function getRoomDetailByEmail(roomEmail, allRooms) {
+async function getAllRoomsFromCache() {
+  return await getKeyFromLocal(FULL_ROOM_LIST_KEY, [])
+}
+
+async function putAllRoomsIntoCache(rooms) {
+  return await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+}
+
+async function getRoomByEmail(roomEmail, allRooms) {
   for (let i = 0; i < allRooms.length; i++) {
     const room = allRooms[i];
     if (room.email === roomEmail) {
@@ -107,7 +115,7 @@ async function getRoomDetailByEmail(roomEmail, allRooms) {
   GMateError("room email not found", {roomEmail});
 }
 
-async function getRoomDetailByName(roomName, allRooms) {
+async function getRoomByName(roomName, allRooms) {
   for (let i = 0; i < allRooms.length; i++) {
     const room = allRooms[i];
     if (room.email === roomName) {
