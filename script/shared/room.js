@@ -96,9 +96,7 @@ async function pickFavoriteRoom(roomEmails) {
   return favoriteRoom;
 }
 
-async function getRoomDetailByEmail(roomEmail) {
-  const allRooms = await CalendarAPI.getAllRoomsWithCache();
-
+async function getRoomDetailByEmail(roomEmail, allRooms) {
   for (let i = 0; i < allRooms.length; i++) {
     const room = allRooms[i];
     if (room.email === roomEmail) {
@@ -109,9 +107,7 @@ async function getRoomDetailByEmail(roomEmail) {
   GMateError("room email not found", {roomEmail});
 }
 
-async function getRoomDetailByName(roomName) {
-  const allRooms = await CalendarAPI.getAllRoomsWithCache();
-
+async function getRoomDetailByName(roomName, allRooms) {
   for (let i = 0; i < allRooms.length; i++) {
     const room = allRooms[i];
     if (room.email === roomName) {
