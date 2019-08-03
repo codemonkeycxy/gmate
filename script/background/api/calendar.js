@@ -204,13 +204,13 @@ function buildCalendarAPI() {
         const roomName = item.generatedResourceName;
         const roomEmail = item.resourceEmail;
 
-        rooms.push({
+        rooms.push(new Room({
           email: roomEmail,
           name: roomName,
           floor: extractRoomFloor(item),
           capacity: item.capacity || extractRoomCapacity(item),
           features: extractRoomFeatures(item) || [],
-        })
+        }))
       });
     }
 
