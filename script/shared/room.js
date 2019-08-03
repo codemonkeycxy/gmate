@@ -29,7 +29,8 @@ async function getRoomFilters() {
   }
 }
 
-function matchRoom(roomStr, posFilter, negFilter, flexFilters) {
+function matchRoom(room, posFilter, negFilter, flexFilters) {
+  const roomStr = room.name;
   let matchPosFilter = true;
   let matchNegFilter = false;
   let matchFlexFilter = true;

@@ -107,7 +107,7 @@
     // todo: to my future self: before changing the roomStr param to an room object, be careful that some users might not have granted API auth at this point
     // one alternative is to fetch the full room list directly from the local storage. if nothing is there yet, just take no action
     // once the user start using GMate, the full room list will be populated and this feature will start working by itself
-    return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+    return rooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
   }
 
   function getSelectedRooms() {

@@ -36,7 +36,7 @@
     const {posFilter, negFilter, flexFilters} = eventFilters;
 
     const allRooms = await CalendarAPI.getAllRoomsWithCache();
-    const roomCandidates = allRooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+    const roomCandidates = allRooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
     // todo: sanity check array size and fail on too many candidates
 
     const busyRooms = await CalendarAPI.pickBusyRooms(myEvent.startStr, myEvent.endStr, roomCandidates.map(room => room.email));

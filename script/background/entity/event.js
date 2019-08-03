@@ -100,7 +100,7 @@ class Event {
 
   matchingRooms(posFilter, negFilter, flexFilters) {
     const rooms = this.rooms.filter(room => room.isAccepted());
-    return rooms.filter(room => matchRoom(room.name, posFilter, negFilter, flexFilters));
+    return rooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
   }
 }
 
