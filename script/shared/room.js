@@ -94,3 +94,29 @@ async function pickFavoriteRoom(roomEmails) {
 
   return favoriteRoom;
 }
+
+async function getRoomDetailByEmail(roomEmail) {
+  const allRooms = await CalendarAPI.getAllRoomsWithCache();
+
+  for (let i = 0; i < allRooms.length; i++) {
+    const room = allRooms[i];
+    if (room.email === roomEmail) {
+      return room;
+    }
+  }
+
+  GMateError("room email not found", {roomEmail});
+}
+
+async function getRoomDetailByName(roomName) {
+  const allRooms = await CalendarAPI.getAllRoomsWithCache();
+
+  for (let i = 0; i < allRooms.length; i++) {
+    const room = allRooms[i];
+    if (room.email === roomName) {
+      return room;
+    }
+  }
+
+  GMateError("room name not found", {roomName});
+}

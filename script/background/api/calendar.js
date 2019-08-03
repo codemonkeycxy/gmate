@@ -342,7 +342,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomFloor(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await getRoomDetailByEmail(roomEmail);
     if (!roomDetail || !roomDetail.floor) {
       return null;
     }
@@ -351,7 +351,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomCapacity(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await getRoomDetailByEmail(roomEmail);
     if (!roomDetail || !roomDetail.capacity) {
       return null;
     }
@@ -360,38 +360,12 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomFeatures(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await getRoomDetailByEmail(roomEmail);
     if (!roomDetail || isEmpty(roomDetail.features)) {
       return null;
     }
 
     return roomDetail.features;
-  }
-
-  async function _getRoomDetailByEmail(roomEmail) {
-    const allRooms = await getAllRoomsWithCache();
-
-    for (let i = 0; i < allRooms.length; i++) {
-      const room = allRooms[i];
-      if (room.email === roomEmail) {
-        return room;
-      }
-    }
-
-    GMateError("room email not found", {roomEmail});
-  }
-
-  async function _getRoomDetailByName(roomName) {
-    const allRooms = await getAllRoomsWithCache();
-
-    for (let i = 0; i < allRooms.length; i++) {
-      const room = allRooms[i];
-      if (room.email === roomName) {
-        return room;
-      }
-    }
-
-    GMateError("room name not found", {roomName});
   }
 
   return {
