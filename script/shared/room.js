@@ -97,11 +97,14 @@ async function pickFavoriteRoom(roomEmails) {
 }
 
 async function getAllRoomsFromCache() {
-  return await getKeyFromLocal(FULL_ROOM_LIST_KEY, [])
+  const roomDicts = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
+  return roomDicts.map(dict => new Room({...dict}));
 }
 
 async function putAllRoomsIntoCache(rooms) {
-  return await persistPairLocal(FULL_ROOM_LIST_KEY, rooms);
+  // converts room entity to key value pairs for easier serialization
+  const roomDicts = rooms.map(room => room.toDict());
+  return await persistPairLocal(FULL_ROOM_LIST_KEY, roomDicts);
 }
 
 async function getRoomByEmail(roomEmail, allRooms) {

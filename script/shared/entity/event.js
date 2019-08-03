@@ -132,4 +132,15 @@ class Room extends Attendee {
     this.capacity = capacity;
     this.features = features;
   }
+
+  // converts room entity to key value pairs for easier serialization
+  toDict() {
+    return {
+      email: this.email,
+      name: this.name,
+      floor: this.floor,
+      capacity: this.capacity,
+      features: this.features,
+    };
+  }
 }

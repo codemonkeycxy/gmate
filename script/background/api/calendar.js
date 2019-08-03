@@ -342,7 +342,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomFloor(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await _getRoomByEmail(roomEmail);
     if (!roomDetail || !roomDetail.floor) {
       return null;
     }
@@ -351,7 +351,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomCapacity(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await _getRoomByEmail(roomEmail);
     if (!roomDetail || !roomDetail.capacity) {
       return null;
     }
@@ -360,7 +360,7 @@ function buildCalendarAPI() {
   }
 
   async function _getRoomFeatures(roomEmail) {
-    const roomDetail = await _getRoomDetailByEmail(roomEmail);
+    const roomDetail = await _getRoomByEmail(roomEmail);
     if (!roomDetail || isEmpty(roomDetail.features)) {
       return null;
     }
@@ -368,7 +368,7 @@ function buildCalendarAPI() {
     return roomDetail.features;
   }
 
-  async function _getRoomDetailByEmail(roomEmail) {
+  async function _getRoomByEmail(roomEmail) {
     const allRooms = await getAllRoomsWithCache();
     return getRoomByEmail(roomEmail, allRooms);
   }
