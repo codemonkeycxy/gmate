@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.3.0
+- [maintenance] Code refactor to unify room entity definition
+
 ## 5.2.0
 - [enhancement] Add user survey on the room radar page
 - [enhancement] Split room radar results into "full" and "partial" matches
