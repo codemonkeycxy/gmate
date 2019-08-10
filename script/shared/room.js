@@ -47,29 +47,29 @@ function matchRoom(room, posFilter, negFilter, flexFilters) {
   }
 
   if (flexFilters) {
-    matchFlexFilter = matchRoomByFlexFilters(roomStr, flexFilters);
+    matchFlexFilter = matchRoomByFlexFilters(room, flexFilters);
   }
 
   return matchPosFilter && !matchNegFilter && matchFlexFilter;
 }
 
-function matchRoomByFlexFilters(roomStr, flexFilters) {
+function matchRoomByFlexFilters(room, flexFilters) {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
 
   return filterSettings.every(
-    filterSetting => matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters)
+    filterSetting => matchRoomByFlexFilterOne(room, filterSetting, flexFilters)
   );
 }
 
-function matchRoomByFlexFilterOne(roomStr, filterSetting, flexFilters) {
+function matchRoomByFlexFilterOne(room, filterSetting, flexFilters) {
   const storageKey = getRoomFilterStorageKey(filterSetting.key);
   const storageVal = flexFilters[storageKey];
   if (storageVal === ANY) {
     return true;
   }
 
-  return filterSetting.match(roomStr, storageVal);
+  return filterSetting.match(room, storageVal);
 }
 
 async function pickFavoriteRoom(roomEmails) {

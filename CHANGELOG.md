@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.4.0
+- [maintenance] Transition to use standardized room floor, capacity and features for filtering
+- [enhancement] Add more offices to location filters
+
 ## 5.3.0
 - [maintenance] Code refactor to unify room entity definition
+- [enhancement] Add more offices to location filters
 
 ## 5.2.0
 - [enhancement] Add user survey on the room radar page

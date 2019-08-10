@@ -110,7 +110,6 @@ async function bootstrap() {
 // todo: add an onboarding walkthrough on install to set up default filters
 // todo: auto detect recurring meetings and prompt the user
 // todo: maybe option to exclude open rooms
-// todo: add sfo 71 Stevenson, 225 Randolph and SYD
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {

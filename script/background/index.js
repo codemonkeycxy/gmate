@@ -21,6 +21,7 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-// (async () => {
-//   console.log(await CalendarAPI.getAllRoomsWithCache());
-// })();
+// TODO: comment this out after migration is done
+(async () => {
+  console.log(await CalendarAPI.refreshAllRoomsCache());
+})();

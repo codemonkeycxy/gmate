@@ -24,7 +24,7 @@ const UBER_ROOM_FILTERS = [{
     'SYD | 580 George Street',
   ],
   default: ANY,
-  match: (roomStr, location) => roomStr.includes(location),
+  match: (room, location) => room.name.includes(location),
   validateInput: input => {
     if (input !== ANY) {
       return {
@@ -43,46 +43,38 @@ const UBER_ROOM_FILTERS = [{
   displayName: 'Floor',
   type: NUM_RANGE,
   default: '',
-  match: (roomStr, floorRangeStr) => {
+  match: (room, floorRangeStr) => {
     const floors = parseNumbersFromString(floorRangeStr);
     if (isEmpty(floors)) {
       return true;
     }
 
-    return floors.some(floor => {
-      const ordinalNum = appendOrdinalSuffix(floor);
-      const re = new RegExp(`.*([-–]).*[^\\d][0]?${ordinalNum}.*\\(.*`);
-      return !!roomStr.match(re);  // convert to boolean
-    });
+    return floors.some(floor => room.floor && room.floor === floor);
   }
 }, {
   key: 'room_size',  // CAUTION: updating key will invalidate user's current settings
   displayName: 'Room size',
   type: NUM_RANGE,
   default: '',
-  match: (roomStr, roomSizeRangeStr) => {
+  match: (room, roomSizeRangeStr) => {
     const roomSizes = parseNumbersFromString(roomSizeRangeStr);
     if (isEmpty(roomSizes)) {
       return true;
     }
 
-    return roomSizes.some(roomSize => {
-      const re = new RegExp(`.*[-–].*\\([^\\d]*[0]?${roomSize}[^\\d]*\\)`);
-      return !!roomStr.match(re);  // convert to boolean
-    });
+    return roomSizes.some(roomSize => room.capacity && room.capacity === roomSize);
   }
 }, {
   key: 'need_vc',  // CAUTION: updating key will invalidate user's current settings
   displayName: 'Must have VC',
   type: CHECKBOX,
   default: false,
-  match: (roomStr, mustHaveVC) => {
+  match: (room, mustHaveVC) => {
     if (!mustHaveVC) {
       return true;
     }
 
-    const re = new RegExp('.*[-–].*\\(.*VC.*\\)');
-    return !!roomStr.match(re);  // convert to boolean
+    return !isEmpty(room.features) && room.features.some(feature => feature === UBER_VC);
   }
 }];
 
