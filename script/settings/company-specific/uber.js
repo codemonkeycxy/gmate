@@ -8,6 +8,7 @@ const UBER_ROOM_FILTERS = [{
   options: [
     ANY,
     'SFO | 1455 Market',
+    'AMS | HQ',
     'ATL | 1201 Peachtree',
     'CHI | 225 W. Randolph St',
     'DC | 1717',
