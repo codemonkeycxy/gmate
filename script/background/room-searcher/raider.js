@@ -110,6 +110,7 @@ async function bootstrap() {
 // todo: add an onboarding walkthrough on install to set up default filters
 // todo: auto detect recurring meetings and prompt the user
 // todo: maybe option to exclude open rooms
+// todo: show prompt for "zero-room-found", likely a misconfig
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
