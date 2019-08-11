@@ -49,7 +49,7 @@
   }
 
   async function renderModelBody() {
-    const filterUI = await asyncRenderRoomBookingFilters((key, val) => (globals.eventFilters[key] = val));
+    const filterUI = await asyncRenderRoomBookingFilters((key, val) => globals.eventFilters[key] = val);
     const bookRecurringCheckbox = renderCheckbox(
       '(Beta) apply to recurring meetings (note you may not always get the same room)',
       false,
@@ -111,7 +111,7 @@
 
     if (globals.eventIdToFulfill !== NO_ID_YET) {
       // the page already carries a valid event id, we are done
-      return await registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
+      return registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
     }
 
     await tryUntilPass(isMainCalendarPage);
