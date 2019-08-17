@@ -21,12 +21,14 @@ function autocomplete(inp, arr, onSelect) {
     /*for each item in the array...*/
     for (i = 0; i < arr.length; i++) {
       /*check if the item starts with the same letters as the text field value:*/
-      if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+      const substrIndex = arr[i].toUpperCase().indexOf(val.toUpperCase());
+      if (substrIndex >= 0) {
         /*create a DIV element for each matching element:*/
         b = document.createElement("DIV");
         /*make the matching letters bold:*/
-        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-        b.innerHTML += arr[i].substr(val.length);
+        b.innerHTML = arr[i].substring(0, substrIndex);
+        b.innerHTML += "<strong>" + arr[i].substring(substrIndex, substrIndex + val.length) + "</strong>";
+        b.innerHTML += arr[i].substring(substrIndex + val.length);
         /*insert a input field that will hold the current array item's value:*/
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
         /*execute a function when someone clicks on the item value (DIV element):*/
