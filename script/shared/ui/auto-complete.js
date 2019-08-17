@@ -1,4 +1,4 @@
-// copied from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_autocomplete
+// copied and modified from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_autocomplete
 function autocomplete(inp, arr, onSelect) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/

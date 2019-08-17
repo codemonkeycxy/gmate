@@ -55,24 +55,24 @@ function renderDropDownSelect(name, options, initialVal, onSelect, validateInput
 }
 
 function renderAutoComplete(name, options, initialVal, onSelect, validateInput) {
-  const input = document.createElement('input');
-  input.placeholder = 'type to search';
-  // todo: add input validation
-  autocomplete(input, options, onSelect);
+  const textInput = document.createElement('input');
+  textInput.placeholder = 'type to search';
+  textInput.value = initialVal;
 
-  const wrapper = wrapUIComponents([input]);
-  wrapper.className = 'autocomplete';
+  const autoCompleteWrapper = wrapUIComponents([textInput]);
+  autoCompleteWrapper.className = "autocomplete";
 
-  const result = wrapUIWithText(name, wrapper);
+  const result = wrapUIWithText(name, autoCompleteWrapper);
   result.setError(validateInput(initialVal));
 
-  // set up initial value and change listener
-  input.value = initialVal;
-  input.addEventListener('change', e => {
-    const input = e.target.value;
-    onSelect(input);
-    result.setError(validateInput(input));
-  });
+  const validateAndSetValue = val => {
+    onSelect(val);
+    result.setError(validateInput(val));
+  };
+  textInput.addEventListener('change', e => validateAndSetValue(e.target.value));
+
+  // bind auto complete options
+  autocomplete(textInput, options, validateAndSetValue);
 
   return result;
 }

@@ -5,14 +5,11 @@ const UBER_ROOM_FILTERS = [{
   key: 'location',  // CAUTION: updating key will invalidate user's current settings
   displayName: 'Location',
   type: SINGLE_OPTION,
-  options: [
-    ANY,
-    ...UBER_OFFICE_LOCATIONS,
-  ],
+  options: UBER_OFFICE_LOCATIONS,
   default: ANY,
   match: (room, location) => room.name.includes(location),
   validateInput: input => {
-    if (input !== ANY) {
+    if (UBER_OFFICE_LOCATIONS.includes(input)) {
       return {
         valid: true,
         errMsg: null
