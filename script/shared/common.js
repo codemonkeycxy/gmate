@@ -73,7 +73,8 @@ const CALENDAR_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r';
 const EDIT_PAGE_URL_PREFIX = 'https://calendar.google.com/calendar/r/eventedit';
 
 // room filter UI options
-const SINGLE_OPTION = 'single-option';
+const AUTO_COMPLETE = 'auto-complete';
+const DROPDOWN = 'drop-down';
 const NUM_RANGE = 'num-range';
 const CHECKBOX = 'checkbox';
 

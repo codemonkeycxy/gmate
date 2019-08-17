@@ -29,7 +29,7 @@ function wrapUIWithText(name, child, textOn = LEFT) {
   return result;
 }
 
-function renderDropDownSelect(name, options, initialVal, onSelect, validateInput) {
+function renderDropdown(name, options, initialVal, onSelect, validateInput) {
   const selectList = document.createElement('select');
   // populate the option list
   options.forEach(option => {

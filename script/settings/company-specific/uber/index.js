@@ -4,7 +4,7 @@ const UBER_CART = 'Cart';
 const UBER_ROOM_FILTERS = [{
   key: 'location',  // CAUTION: updating key will invalidate user's current settings
   displayName: 'Location',
-  type: SINGLE_OPTION,
+  type: AUTO_COMPLETE,
   options: UBER_OFFICE_LOCATIONS,
   default: ANY,
   match: (room, location) => room.name.includes(location),

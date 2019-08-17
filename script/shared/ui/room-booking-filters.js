@@ -25,7 +25,8 @@
  */
 async function asyncRenderRoomBookingFilters(onChange) {
   const FILTER_RENDER_FUNCTIONS = {
-    [SINGLE_OPTION]: renderSingleOptionFilter,
+    [AUTO_COMPLETE]: renderAutoCompleteFilter,
+    [DROPDOWN]: renderDropdownFilter,
     [NUM_RANGE]: renderNumRangeFilter,
     [CHECKBOX]: renderCheckboxFilter,
   };
@@ -123,21 +124,21 @@ async function asyncRenderRoomBookingFilters(onChange) {
   }
 
   // user can pick one option from a list of dropdown values
-  function renderSingleOptionFilter(title, initialVal, storageKey, filterSetting) {
-    const options = filterSetting.options;
-    if (options.length < 10) {
-      return renderDropDownSelect(
-        title,
-        options,
-        initialVal,
-        selected => onChange(storageKey, selected),
-        filterSetting.validateInput
-      );
-    }
+  function renderDropdownFilter(title, initialVal, storageKey, filterSetting) {
+    return renderDropdown(
+      title,
+      filterSetting.options,
+      initialVal,
+      selected => onChange(storageKey, selected),
+      filterSetting.validateInput
+    );
+  }
 
+  // user can type and search
+  function renderAutoCompleteFilter(title, initialVal, storageKey, filterSetting) {
     return renderAutoComplete(
       title,
-      options,
+      filterSetting.options,
       initialVal,
       selected => onChange(storageKey, selected),
       filterSetting.validateInput
