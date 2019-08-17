@@ -9,17 +9,24 @@ const UBER_ROOM_FILTERS = [{
   default: ANY,
   match: (room, location) => room.name.includes(location),
   validateInput: input => {
-    if (UBER_OFFICE_LOCATIONS.includes(input)) {
+    if (!input || !input.trim() || input === ANY) {
       return {
-        valid: true,
-        errMsg: null
+        valid: false,
+        errMsg: "Please select. Email gmate.hotline@gmail.com if your location is not listed"
+      }
+    }
+
+    if (!UBER_OFFICE_LOCATIONS.includes(input)) {
+      return {
+        valid: false,
+        errMsg: "Invalid input. Email gmate.hotline@gmail.com if your location is not listed"
       }
     }
 
     return {
-      valid: false,
-      errMsg: "Please select. Email gmate.hotline@gmail.com if your location is not listed"
-    }
+      valid: true,
+      errMsg: null
+    };
   }
 }, {
   key: 'floor',  // CAUTION: updating key will invalidate user's current settings
