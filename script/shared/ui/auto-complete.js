@@ -1,5 +1,5 @@
 // copied from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_autocomplete
-function autocomplete(inp, arr) {
+function autocomplete(inp, arr, onSelect) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
@@ -33,6 +33,7 @@ function autocomplete(inp, arr) {
         b.addEventListener("click", function (e) {
           /*insert the value for the autocomplete text field:*/
           inp.value = this.getElementsByTagName("input")[0].value;
+          onSelect(inp.value);
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
