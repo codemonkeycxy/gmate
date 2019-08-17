@@ -21,6 +21,29 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-// (async () => {
-//   console.log(await CalendarAPI.refreshAllRoomsCache());
-// })();
+(async () => {
+  const rooms = await CalendarAPI.refreshAllRoomsCache();
+  let offices = {};
+  rooms.forEach(room => {
+    const dashIndex = room.name.indexOf('-');
+    const office = room.name.substring(0, dashIndex).trim();
+    if (office && !office.toLowerCase().includes('test')) {
+      if (offices[office]) {
+        offices[office]++;
+      } else {
+        offices[office] = 1;
+      }
+    }
+  });
+
+  let toInclude = [];
+  Object.keys(offices).map(office => {
+    if (offices[office] > 5) {
+      toInclude.push(office);
+    }
+  });
+
+  toInclude = toInclude.sort();
+  console.log(toInclude);
+  await persistPairLocal('temp', toInclude);
+})();

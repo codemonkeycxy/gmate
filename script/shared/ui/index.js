@@ -56,6 +56,7 @@ function renderDropDownSelect(name, options, initialVal, onSelect, validateInput
 
 function renderAutoComplete(name, options, initialVal, onSelect, validateInput) {
   const input = document.createElement('input');
+  // todo: add input validation
   autocomplete(input, options, onSelect);
 
   const wrapper = wrapUIComponents([input]);
