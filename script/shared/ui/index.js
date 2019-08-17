@@ -54,6 +54,26 @@ function renderDropDownSelect(name, options, initialVal, onSelect, validateInput
   return result;
 }
 
+function renderAutoComplete(name, options, initialVal, onSelect, validateInput) {
+  const input = document.createElement('input');
+  autocomplete(input, options);
+
+  const wrapper = wrapUIComponents([input]);
+  wrapper.className = 'autocomplete';
+  const result = wrapUIWithText(name, wrapper);
+  result.setError(validateInput(initialVal));
+
+  // set up initial value and change listener
+  input.value = initialVal;
+  input.addEventListener('change', e => {
+    const input = e.target.value;
+    onSelect(input);
+    result.setError(validateInput(input));
+  });
+
+  return result;
+}
+
 function renderStringNumberRange(name, initialVal, onChange) {
   const input = document.createElement('input');
   input.value = initialVal;

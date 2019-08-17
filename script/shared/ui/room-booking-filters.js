@@ -6,20 +6,20 @@
  * this function returns the following html
 
  <div>
-     <!--new style flex filters to be dynamically generated via code-->
+ <!--new style flex filters to be dynamically generated via code-->
 
-     <!--old style regex filters-->
-     <span>Name include (</span>
-     <a href="https://regex101.com/" target="_blank">regex</a>
-     <span>): </span>
-     <input type="text" placeholder="1455.*0(4|5)th" room-booking-filter-positive-1">
+ <!--old style regex filters-->
+ <span>Name include (</span>
+ <a href="https://regex101.com/" target="_blank">regex</a>
+ <span>): </span>
+ <input type="text" placeholder="1455.*0(4|5)th" room-booking-filter-positive-1">
 
-     <br>
+ <br>
 
-     <span>Name exclude (</span>
-     <a href="https://regex101.com/" target="_blank">regex</a>
-     <span>): </span>
-     <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
+ <span>Name exclude (</span>
+ <a href="https://regex101.com/" target="_blank">regex</a>
+ <span>): </span>
+ <input type="text" placeholder="(Cart|Quiet Room)" id="room-booking-filter-negative">
  </div>
 
  */
@@ -124,9 +124,20 @@ async function asyncRenderRoomBookingFilters(onChange) {
 
   // user can pick one option from a list of dropdown values
   function renderSingleOptionFilter(title, initialVal, storageKey, filterSetting) {
-    return renderDropDownSelect(
+    const options = filterSetting.options;
+    if (options.length < 10) {
+      return renderDropDownSelect(
+        title,
+        options,
+        initialVal,
+        selected => onChange(storageKey, selected),
+        filterSetting.validateInput
+      );
+    }
+
+    return renderAutoComplete(
       title,
-      filterSetting.options,
+      options,
       initialVal,
       selected => onChange(storageKey, selected),
       filterSetting.validateInput
