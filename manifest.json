@@ -54,7 +54,8 @@
       ],
       "css": [
         "styling/main.css",
-        "styling/modal.css"
+        "styling/modal.css",
+        "styling/auto-complete.css"
       ],
       "js": [
         "script/shared/common.js",

@@ -111,6 +111,7 @@ async function bootstrap() {
 // todo: auto detect recurring meetings and prompt the user
 // todo: maybe option to exclude open rooms
 // todo: show prompt for "zero-room-found", likely a misconfig
+// todo: handle "Driver Onboard Cart [Mobile Cart, Zoom]"
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
