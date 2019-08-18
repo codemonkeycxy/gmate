@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.5.0
+- [feature] Support many more office locations by changing the location filter dropdown to autocomplete typeahead
+
 ## 5.4.0
 - [maintenance] Transition to use standardized room floor, capacity and features for filtering
 - [enhancement] Add more offices to location filters
