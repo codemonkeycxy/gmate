@@ -744,3 +744,13 @@ function chunk(array, size) {
 function prettyDate(date) {
   return date.toString().replace(/(:00)?\s*GMT.*$/, '').trim();
 }
+
+async function parallel(funcs, randDelayMs = TEN_SEC_MS) {
+  await Promise.all(funcs.map(func =>
+    // prepare operations to be run in parallel
+    (async () => {
+      await sleep(getRandomInt(randDelayMs));
+      await func();
+    })()
+  ));
+}
