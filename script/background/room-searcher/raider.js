@@ -172,8 +172,9 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
   const lastEventId = recurringIds[recurringIds.length - 1];
   const lastEvent = await CalendarAPI.getEventB64(lastEventId);
   const freeRooms = await getFreeRoomsForEvent(lastEvent, eventFilters);
+  // randomly pick up to 3 items from the free room list as the preference
   // todo: test when freeRooms is empty or smaller than 3
-  return freeRooms.slice(0, 3);  // pick up to 3 items from the free room list as the preference
+  return shuffleInPlace(freeRooms).slice(0, 3);
 }
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
