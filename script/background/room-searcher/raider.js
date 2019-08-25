@@ -129,7 +129,7 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
   if (msg.data.bookRecurring) {
     await enqueueRecurringTasks(eventId, eventName, eventFilters);
   } else {
-    enqueue(EventTask(eventId, eventName, eventFilters));
+    enqueue(EventTask({eventId, eventName, eventFilters}));
   }
 
   await CalendarAPI.refreshAllRoomsCache();
@@ -146,7 +146,12 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   }
 
   const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
-  enqueueMany(recurringIds.map(idToBook => EventTask(idToBook, eventName, eventFilters)));
+  enqueueMany(recurringIds.map(idToBook => EventTask({
+    eventId: idToBook,
+    eventName,
+    eventFilters,
+    preferredRooms: []
+  })));
   track(RECURRING_ROOM_TO_BE_FULFILLED);
 
   if (recurringIds.length < 2) {

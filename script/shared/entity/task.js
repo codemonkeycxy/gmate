@@ -3,14 +3,15 @@ const TASK_TYPE = {
   EVENT: "event"
 };
 
-function EventTask(eventId, eventName, eventFilters) {
+function EventTask({eventId, eventName, eventFilters, preferredRooms}) {
   return {
     id: nextId(),
     type: TASK_TYPE.EVENT,
     data: {
       eventId: eventId,
       eventName: eventName,
-      eventFilters: eventFilters
+      eventFilters: eventFilters,
+      preferredRooms: preferredRooms,
     }
   };
 }

@@ -22,5 +22,6 @@ onMessage((msg, sender, cb) => {
 });
 
 // (async () => {
-//   const rooms = await CalendarAPI.refreshAllRoomsCache();
+//   const rooms = await CalendarAPI.eventIdToRecurringIdsB64('NGpnN2UxdjAxb2k3ZTdibjhjN3VpOGJhbHRfMjAxOTA4MjdUMDMwMDAwWiB4aW55aUB1YmVyLmNvbQ');
+//   console.log(rooms);
 // })();
