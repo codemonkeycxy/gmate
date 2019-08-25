@@ -146,7 +146,7 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   }
 
   const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
-  const preferredRooms = await getPreferredRoomsForRecurringEvents(recurringIds);
+  const preferredRooms = await getPreferredRoomsForRecurringEvents(recurringIds, eventFilters);
   enqueueMany(recurringIds.map(idToBook => EventTask({
     eventId: idToBook,
     eventName,
@@ -162,16 +162,18 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   }
 }
 
-async function getPreferredRoomsForRecurringEvents(recurringIds) {
+async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
   if (recurringIds.length < 1) {
     return [];
   }
 
   // can safely assume recurringIds are ordered by start date because it's handled by API
   // todo: re-sort events by start date after updating eventIdToRecurringIdsB64 to return event objects
-  const lastMeetingId = recurringIds[recurringIds.length - 1];
-  const lastMeeting = await CalendarAPI.getEventB64(lastMeetingId);
-  return []
+  const lastEventId = recurringIds[recurringIds.length - 1];
+  const lastEvent = await CalendarAPI.getEventB64(lastEventId);
+  const freeRooms = await getFreeRoomsForEvent(lastEvent, eventFilters);
+  // todo: test when freeRooms is empty or smaller than 3
+  return freeRooms.slice(0, 3);  // pick up to 3 items from the free room list as the preference
 }
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
