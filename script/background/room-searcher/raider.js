@@ -146,11 +146,12 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   }
 
   const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
+  const preferredRooms = await getPreferredRoomsForRecurringEvents(recurringIds);
   enqueueMany(recurringIds.map(idToBook => EventTask({
     eventId: idToBook,
     eventName,
     eventFilters,
-    preferredRooms: []
+    preferredRooms,
   })));
   track(RECURRING_ROOM_TO_BE_FULFILLED);
 
@@ -159,6 +160,18 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   } else {
     notify('Success!', `Added ${recurringIds.length} meetings to the room searching queue`);
   }
+}
+
+async function getPreferredRoomsForRecurringEvents(recurringIds) {
+  if (recurringIds.length < 1) {
+    return [];
+  }
+
+  // can safely assume recurringIds are ordered by start date because it's handled by API
+  // todo: re-sort events by start date after updating eventIdToRecurringIdsB64 to return event objects
+  const lastMeetingId = recurringIds[recurringIds.length - 1];
+  const lastMeeting = await CalendarAPI.getEventB64(lastMeetingId);
+  return []
 }
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
@@ -265,20 +278,7 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  const allRooms = await CalendarAPI.getAllRoomsWithCache();
-  const roomCandidates = allRooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
-  console.log(`found ${roomCandidates.length} room candidates`);
-  if (isEmpty(roomCandidates)) {
-    // 0 room candidates indicate either a room list fetching issue or a filter setup issue. log more info for investigation
-    GMateError('zero room candidates', {
-      roomListLength: allRooms.length,
-      posFilter,
-      negFilter,
-      flexFilters
-    })
-  }
-
-  const freeRooms = await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
+  const freeRooms = await getFreeRoomsForEvent(event, {posFilter, negFilter, flexFilters});
   if (isEmpty(freeRooms)) {
     console.log('no free room is found. try again later...');
     enqueue(currentTask);
@@ -460,14 +460,19 @@ function getNapFillers(napMinutes) {
   return fillers;
 }
 
-async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = []) {
-  for (let i = 0; i < roomEmailsByPreference.length; i++) {
-    const preferredRoom = roomEmailsByPreference[i];
-    if (freeRoomEmails.includes(preferredRoom)) {
-      return preferredRoom;
-    }
+async function getFreeRoomsForEvent(event, {posFilter, negFilter, flexFilters}) {
+  const allRooms = await CalendarAPI.getAllRoomsWithCache();
+  const roomCandidates = allRooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
+  console.log(`found ${roomCandidates.length} room candidates`);
+  if (isEmpty(roomCandidates)) {
+    // 0 room candidates indicate either a room list fetching issue or a filter setup issue. log more info for investigation
+    GMateError('zero room candidates', {
+      roomListLength: allRooms.length,
+      posFilter,
+      negFilter,
+      flexFilters
+    })
   }
 
-  // fall back onto user's historical room selection
-  return await pickRoomBasedOnHistory(freeRoomEmails);
+  return await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
 }

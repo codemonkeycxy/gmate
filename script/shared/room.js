@@ -96,6 +96,18 @@ async function pickRoomBasedOnHistory(roomEmails) {
   return favoriteRoom;
 }
 
+async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = []) {
+  for (let i = 0; i < roomEmailsByPreference.length; i++) {
+    const preferredRoom = roomEmailsByPreference[i];
+    if (freeRoomEmails.includes(preferredRoom)) {
+      return preferredRoom;
+    }
+  }
+
+  // fall back onto user's historical room selection
+  return await pickRoomBasedOnHistory(freeRoomEmails);
+}
+
 async function getAllRoomsFromCache() {
   const roomDicts = await getKeyFromLocal(FULL_ROOM_LIST_KEY, []);
   return roomDicts.map(dict => new Room({...dict}));
