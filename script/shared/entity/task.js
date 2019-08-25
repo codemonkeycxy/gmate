@@ -11,7 +11,7 @@ function EventTask({eventId, eventName, eventFilters, preferredRooms}) {
       eventId: eventId,
       eventName: eventName,
       eventFilters: eventFilters,
-      preferredRooms: preferredRooms,
+      preferredRooms: preferredRooms || [],
     }
   };
 }

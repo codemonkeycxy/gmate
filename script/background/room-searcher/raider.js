@@ -287,7 +287,10 @@ async function nextTask() {
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
   // todo: pick a room with capacity closer to the event human invitees
-  const success = await bookRoom(eventIdB64, await pickFavoriteRoom(freeRooms));
+  const success = await bookRoom(
+    eventIdB64,
+    await pickRoomEmailByPreference(freeRooms, currentTask.data.preferredRooms || [])
+  );
 
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
@@ -455,4 +458,16 @@ function getNapFillers(napMinutes) {
   }
 
   return fillers;
+}
+
+async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = []) {
+  for (let i = 0; i < roomEmailsByPreference.length; i++) {
+    const preferredRoom = roomEmailsByPreference[i];
+    if (freeRoomEmails.includes(preferredRoom)) {
+      return preferredRoom;
+    }
+  }
+
+  // fall back onto user's historical room selection
+  return await pickRoomBasedOnHistory(freeRoomEmails);
 }

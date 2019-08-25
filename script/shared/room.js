@@ -72,7 +72,7 @@ function matchRoomByFlexFilterOne(room, filterSetting, flexFilters) {
   return filterSetting.match(room, storageVal);
 }
 
-async function pickFavoriteRoom(roomEmails) {
+async function pickRoomBasedOnHistory(roomEmails) {
   if (isEmpty(roomEmails)) {
     return null;
   }
