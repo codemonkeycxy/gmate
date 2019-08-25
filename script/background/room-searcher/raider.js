@@ -101,7 +101,6 @@ async function bootstrap() {
 // todo: build a community with redit
 // todo: put room radar and raider button on calendar main page
 // todo: exclude cart and other non-meeting rooms
-// todo: book consistent rooms for recurring meetings
 // todo: (maybe) when possible, book room with capacity closer to the number of invitees
 // todo: detect the user company and save as a global variable and use that to drive UI
 // https://developer.chrome.com/extensions/identity#method-getProfileUserInfo and need "identity.email" permission
@@ -124,35 +123,38 @@ onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
     throw GMateError('empty event id', {eventName});
   }
 
-  // enqueue the event at hand first even if we need to enqueue other recurring meetings later
-  // this way the UI is not blocked by the async bookRecurring logic
-  enqueue(EventTask(eventId, eventName, eventFilters));
   track(ROOM_TO_BE_FULFILLED);
 
   // NOTE: leave the async logic towards the end in order not to block the UI
   if (msg.data.bookRecurring) {
-    // the event might have just been created, wait until it can be fetched from the API before continuing
-    const success = await tryUntilPass(
-      async () => await CalendarAPI.getEventB64(eventId),
-      {sleepMs: 1000, countdown: 15, suppressError: true}  // wait up to 15 sec
-    );
-    if (!success) {
-      return notify('Oops. We encountered a problem', 'Unable to enqueue recurring meetings. Please try again');
-    }
-
-    const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
-    enqueueMany(recurringIds.map(idToBook => EventTask(idToBook, eventName, eventFilters)));
-    track(RECURRING_ROOM_TO_BE_FULFILLED);
-
-    if (recurringIds.length < 2) {
-      notify('Warning!', `Only found ${recurringIds.length} recurring meeting. Are you sure?`);
-    } else {
-      notify('Success!', `Added ${recurringIds.length} meetings to the room searching queue`);
-    }
+    await enqueueRecurringTasks(eventId, eventName, eventFilters);
+  } else {
+    enqueue(EventTask(eventId, eventName, eventFilters));
   }
 
   await CalendarAPI.refreshAllRoomsCache();
 });
+
+async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
+  // the event might have just been created, wait until it can be fetched from the API before continuing
+  const success = await tryUntilPass(
+    async () => await CalendarAPI.getEventB64(eventId),
+    {sleepMs: 1000, countdown: 15, suppressError: true}  // wait up to 15 sec
+  );
+  if (!success) {
+    return notify('Oops. We encountered a problem', 'Unable to enqueue recurring meetings. Please try again');
+  }
+
+  const recurringIds = await CalendarAPI.eventIdToRecurringIdsB64(eventId);
+  enqueueMany(recurringIds.map(idToBook => EventTask(idToBook, eventName, eventFilters)));
+  track(RECURRING_ROOM_TO_BE_FULFILLED);
+
+  if (recurringIds.length < 2) {
+    notify('Warning!', `Only found ${recurringIds.length} recurring meeting. Are you sure?`);
+  } else {
+    notify('Success!', `Added ${recurringIds.length} meetings to the room searching queue`);
+  }
+}
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
   const eventName = msg.data.eventName;

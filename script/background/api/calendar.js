@@ -62,7 +62,7 @@ function buildCalendarAPI() {
         start.toISOString()
         }&timeMax=${
         end.toISOString()
-        }`
+        }&orderBy=startTime`
     );
 
     return result.items;
