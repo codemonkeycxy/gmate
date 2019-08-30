@@ -111,6 +111,8 @@ async function bootstrap() {
 // todo: maybe option to exclude open rooms
 // todo: show prompt for "zero-room-found", likely a misconfig
 // todo: handle "Driver Onboard Cart [Mobile Cart, Zoom]"
+// todo: debug SFO | 1455-Market-GF-Basilisk (5)
+// todo: provide pure text filters
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -169,6 +171,8 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
 
   // can safely assume recurringIds are ordered by start date because it's handled by API
   // todo: re-sort events by start date after updating eventIdToRecurringIdsB64 to return event objects
+  // todo: randomly sample a few more events to make the final list more accurate
+  // trade off list accuracy with performance (waiting time)
   const lastEventId = recurringIds[recurringIds.length - 1];
   const lastEvent = await CalendarAPI.getEventB64(lastEventId);
   const freeRooms = await getFreeRoomsForEvent(lastEvent, eventFilters);
