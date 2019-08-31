@@ -1,3 +1,25 @@
+class Room extends Attendee {
+  constructor({email, status, name, floor, capacity, features}) {
+    super({email, status});
+
+    this.name = name;
+    this.floor = floor;
+    this.capacity = capacity;
+    this.features = features;
+  }
+
+  // converts to key value pairs for easier serialization
+  toDict() {
+    return {
+      email: this.email,
+      name: this.name,
+      floor: this.floor,
+      capacity: this.capacity,
+      features: this.features,
+    };
+  }
+}
+
 function matchRoom(room, posFilter, negFilter, flexFilters) {
   const roomStr = room.name;
   let matchPosFilter = true;
