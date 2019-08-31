@@ -46,8 +46,8 @@
 
   async function renderModelBody() {
     const filterUI = await asyncRenderRoomBookingFilters(
-      (key, val) => globals.eventFilters.posFilter = val,
-      (key, val) => globals.eventFilters.negFilter = val,
+      val => globals.eventFilters.posFilter = val,
+      val => globals.eventFilters.negFilter = val,
       (key, val) => globals.eventFilters.flexFilters[key] = val,
     );
     const bookRecurringCheckbox = renderCheckbox(
