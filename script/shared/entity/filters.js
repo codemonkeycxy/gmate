@@ -5,23 +5,6 @@ const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
 
-class Filters {
-  constructor({posFilter, negFilter, flexFilters}) {
-    this.posFilter = posFilter;
-    this.negFilter = negFilter;
-    this.flexFilters = flexFilters;
-  }
-
-  // converts key value pairs for easier serialization
-  toDict() {
-    return {
-      posFilter: this.posFilter,
-      negFilter: this.negFilter,
-      flexFilters: this.flexFilters,
-    };
-  }
-}
-
 function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }
@@ -42,11 +25,11 @@ async function getFlexRoomFilters() {
 async function getRoomFilters() {
   const result = await getFromSync(DEFAULT_ROOM_BOOKING_FILTERS);
 
-  return new Filters({
+  return {
     posFilter: result[ROOM_BOOKING_FILTER_POSITIVE],
     negFilter: result[ROOM_BOOKING_FILTER_NEGATIVE],
     flexFilters: await getFlexRoomFilters()
-  }).toDict();
+  };
 }
 
 async function persistPosFilter(posFilter) {
