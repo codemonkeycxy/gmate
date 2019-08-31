@@ -1,3 +1,7 @@
+const DEFAULT_ROOM_BOOKING_FILTERS = {};
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
+
 class Filters {
   constructor({posFilter, negFilter, flexFilters}) {
     this.posFilter = posFilter;
