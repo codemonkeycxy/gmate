@@ -169,16 +169,25 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
     return [];
   }
 
-  // can safely assume recurringIds are ordered by start date because it's handled by API
-  // todo: re-sort events by start date after updating eventIdToRecurringIdsB64 to return event objects
-  // todo: randomly sample a few more events to make the final list more accurate
-  // trade off list accuracy with performance (waiting time)
-  const lastEventId = recurringIds[recurringIds.length - 1];
-  const lastEvent = await CalendarAPI.getEventB64(lastEventId);
-  const freeRooms = await getFreeRoomsForEvent(lastEvent, eventFilters);
-  // randomly pick up to 3 items from the free room list as the preference
-  // todo: test when freeRooms is empty or smaller than 3
-  return shuffleInPlace(freeRooms).slice(0, 3);
+  // randomly select 5 event ids to search for the most common free rooms
+  const randomNIds = shuffleInPlace([...recurringIds]).slice(recurringIds.length - 5, recurringIds.length);
+  const roomEmailCount = {};
+  await parallel(randomNIds.map(eventId =>
+    async () => {
+      const event = await CalendarAPI.getEventB64(eventId);
+      const freeRooms = await getFreeRoomsForEvent(event, eventFilters);
+      freeRooms.forEach(roomEmail => {
+        if (roomEmailCount[roomEmail]) {
+          roomEmailCount[roomEmail]++;
+        } else {
+          roomEmailCount[roomEmail] = 1;
+        }
+      });
+    }), 0
+  );
+
+  // pick the top 3 common free rooms as room book preference
+  return sortRoomEmailByCount(roomEmailCount).slice(0, 3);
 }
 
 onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
@@ -482,4 +491,8 @@ async function getFreeRoomsForEvent(event, {posFilter, negFilter, flexFilters}) 
   }
 
   return await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));
+}
+
+function sortRoomEmailByCount(roomEmailCount) {
+  return Object.keys(roomEmailCount).sort((roomEmail1, roomEmail2) => roomEmailCount[roomEmail2] - roomEmailCount[roomEmail1]);
 }
