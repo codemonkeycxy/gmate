@@ -1,4 +1,8 @@
-async function asyncRenderRoomBookingFilters(onPosFilterChange, onNegFilterChange, onFlexFilterChange) {
+async function asyncRenderRoomBookingFilters(
+  onPosRegexFilterChange,
+  onNegRegexFilterChange,
+  onFlexFilterChange
+) {
   const FILTER_RENDER_FUNCTIONS = {
     [AUTO_COMPLETE]: renderAutoCompleteFilter,
     [DROPDOWN]: renderDropdownFilter,
@@ -12,11 +16,11 @@ async function asyncRenderRoomBookingFilters(onPosFilterChange, onNegFilterChang
 
     const posFilterInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
     posFilterInput.value = posFilter;
-    posFilterInput.addEventListener("input", e => onPosFilterChange(e.target.value));
+    posFilterInput.addEventListener("input", e => onPosRegexFilterChange(e.target.value));
 
     const negFilterInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
     negFilterInput.value = negFilter;
-    negFilterInput.addEventListener("input", e => onNegFilterChange(e.target.value));
+    negFilterInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
   }
 
   function injectFlexFiltersUI(filtersWrapper, flexFilters) {
