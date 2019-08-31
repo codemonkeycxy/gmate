@@ -177,6 +177,35 @@ function getElementByAttr(tagName, attrName, expectedVal) {
   return null;
 }
 
+// ref: https://stackoverflow.com/questions/5783969/how-to-get-child-element-by-id-in-javascript
+function findChildById(element, childID) {
+  function getAllDescendant(element, lstChildrenNodes) {
+    lstChildrenNodes = lstChildrenNodes ? lstChildrenNodes : [];
+    var lstChildren = element.childNodes;
+
+    for (var i = 0; i < lstChildren.length; i++) {
+      if (lstChildren[i].nodeType == 1) // 1 is 'ELEMENT_NODE'
+      {
+        lstChildrenNodes.push(lstChildren[i]);
+        lstChildrenNodes = getAllDescendant(lstChildren[i], lstChildrenNodes);
+      }
+    }
+
+    return lstChildrenNodes;
+  }
+
+  var retElement = null;
+  var lstChildren = getAllDescendant(element);
+  for (var i = 0; i < lstChildren.length; i++) {
+    if (lstChildren[i].id == childID) {
+      retElement = lstChildren[i];
+      break;
+    }
+  }
+
+  return retElement;
+}
+
 function isEdit() {
   return Boolean(getEventId());
 }
@@ -582,8 +611,7 @@ function deepEqual() {
     for (p in y) {
       if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
         return false;
-      }
-      else if (typeof y[p] !== typeof x[p]) {
+      } else if (typeof y[p] !== typeof x[p]) {
         return false;
       }
     }
@@ -591,8 +619,7 @@ function deepEqual() {
     for (p in x) {
       if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
         return false;
-      }
-      else if (typeof y[p] !== typeof x[p]) {
+      } else if (typeof y[p] !== typeof x[p]) {
         return false;
       }
 

@@ -90,12 +90,16 @@ function renderStringNumberRange(name, initialVal, onChange) {
 }
 
 function renderCheckbox(name, initialVal, onChange, textOn = LEFT) {
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
+  const id = `checkbox${getRandomInt(Number.MAX_SAFE_INTEGER)}`;
+  const textLeft = htmlToElement(`<div><label for=${id}>${name}</label><input type="checkbox" name="checkbox" id=${id}></div>`);
+  const textRight = htmlToElement(`<div><input type="checkbox" name="checkbox" id=${id}><label for=${id}>${name}</label></div>`);
+
+  const checkboxWrapper = textOn === LEFT ? textLeft : textRight;
+  const checkbox = findChildById(checkboxWrapper, id);
   checkbox.checked = initialVal;
   checkbox.addEventListener('click', e => onChange(e.target.checked));
 
-  return wrapUIWithText(name, checkbox, textOn);
+  return checkboxWrapper;
 }
 
 function renderDivider() {

@@ -74,8 +74,6 @@ async function bootstrap() {
 // todo: also add the "no need to book" cases to the "recently booked" section regardless
 // todo: generate WOW meeting/free time ratio
 // todo: button disappears after 1 refresh in the meeting edit page
-// todo: make checkbox text clickable
-// https://stackoverflow.com/questions/6293588/how-to-create-an-html-checkbox-with-a-clickable-label
 // todo: study this useful link and possibly fetch more matching rooms
 // https://www.quora.com/How-can-you-restore-the-Google-Calendar-prompt-when-you-change-time-zones
 // todo: consider using js getter https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
@@ -111,7 +109,6 @@ async function bootstrap() {
 // todo: maybe option to exclude open rooms
 // todo: show prompt for "zero-room-found", likely a misconfig
 // todo: handle "Driver Onboard Cart [Mobile Cart, Zoom]"
-// todo: debug SFO | 1455-Market-GF-Basilisk (5)
 // todo: provide pure text filters
 
 // ==================== task queue management ======================

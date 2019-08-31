@@ -1,4 +1,4 @@
-async function loadHTML(fileName) {
+async function loadHTMLString(fileName) {
   return await new Promise(
     resolve => fetch(chrome.extension.getURL(fileName))
       .then(response => response.text())
@@ -7,6 +7,10 @@ async function loadHTML(fileName) {
         throw GMateError(error.message);
       })
   );
+}
+
+async function loadHTMLElement(fileName) {
+  return htmlToElement(await loadHTMLString(fileName));
 }
 
 /**

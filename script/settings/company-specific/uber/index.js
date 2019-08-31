@@ -39,7 +39,12 @@ const UBER_ROOM_FILTERS = [{
       return true;
     }
 
-    return floors.some(floor => room.floor && room.floor === floor);
+    // don't match rooms with no floor info
+    if (isEmpty(room.floor)) {
+      return false;
+    }
+
+    return floors.some(floor => room.floor === floor);
   }
 }, {
   key: 'room_size',  // CAUTION: updating key will invalidate user's current settings
@@ -52,7 +57,12 @@ const UBER_ROOM_FILTERS = [{
       return true;
     }
 
-    return roomSizes.some(roomSize => room.capacity && room.capacity === roomSize);
+    // don't match rooms with no capacity info
+    if (isEmpty(room.capacity)) {
+      return false;
+    }
+
+    return roomSizes.some(roomSize => room.capacity === roomSize);
   }
 }, {
   key: 'need_vc',  // CAUTION: updating key will invalidate user's current settings

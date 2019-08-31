@@ -7,7 +7,7 @@
     const {eventId, eventFilters} = msg.data;
     const newTab = window.open();
     const dom = newTab.document;
-    dom.write(await loadHTML('template/room-radar.html'));
+    dom.write(await loadHTMLString('template/room-radar.html'));
     // todo: inject icon
 
     const event = await CalendarAPI.getEventB64(eventId);
