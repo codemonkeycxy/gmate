@@ -1,9 +1,9 @@
-const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
-const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
+const ROOM_BOOKING_FILTER_POS_REGEX = "room-booking-filter-positive-1";
+const ROOM_BOOKING_FILTER_NEG_REGEX = "room-booking-filter-negative";
 
 const DEFAULT_ROOM_BOOKING_FILTERS = {};
-DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
-DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POS_REGEX] = "";
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEG_REGEX] = "";
 
 function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
@@ -26,18 +26,18 @@ async function getRoomFilters() {
   const result = await getFromSync(DEFAULT_ROOM_BOOKING_FILTERS);
 
   return {
-    posFilter: result[ROOM_BOOKING_FILTER_POSITIVE],
-    negFilter: result[ROOM_BOOKING_FILTER_NEGATIVE],
+    posFilter: result[ROOM_BOOKING_FILTER_POS_REGEX],
+    negFilter: result[ROOM_BOOKING_FILTER_NEG_REGEX],
     flexFilters: await getFlexRoomFilters()
   };
 }
 
-async function persistPosFilter(posFilter) {
-  await persistPairSync(ROOM_BOOKING_FILTER_POSITIVE, posFilter);
+async function persistPosRegexFilter(posRegex) {
+  await persistPairSync(ROOM_BOOKING_FILTER_POS_REGEX, posRegex);
 }
 
-async function persistNegFilter(negFilter) {
-  await persistPairSync(ROOM_BOOKING_FILTER_NEGATIVE, negFilter);
+async function persistNegRegexFilter(negRegex) {
+  await persistPairSync(ROOM_BOOKING_FILTER_NEG_REGEX, negRegex);
 }
 
 async function persistFlexFilter(key, val) {

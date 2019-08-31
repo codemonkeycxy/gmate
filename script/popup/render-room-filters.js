@@ -4,8 +4,8 @@
 
   const uiGroupWrapper = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
   uiGroupWrapper.appendChild(await asyncRenderRoomBookingFilters(
-    persistPosFilter,
-    persistNegFilter,
+    persistPosRegexFilter,
+    persistNegRegexFilter,
     persistFlexFilter,
   ));
 })();
