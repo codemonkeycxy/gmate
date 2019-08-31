@@ -10,11 +10,11 @@ async function asyncRenderRoomBookingFilters(onChange) {
     const regexFilters = await loadHTMLElement('template/room-filters.html');
     filtersWrapper.appendChild(regexFilters);
 
-    const posFilterInput = findChildById(regexFilters, ROOM_BOOKING_FILTER_POSITIVE);
+    const posFilterInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
     posFilterInput.value = posFilter;
     posFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
 
-    const negFilterInput = findChildById(regexFilters, ROOM_BOOKING_FILTER_NEGATIVE);
+    const negFilterInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
     negFilterInput.value = negFilter;
     negFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
   }
