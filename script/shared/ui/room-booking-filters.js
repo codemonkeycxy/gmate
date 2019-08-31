@@ -14,13 +14,13 @@ async function asyncRenderRoomBookingFilters(
     const regexFilters = await loadHTMLElement('template/room-filters.html');
     filtersWrapper.appendChild(regexFilters);
 
-    const posFilterInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
-    posFilterInput.value = posRegex;
-    posFilterInput.addEventListener("input", e => onPosRegexFilterChange(e.target.value));
+    const posRegexInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
+    posRegexInput.value = posRegex;
+    posRegexInput.addEventListener("input", e => onPosRegexFilterChange(e.target.value));
 
-    const negFilterInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
-    negFilterInput.value = negRegex;
-    negFilterInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
+    const negRegexInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
+    negRegexInput.value = negRegex;
+    negRegexInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
   }
 
   function injectFlexFiltersUI(filtersWrapper, flexFilters) {
