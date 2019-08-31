@@ -1,3 +1,6 @@
+const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
+const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
+
 const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POSITIVE] = "";
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEGATIVE] = "";
@@ -44,4 +47,16 @@ async function getRoomFilters() {
     negFilter: result[ROOM_BOOKING_FILTER_NEGATIVE],
     flexFilters: await getFlexRoomFilters()
   }).toDict();
+}
+
+async function persistPosFilter(posFilter) {
+  await persistPairSync(ROOM_BOOKING_FILTER_POSITIVE, posFilter);
+}
+
+async function persistNegFilter(negFilter) {
+  await persistPairSync(ROOM_BOOKING_FILTER_NEGATIVE, negFilter);
+}
+
+async function persistFlexFilter(key, val) {
+  await persistPairSync(key, val);
 }

@@ -20,8 +20,6 @@ const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
 const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
-const ROOM_BOOKING_FILTER_POSITIVE = "room-booking-filter-positive-1";
-const ROOM_BOOKING_FILTER_NEGATIVE = "room-booking-filter-negative";
 
 // UI modification actions
 const SHOW_BANNER = "show-banner";
