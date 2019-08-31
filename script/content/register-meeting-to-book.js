@@ -27,9 +27,7 @@
         return;
       }
 
-      const {posFilter, negFilter, flexFilters} = await getRoomFilters();
-      globals.eventFilters = {posFilter, negFilter, flexFilters};
-
+      globals.eventFilters = await getRoomFilters();
       const modal = renderModal(
         await renderModelBody(),
         'Select the filters you want to apply',
