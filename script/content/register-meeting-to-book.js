@@ -49,7 +49,11 @@
   }
 
   async function renderModelBody() {
-    const filterUI = await asyncRenderRoomBookingFilters((key, val) => globals.eventFilters[key] = val);
+    const filterUI = await asyncRenderRoomBookingFilters(
+      (key, val) => globals.eventFilters[key] = val,
+      (key, val) => globals.eventFilters[key] = val,
+      (key, val) => globals.eventFilters[key] = val,
+    );
     const bookRecurringCheckbox = renderCheckbox(
       'apply to recurring meetings (GMate will try to maximize consistent rooms)',
       false,

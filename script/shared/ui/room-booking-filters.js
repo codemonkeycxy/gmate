@@ -1,4 +1,4 @@
-async function asyncRenderRoomBookingFilters(onChange) {
+async function asyncRenderRoomBookingFilters(onPosFilterChange, onNegFilterChange, onFlexFilterChange) {
   const FILTER_RENDER_FUNCTIONS = {
     [AUTO_COMPLETE]: renderAutoCompleteFilter,
     [DROPDOWN]: renderDropdownFilter,
@@ -12,11 +12,11 @@ async function asyncRenderRoomBookingFilters(onChange) {
 
     const posFilterInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
     posFilterInput.value = posFilter;
-    posFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
+    posFilterInput.addEventListener("input", e => onPosFilterChange(ROOM_BOOKING_FILTER_POSITIVE, e.target.value));
 
     const negFilterInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
     negFilterInput.value = negFilter;
-    negFilterInput.addEventListener("input", e => onChange(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
+    negFilterInput.addEventListener("input", e => onNegFilterChange(ROOM_BOOKING_FILTER_NEGATIVE, e.target.value));
   }
 
   function injectFlexFiltersUI(filtersWrapper, flexFilters) {
@@ -44,7 +44,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
       title,
       filterSetting.options,
       initialVal,
-      selected => onChange(storageKey, selected),
+      selected => onFlexFilterChange(storageKey, selected),
       filterSetting.validateInput
     );
   }
@@ -55,7 +55,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
       title,
       filterSetting.options,
       initialVal,
-      selected => onChange(storageKey, selected),
+      selected => onFlexFilterChange(storageKey, selected),
       filterSetting.validateInput
     );
   }
@@ -65,7 +65,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
     return renderStringNumberRange(
       title,
       initialVal,
-      selected => onChange(storageKey, selected)
+      selected => onFlexFilterChange(storageKey, selected)
     );
   }
 
@@ -74,7 +74,7 @@ async function asyncRenderRoomBookingFilters(onChange) {
     return renderCheckbox(
       title,
       initialVal,
-      checked => onChange(storageKey, checked)
+      checked => onFlexFilterChange(storageKey, checked)
     );
   }
 

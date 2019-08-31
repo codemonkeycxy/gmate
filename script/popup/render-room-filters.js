@@ -3,5 +3,9 @@
   const ROOM_BOOKING_FILTERS_UI_GROUP = 'room-booking-filter-ui-group';
 
   const uiGroupWrapper = document.getElementById(ROOM_BOOKING_FILTERS_UI_GROUP);
-  uiGroupWrapper.appendChild(await asyncRenderRoomBookingFilters(persistPairSync));
+  uiGroupWrapper.appendChild(await asyncRenderRoomBookingFilters(
+    persistPairSync,
+    persistPairSync,
+    persistPairSync,
+  ));
 })();
