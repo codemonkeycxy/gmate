@@ -27,6 +27,10 @@ class Filters {
   }
 }
 
+Filters.fromDict = ({posFilter, negFilter, flexFilters}) => {
+  return new Filters({posRegex: posFilter, negRegex: negFilter, flexFilters});
+};
+
 function getRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }

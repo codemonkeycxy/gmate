@@ -20,6 +20,10 @@ class Room extends Attendee {
   }
 }
 
+function matchRoomV2(room, filters) {
+  return matchRoom(room, filters.posRegex, filters.negRegex, filters.flexFilters);
+}
+
 function matchRoom(room, posFilter, negFilter, flexFilters) {
   const roomStr = room.name;
   let matchPosFilter = true;

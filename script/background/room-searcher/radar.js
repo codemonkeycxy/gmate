@@ -4,7 +4,8 @@
 // self-invoking function to avoid name collision
 (() => {
   onMessageOfType(ROOM_RADAR, async msg => {
-    const {eventId, eventFilters} = msg.data;
+    const {eventId} = msg.data;
+    const filters = Filters.fromDict(msg.data.eventFilters);
     const newTab = window.open();
     const dom = newTab.document;
     dom.write(await loadHTMLString('template/room-radar.html'));
@@ -12,7 +13,7 @@
 
     const event = await CalendarAPI.getEventB64(eventId);
     renderMyEventInfo(dom, event);
-    await renderTheirEventInfo(dom, event, eventFilters);
+    await renderTheirEventInfo(dom, event, filters);
   });
 
   function renderMyEventInfo(dom, event) {
@@ -21,8 +22,8 @@
     dom.getElementById('owner-event-end').innerText = prettyDate(event.end);
   }
 
-  async function renderTheirEventInfo(dom, myEvent, eventFilters) {
-    const {fullMatch, partialMatch} = await getLowUtilEvents(myEvent, eventFilters);
+  async function renderTheirEventInfo(dom, myEvent, filters) {
+    const {fullMatch, partialMatch} = await getLowUtilEvents(myEvent, filters);
 
     // todo: switch to a better looking loader https://www.w3schools.com/howto/howto_css_loader.asp
     const loader = dom.getElementById('loading');
@@ -32,11 +33,9 @@
     dom.getElementById('underutilized-rooms-partial-match').appendChild(partialMatch);
   }
 
-  async function getLowUtilEvents(myEvent, eventFilters) {
-    const {posFilter, negFilter, flexFilters} = eventFilters;
-
+  async function getLowUtilEvents(myEvent, filters) {
     const allRooms = await CalendarAPI.getAllRoomsWithCache();
-    const roomCandidates = allRooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
+    const roomCandidates = allRooms.filter(room => matchRoomV2(room, filters));
     // todo: sanity check array size and fail on too many candidates
 
     const busyRooms = await CalendarAPI.pickBusyRooms(myEvent.startStr, myEvent.endStr, roomCandidates.map(room => room.email));
