@@ -27,7 +27,7 @@
         return;
       }
 
-      globals.eventFilters = await getRoomFiltersV2();
+      globals.eventFilters = await getRoomFilters();
       const modal = renderModal(
         await renderModelBody(),
         'Select the filters you want to apply',

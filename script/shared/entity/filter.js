@@ -47,16 +47,6 @@ async function getFlexRoomFilters() {
 async function getRoomFilters() {
   const result = await getFromSync(DEFAULT_ROOM_BOOKING_FILTERS);
 
-  return {
-    posFilter: result[ROOM_BOOKING_FILTER_POS_REGEX],
-    negFilter: result[ROOM_BOOKING_FILTER_NEG_REGEX],
-    flexFilters: await getFlexRoomFilters()
-  };
-}
-
-async function getRoomFiltersV2() {
-  const result = await getFromSync(DEFAULT_ROOM_BOOKING_FILTERS);
-
   return new Filters({
     posRegex: result[ROOM_BOOKING_FILTER_POS_REGEX],
     negRegex: result[ROOM_BOOKING_FILTER_NEG_REGEX],

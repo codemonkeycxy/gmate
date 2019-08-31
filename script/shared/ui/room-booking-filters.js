@@ -84,7 +84,7 @@ async function asyncRenderRoomBookingFilters(
 
   const filtersWrapper = document.createElement('div');
 
-  const filters = await getRoomFiltersV2();
+  const filters = await getRoomFilters();
   injectFlexFiltersUI(filtersWrapper, filters.flexFilters);
   await injectRegexFiltersUI(filtersWrapper, filters.posRegex, filters.negRegex);
 

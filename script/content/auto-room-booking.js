@@ -7,14 +7,14 @@
     addSaveListener(initialRooms);
   }
 
-  async function bookFavoriteRoom({posFilter, negFilter, flexFilters}) {
+  async function bookFavoriteRoom(filters) {
     if (isEdit()) {
       // only auto book for new events
       return;
     }
 
     const selectedRooms = Object.values(getSelectedRooms());
-    const matchingRooms = await filterRooms(selectedRooms, posFilter, negFilter, flexFilters);
+    const matchingRooms = await filterRooms(selectedRooms, filters);
     if (!isEmpty(matchingRooms)) {
       // a qualified room is already booked
       return;
@@ -27,7 +27,7 @@
       }
 
       let {roomList, roomIdToElement} = getRoomOptions();
-      const filteredRooms = await filterRooms(roomList, posFilter, negFilter, flexFilters);
+      const filteredRooms = await filterRooms(roomList, filters);
       const selectedRoomEmail = await pickRoomBasedOnHistory(filteredRooms.map(room => room.id));
 
       if (selectedRoomEmail) {
@@ -102,7 +102,7 @@
     return result;
   }
 
-  async function filterRooms(rooms, posFilter, negFilter, flexFilters) {
+  async function filterRooms(rooms, filters) {
     const roomDicts = rooms.filter(room => room.status !== DECLINED);
     const allRooms = await getAllRoomsFromCache();
     if (isEmpty(allRooms)) {
@@ -117,7 +117,7 @@
         return false;
       }
 
-      return matchRoom(roomEntity, posFilter, negFilter, flexFilters);
+      return matchRoom(roomEntity, filters.posRegex, filters.negRegex, filters.flexFilters);
     });
   }
 
