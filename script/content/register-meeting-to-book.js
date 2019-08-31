@@ -27,7 +27,7 @@
         return;
       }
 
-      globals.eventFilters = await getRoomFilters();
+      globals.eventFilters = await getRoomFiltersV2();
       const modal = renderModal(
         await renderModelBody(),
         'Select the filters you want to apply',
@@ -44,9 +44,9 @@
 
   async function renderModelBody() {
     const filterUI = await asyncRenderRoomBookingFilters(
-      val => globals.eventFilters.posFilter = val,
-      val => globals.eventFilters.negFilter = val,
-      (key, val) => globals.eventFilters.flexFilters[key] = val,
+      val => globals.eventFilters.posRegex = val,
+      val => globals.eventFilters.negRegex = val,
+      (key, val) => globals.eventFilters.setFlexFilter(key, val),
     );
     const bookRecurringCheckbox = renderCheckbox(
       'apply to recurring meetings (GMate will try to maximize consistent rooms)',
@@ -142,7 +142,7 @@
       data: {
         eventId: eventId,
         eventName: eventName,
-        eventFilters: globals.eventFilters,
+        eventFilters: globals.eventFilters.toDict(),
         bookRecurring: globals.bookRecurring,
       }
     });
@@ -151,7 +151,7 @@
   function resetGlobal() {
     globals = {
       eventIdToFulfill: null,
-      eventFilters: {},
+      eventFilters: new Filters({}),
       eventName: '',
       bookRecurring: false,
     };
