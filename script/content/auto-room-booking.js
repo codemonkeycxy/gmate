@@ -7,7 +7,7 @@
     addSaveListener(initialRooms);
   }
 
-  async function bookFavoriteRoom(posFilter, negFilter, flexFilters) {
+  async function bookFavoriteRoom({posFilter, negFilter, flexFilters}) {
     if (isEdit()) {
       // only auto book for new events
       return;
@@ -226,11 +226,8 @@
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === AUTO_ROOM_BOOKING) {
-      const filters = msg.data && msg.data.eventFilters || await getRoomFilters();
-      const {posFilter, negFilter, flexFilters} = filters;
-
       await tryUntilPass(isRoomTabLoaded);
-      await bookFavoriteRoom(posFilter, negFilter, flexFilters);
+      await bookFavoriteRoom(await getRoomFilters());
     }
 
     if (msg.type === REGISTER_FAVORITE_ROOMS) {
