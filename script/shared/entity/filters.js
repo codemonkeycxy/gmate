@@ -6,7 +6,16 @@ class Filters {
   constructor({posFilter, negFilter, flexFilters}) {
     this.posFilter = posFilter;
     this.negFilter = negFilter;
-    this.flexFilter = flexFilters;
+    this.flexFilters = flexFilters;
+  }
+
+  // converts key value pairs for easier serialization
+  toDict() {
+    return {
+      posFilter: this.posFilter,
+      negFilter: this.negFilter,
+      flexFilters: this.flexFilters,
+    };
   }
 }
 
@@ -16,7 +25,7 @@ function getRoomFilterStorageKey(filterKey) {
 
 /**
  * Flex filters are room filters that are flexibly defined on a per company basis.
- * See examples from the COMPANY_SPECIFIC_FILTERS on the above
+ * See examples from the COMPANY_SPECIFIC_FILTERS
  */
 async function getFlexRoomFilters() {
   const companyName = 'uber';  // hard code for now
@@ -27,16 +36,12 @@ async function getFlexRoomFilters() {
   return await getFromSync(storageKeys);
 }
 
-/**
- * Returns both the old style regex based filters and the new style company specific flex filters
- * @returns {Promise<{posFilter: *, negFilter: *, flexFilters: *}>}
- */
 async function getRoomFilters() {
   const result = await getFromSync(DEFAULT_ROOM_BOOKING_FILTERS);
 
-  return {
+  return new Filters({
     posFilter: result[ROOM_BOOKING_FILTER_POSITIVE],
     negFilter: result[ROOM_BOOKING_FILTER_NEGATIVE],
     flexFilters: await getFlexRoomFilters()
-  }
+  }).toDict();
 }

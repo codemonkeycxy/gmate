@@ -133,7 +133,7 @@ class Room extends Attendee {
     this.features = features;
   }
 
-  // converts room entity to key value pairs for easier serialization
+  // converts to key value pairs for easier serialization
   toDict() {
     return {
       email: this.email,
