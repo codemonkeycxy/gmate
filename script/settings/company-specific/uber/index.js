@@ -34,14 +34,14 @@ const UBER_ROOM_FILTERS = [{
   type: NUM_RANGE,
   default: '',
   match: (room, floorRangeStr) => {
-    const floors = parseNumbersFromString(floorRangeStr);
-    if (isEmpty(floors)) {
-      return true;
-    }
-
     // don't match rooms with no floor info
     if (isEmpty(room.floor)) {
       return false;
+    }
+
+    const floors = parseNumbersFromString(floorRangeStr);
+    if (isEmpty(floors)) {
+      return true;
     }
 
     return floors.some(floor => room.floor === floor);
@@ -52,14 +52,14 @@ const UBER_ROOM_FILTERS = [{
   type: NUM_RANGE,
   default: '',
   match: (room, roomSizeRangeStr) => {
-    const roomSizes = parseNumbersFromString(roomSizeRangeStr);
-    if (isEmpty(roomSizes)) {
-      return true;
-    }
-
     // don't match rooms with no capacity info
     if (isEmpty(room.capacity)) {
       return false;
+    }
+
+    const roomSizes = parseNumbersFromString(roomSizeRangeStr);
+    if (isEmpty(roomSizes)) {
+      return true;
     }
 
     return roomSizes.some(roomSize => room.capacity === roomSize);
