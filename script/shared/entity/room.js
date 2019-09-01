@@ -20,32 +20,28 @@ class Room extends Attendee {
   }
 }
 
-function matchRoomV2(room, filters) {
-  return matchRoom(room, filters.posRegex, filters.negRegex, filters.flexFilters);
-}
-
-function matchRoom(room, posFilter, negFilter, flexFilters) {
+function matchRoom(room, filters) {
   const roomStr = room.name;
-  let matchPosFilter = true;
-  let matchNegFilter = false;
+  let matchPosRegex = true;
+  let matchNegRegex = false;
   let matchFlexFilter = true;
 
-  if (posFilter) {
-    const posRe = new RegExp(posFilter);
+  if (filters.posRegex) {
+    const posRe = new RegExp(filters.posRegex);
     // return if name matches with positive filter
-    matchPosFilter = roomStr.match(posRe);
+    matchPosRegex = roomStr.match(posRe);
   }
 
-  if (negFilter) {
-    const negRe = new RegExp(negFilter);
-    matchNegFilter = roomStr.match(negRe);
+  if (filters.negRex) {
+    const negRe = new RegExp(filters.negRex);
+    matchNegRegex = roomStr.match(negRe);
   }
 
-  if (flexFilters) {
-    matchFlexFilter = matchRoomByFlexFilters(room, flexFilters);
+  if (filters.flexFilters) {
+    matchFlexFilter = matchRoomByFlexFilters(room, filters.flexFilters);
   }
 
-  return matchPosFilter && !matchNegFilter && matchFlexFilter;
+  return matchPosRegex && !matchNegRegex && matchFlexFilter;
 }
 
 function matchRoomByFlexFilters(room, flexFilters) {

@@ -98,9 +98,9 @@ class Event {
     return this.rooms.some(room => room.email === roomEmail && room.isAccepted());
   }
 
-  matchingRooms(posFilter, negFilter, flexFilters) {
+  matchingRooms(filters) {
     const rooms = this.rooms.filter(room => room.isAccepted());
-    return rooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
+    return rooms.filter(room => matchRoom(room, filters));
   }
 }
 

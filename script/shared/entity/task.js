@@ -10,7 +10,7 @@ function EventTask({eventId, eventName, eventFilters, preferredRooms}) {
     data: {
       eventId: eventId,
       eventName: eventName,
-      eventFilters: eventFilters,
+      eventFilters: eventFilters.toDict(),
       preferredRooms: preferredRooms || [],
     }
   };

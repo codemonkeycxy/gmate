@@ -115,7 +115,7 @@ async function bootstrap() {
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
   const eventId = msg.data.eventId;
   const eventName = msg.data.eventName;
-  const eventFilters = msg.data.eventFilters;
+  const eventFilters = Filters.fromDict(msg.data.eventFilters);
 
   if (!eventId) {
     // if this happens there's a bug
@@ -161,7 +161,7 @@ async function enqueueRecurringTasks(eventId, eventName, eventFilters) {
   }
 }
 
-async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
+async function getPreferredRoomsForRecurringEvents(recurringIds, filters) {
   if (recurringIds.length < 1) {
     return [];
   }
@@ -172,7 +172,7 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, eventFilters) {
   await parallel(randomNIds.map(eventId =>
     async () => {
       const event = await CalendarAPI.getEventB64(eventId);
-      const freeRooms = await getFreeRoomsForEvent(event, eventFilters);
+      const freeRooms = await getFreeRoomsForEvent(event, filters);
       freeRooms.forEach(roomEmail => {
         if (roomEmailCount[roomEmail]) {
           roomEmailCount[roomEmail]++;
@@ -284,14 +284,14 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  const {posFilter, negFilter, flexFilters} = currentTask.data.eventFilters;
-  if (!isEmpty(event.matchingRooms(posFilter, negFilter, flexFilters))) {
+  const filters = Filters.fromDict(currentTask.data.eventFilters);
+  if (!isEmpty(event.matchingRooms(filters))) {
     console.log(`no need to book for ${JSON.stringify(currentTask)}`);
     notifyThrottled('Great News!', `"${event.name}" already has a room that meets your criteria!`);
     return nextTaskFireAndForget();
   }
 
-  const freeRooms = await getFreeRoomsForEvent(event, {posFilter, negFilter, flexFilters});
+  const freeRooms = await getFreeRoomsForEvent(event, filters);
   if (isEmpty(freeRooms)) {
     console.log('no free room is found. try again later...');
     enqueue(currentTask);
@@ -473,17 +473,15 @@ function getNapFillers(napMinutes) {
   return fillers;
 }
 
-async function getFreeRoomsForEvent(event, {posFilter, negFilter, flexFilters}) {
+async function getFreeRoomsForEvent(event, filters) {
   const allRooms = await CalendarAPI.getAllRoomsWithCache();
-  const roomCandidates = allRooms.filter(room => matchRoom(room, posFilter, negFilter, flexFilters));
+  const roomCandidates = allRooms.filter(room => matchRoom(room, filters));
   console.log(`found ${roomCandidates.length} room candidates`);
   if (isEmpty(roomCandidates)) {
     // 0 room candidates indicate either a room list fetching issue or a filter setup issue. log more info for investigation
     GMateError('zero room candidates', {
       roomListLength: allRooms.length,
-      posFilter,
-      negFilter,
-      flexFilters
+      ...filters.toDict(),
     })
   }
 
