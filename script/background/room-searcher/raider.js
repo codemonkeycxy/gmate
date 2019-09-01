@@ -110,6 +110,7 @@ async function bootstrap() {
 // todo: show prompt for "zero-room-found", likely a misconfig
 // todo: handle "Driver Onboard Cart [Mobile Cart, Zoom]"
 // todo: provide pure text filters
+// todo: consider supporting the above feature with addable/removable input list https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
