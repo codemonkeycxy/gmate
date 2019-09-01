@@ -32,8 +32,8 @@ function matchRoom(room, filters) {
     matchPosRegex = roomStr.match(posRe);
   }
 
-  if (filters.negRex) {
-    const negRe = new RegExp(filters.negRex);
+  if (filters.negRegex) {
+    const negRe = new RegExp(filters.negRegex);
     matchNegRegex = roomStr.match(negRe);
   }
 
