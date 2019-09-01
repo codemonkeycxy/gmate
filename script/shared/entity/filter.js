@@ -17,6 +17,49 @@ class Filters {
     this.flexFilters[key] = val;
   }
 
+  matchRoom(room) {
+    const roomStr = room.name;
+    let matchPosRegex = true;
+    let matchNegRegex = false;
+    let matchFlexFilter = true;
+
+    if (this.posRegex) {
+      const posRe = new RegExp(this.posRegex);
+      // return if name matches with positive filter
+      matchPosRegex = roomStr.match(posRe);
+    }
+
+    if (this.negRegex) {
+      const negRe = new RegExp(this.negRegex);
+      matchNegRegex = roomStr.match(negRe);
+    }
+
+    if (this.flexFilters) {
+      matchFlexFilter = this._matchRoomByFlexFilters(room);
+    }
+
+    return matchPosRegex && !matchNegRegex && matchFlexFilter;
+  }
+
+  _matchRoomByFlexFilters(room) {
+    const companyName = 'uber';  // hard code for now
+    const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
+
+    return filterSettings.every(
+      filterSetting => this._matchRoomByFlexFilterOne(room, filterSetting)
+    );
+  }
+
+  _matchRoomByFlexFilterOne(room, filterSetting) {
+    const storageKey = getRoomFilterStorageKey(filterSetting.key);
+    const storageVal = this.flexFilters[storageKey];
+    if (storageVal === ANY) {
+      return true;
+    }
+
+    return filterSetting.match(room, storageVal);
+  }
+
   // converts to key value pairs for easier serialization
   toDict() {
     return {

@@ -35,7 +35,7 @@
 
   async function getLowUtilEvents(myEvent, filters) {
     const allRooms = await CalendarAPI.getAllRoomsWithCache();
-    const roomCandidates = allRooms.filter(room => matchRoom(room, filters));
+    const roomCandidates = allRooms.filter(room => filters.matchRoom(room));
     // todo: sanity check array size and fail on too many candidates
 
     const busyRooms = await CalendarAPI.pickBusyRooms(myEvent.startStr, myEvent.endStr, roomCandidates.map(room => room.email));

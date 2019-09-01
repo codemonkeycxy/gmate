@@ -117,7 +117,7 @@
         return false;
       }
 
-      return matchRoom(roomEntity, filters);
+      return filters.matchRoom(roomEntity);
     });
   }
 

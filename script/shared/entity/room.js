@@ -20,49 +20,6 @@ class Room extends Attendee {
   }
 }
 
-function matchRoom(room, filters) {
-  const roomStr = room.name;
-  let matchPosRegex = true;
-  let matchNegRegex = false;
-  let matchFlexFilter = true;
-
-  if (filters.posRegex) {
-    const posRe = new RegExp(filters.posRegex);
-    // return if name matches with positive filter
-    matchPosRegex = roomStr.match(posRe);
-  }
-
-  if (filters.negRegex) {
-    const negRe = new RegExp(filters.negRegex);
-    matchNegRegex = roomStr.match(negRe);
-  }
-
-  if (filters.flexFilters) {
-    matchFlexFilter = matchRoomByFlexFilters(room, filters.flexFilters);
-  }
-
-  return matchPosRegex && !matchNegRegex && matchFlexFilter;
-}
-
-function matchRoomByFlexFilters(room, flexFilters) {
-  const companyName = 'uber';  // hard code for now
-  const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
-
-  return filterSettings.every(
-    filterSetting => matchRoomByFlexFilterOne(room, filterSetting, flexFilters)
-  );
-}
-
-function matchRoomByFlexFilterOne(room, filterSetting, flexFilters) {
-  const storageKey = getRoomFilterStorageKey(filterSetting.key);
-  const storageVal = flexFilters[storageKey];
-  if (storageVal === ANY) {
-    return true;
-  }
-
-  return filterSetting.match(room, storageVal);
-}
-
 async function pickRoomBasedOnHistory(roomEmails) {
   if (isEmpty(roomEmails)) {
     return null;

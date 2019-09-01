@@ -100,7 +100,7 @@ class Event {
 
   matchingRooms(filters) {
     const rooms = this.rooms.filter(room => room.isAccepted());
-    return rooms.filter(room => matchRoom(room, filters));
+    return rooms.filter(room => filters.matchRoom(room));
   }
 }
 
