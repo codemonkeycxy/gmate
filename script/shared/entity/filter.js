@@ -22,28 +22,34 @@ class Filters {
 
   matchRoom(room) {
     const roomStr = room.name;
-    let matchPosRegex = true;
-    let matchNegRegex = false;
-    let matchFlexFilter = true;
 
     if (this.posRegex) {
       const posRe = new RegExp(this.posRegex);
-      // return if name matches with positive filter
-      matchPosRegex = roomStr.match(posRe);
+      if (!roomStr.match(posRe)) {
+        return false;
+      }
     }
 
     if (this.negRegex) {
       const negRe = new RegExp(this.negRegex);
-      matchNegRegex = roomStr.match(negRe);
+      if (roomStr.match(negRe)) {
+        return false;
+      }
     }
 
-    // todo: add negTexts logic
+    if (!isEmpty(this.negTexts)) {
+      if (this.negTexts.some(negText => negText && roomStr.toUpperCase().includes(negText.toUpperCase()))) {
+        return false;
+      }
+    }
 
     if (this.flexFilters) {
-      matchFlexFilter = this._matchRoomByFlexFilters(room);
+      if (!this._matchRoomByFlexFilters(room)) {
+        return false;
+      }
     }
 
-    return matchPosRegex && !matchNegRegex && matchFlexFilter;
+    return true;
   }
 
   _matchRoomByFlexFilters(room) {

@@ -14,7 +14,10 @@ async function asyncRenderRoomBookingFilters(
   function constructTextFiltersUI(filterUI, negTexts) {
     const negTextsInput = findChildById(filterUI, 'room-booking-filter-negative-texts');
     negTextsInput.value = negTexts.join(',');
-    negTextsInput.addEventListener("input", e => onNegTextsFilterChange(e.target.value.split(/[\s,]+/)));
+    negTextsInput.addEventListener("input", e => {
+      const val = e.target.value;
+      onNegTextsFilterChange(val ? val.split(/[\s,]+/) : []);
+    });
   }
 
 
