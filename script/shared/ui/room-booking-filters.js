@@ -97,6 +97,7 @@ async function asyncRenderRoomBookingFilters(
 
   const filterUI = await loadHTMLElement('template/room-filters.html');
   filtersWrapper.appendChild(filterUI);
+  filtersWrapper.appendChild(newExpandableInputList());
   constructTextFiltersUI(filterUI, filters.negTexts);
   constructRegexFiltersUI(filterUI, filters.posRegex, filters.negRegex);
 

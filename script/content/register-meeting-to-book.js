@@ -76,8 +76,7 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    const needRoomButton = newButton();
-    needRoomButton.setText(SEARCH_ROOM_BTN_MSG);
+    const needRoomButton = newButton(SEARCH_ROOM_BTN_MSG);
     needRoomButton.style.backgroundColor = '#4285f4';
     needRoomButton.style.color = '#fff';
     needRoomButton.style.height = '32px';

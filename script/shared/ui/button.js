@@ -11,13 +11,14 @@
  </button>
 
  */
-function newButton() {
+function newButton(text) {
   injectCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
   const btn = document.createElement('button');
   btn.style.borderRadius = '3px';
   btn.style.fontFamily = "'Google Sans',Roboto,Arial,sans-serif";
 
   const btnText = document.createElement('span');
+  btnText.textContent = text;
   btn.appendChild(btnText);
 
   const spinner = document.createElement('span');
@@ -26,7 +27,6 @@ function newButton() {
   btn.appendChild(spinner);
 
   // inject convenient helper functions
-  btn.setText = text => btnText.textContent = text;
   btn.showSpinner = () => show(spinner);
   btn.hideSpinner = () => hide(spinner);
 
