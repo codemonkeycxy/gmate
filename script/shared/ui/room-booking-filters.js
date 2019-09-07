@@ -15,7 +15,7 @@ async function asyncRenderRoomBookingFilters(
     const negTextUI = findChildById(filterUI, 'room-booking-filter-negative-texts');
     negTextUI.appendChild(newExpandableInputList(
       negTexts,
-      'full or partial room name',
+      'enter full or partial room name',
       {minWidth: '275px'},
       onNegTextsFilterChange
     ));
