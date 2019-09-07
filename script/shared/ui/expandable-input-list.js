@@ -1,13 +1,17 @@
 // idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
-function newExpandableInputList(values, placeholder = '', style = {minWidth: '100px'}, onChange) {
+function newExpandableInputList(values = [], placeholder = '', style = {minWidth: '100px'}, onChange) {
   const uniqueKey = getRandomInt(Number.MAX_SAFE_INTEGER);
   const listWrapper = document.createElement('div');
   // make a copy of the initial values
   const results = [...values];
 
-  function formRowId(i) {
-    return `${uniqueKey}-expandable-input-list-item-${i}`;
-  }
+  const addBtn = newButton('+');
+  addBtn.addEventListener("click", () => {
+    results.push('');
+    onInputChange();
+    addRow(results.length - 1);
+  });
+  listWrapper.appendChild(addBtn);
 
   function onInputChange() {
     onChange(results.filter(res => res));
@@ -15,11 +19,9 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
 
   function addRow(i) {
     const rowWrapper = document.createElement('div');
-    rowWrapper.id = formRowId(i);
-    listWrapper.appendChild(rowWrapper);
+    listWrapper.insertBefore(rowWrapper, addBtn);
 
     appendInput(i, rowWrapper);
-    appendAddBtn(i, rowWrapper);
     appendRemoveBtn(i, rowWrapper);
   }
 
@@ -36,16 +38,6 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
     rowWrapper.appendChild(input);
   }
 
-  function appendAddBtn(i, rowWrapper) {
-    const addBtn = newButton('+');
-    addBtn.addEventListener("click", () => {
-      results[i + 1] = '';
-      onInputChange();
-      addRow(i + 1);
-    });
-    rowWrapper.appendChild(addBtn);
-  }
-
   function appendRemoveBtn(i, rowWrapper) {
     const removeBtn = newButton('−');
     removeBtn.addEventListener("click", () => {
@@ -56,12 +48,9 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
     rowWrapper.appendChild(removeBtn);
   }
 
-  if (isEmpty(results)) {
-    addRow(0);
-  } else {
-    for (let index = 0; index < results.length; index++) {
-      addRow(index);
-    }
+  for (let index = 0; index < results.length; index++) {
+    addRow(index);
   }
+
   return listWrapper;
 }
