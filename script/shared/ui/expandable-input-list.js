@@ -3,7 +3,7 @@ function newExpandableInputList(values = [], placeholder = '', style = {minWidth
   const uniqueKey = getRandomInt(Number.MAX_SAFE_INTEGER);
   const listWrapper = document.createElement('div');
   // make a copy of the initial values
-  const results = [...values];
+  const results = isEmpty(values) ? [''] : [...values];
 
   const addBtn = newButton('+');
   addBtn.addEventListener("click", () => {
