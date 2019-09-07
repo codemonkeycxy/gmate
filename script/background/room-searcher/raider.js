@@ -115,7 +115,7 @@ async function bootstrap() {
 // todo: test gmate on chromium (try windows) and see why search room button doesn't respond
 // todo: send out feature request questionnaire
 // todo: maybe ask someone to create a reddit community. or start with a reddit thread? hmm... this might spread the app idea too early and invite competitions
-// todo: consider requesting free feature upvote https://featureupvote.com/opensource/
+// todo: consider requesting free feature upvote https://gmate.featureupvote.com/
 // todo: add total room booked count to logo
 
 // ==================== task queue management ======================
