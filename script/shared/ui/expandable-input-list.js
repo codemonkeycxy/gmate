@@ -47,21 +47,13 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
   }
 
   function appendRemoveBtn(i, rowWrapper) {
-    if (i === 0) {
-      return;  // don't allow user to delete the one last row
-    }
-
     const removeBtn = newButton('−');
     removeBtn.addEventListener("click", () => {
       results[i] = '';
       onInputChange();
-      removeRow(i);
+      rowWrapper.remove();
     });
     rowWrapper.appendChild(removeBtn);
-  }
-
-  function removeRow(i) {
-    findChildById(listWrapper, formRowId(i)).remove();
   }
 
   if (isEmpty(results)) {
