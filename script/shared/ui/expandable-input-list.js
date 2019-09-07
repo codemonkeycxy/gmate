@@ -18,6 +18,12 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
     rowWrapper.id = formRowId(i);
     listWrapper.appendChild(rowWrapper);
 
+    appendInput(i, rowWrapper);
+    appendAddBtn(i, rowWrapper);
+    appendRemoveBtn(i, rowWrapper);
+  }
+
+  function appendInput(i, rowWrapper) {
     const input = document.createElement("INPUT");
     input.type = 'text';
     input.placeholder = placeholder;
@@ -28,10 +34,6 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
       onInputChange();
     });
     rowWrapper.appendChild(input);
-
-
-    appendAddBtn(i, rowWrapper);
-    appendRemoveBtn(i, rowWrapper);
   }
 
   function appendAddBtn(i, rowWrapper) {
