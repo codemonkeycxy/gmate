@@ -12,7 +12,7 @@ class Filters {
   constructor({posRegex, negRegex, negTexts, flexFilters}) {
     this.posRegex = posRegex || '';
     this.negRegex = negRegex || '';
-    this.negTexts = negTexts || '';
+    this.negTexts = negTexts || [];
     this.flexFilters = flexFilters || {};
   }
 
