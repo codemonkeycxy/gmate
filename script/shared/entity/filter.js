@@ -1,15 +1,18 @@
 const ROOM_BOOKING_FILTER_POS_REGEX = "room-booking-filter-positive-1";
 const ROOM_BOOKING_FILTER_NEG_REGEX = "room-booking-filter-negative";
+const ROOM_BOOKING_FILTER_NEG_TEXT = "room-booking-filter-negative-text";
 
 const DEFAULT_ROOM_BOOKING_FILTERS = {};
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_POS_REGEX] = '';
 DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEG_REGEX] = '';
+DEFAULT_ROOM_BOOKING_FILTERS[ROOM_BOOKING_FILTER_NEG_TEXT] = '';
 
 
 class Filters {
-  constructor({posRegex, negRegex, flexFilters}) {
+  constructor({posRegex, negRegex, negText, flexFilters}) {
     this.posRegex = posRegex || '';
     this.negRegex = negRegex || '';
+    this.negText = negText || '';
     this.flexFilters = flexFilters || {};
   }
 
@@ -33,6 +36,8 @@ class Filters {
       const negRe = new RegExp(this.negRegex);
       matchNegRegex = roomStr.match(negRe);
     }
+
+    // todo: add negtext logic
 
     if (this.flexFilters) {
       matchFlexFilter = this._matchRoomByFlexFilters(room);
@@ -65,13 +70,14 @@ class Filters {
     return {
       posFilter: this.posRegex,
       negFilter: this.negRegex,
+      negText: this.negText,
       flexFilters: this.flexFilters
     };
   }
 }
 
-Filters.fromDict = ({posFilter, negFilter, flexFilters}) => {
-  return new Filters({posRegex: posFilter, negRegex: negFilter, flexFilters});
+Filters.fromDict = ({posFilter, negFilter, negText, flexFilters}) => {
+  return new Filters({posRegex: posFilter, negRegex: negFilter, negText, flexFilters});
 };
 
 function getRoomFilterStorageKey(filterKey) {
@@ -97,6 +103,7 @@ async function getRoomFilters() {
   return new Filters({
     posRegex: result[ROOM_BOOKING_FILTER_POS_REGEX],
     negRegex: result[ROOM_BOOKING_FILTER_NEG_REGEX],
+    negText: result[ROOM_BOOKING_FILTER_NEG_TEXT],
     flexFilters: await getFlexRoomFilters()
   });
 }
@@ -107,6 +114,10 @@ async function persistPosRegexFilter(posRegex) {
 
 async function persistNegRegexFilter(negRegex) {
   await persistPairSync(ROOM_BOOKING_FILTER_NEG_REGEX, negRegex);
+}
+
+async function persistNegTextFilter(negText) {
+  await persistPairSync(ROOM_BOOKING_FILTER_NEG_TEXT, negText);
 }
 
 async function persistFlexFilter(key, val) {

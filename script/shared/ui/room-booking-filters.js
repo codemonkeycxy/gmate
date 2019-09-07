@@ -1,6 +1,7 @@
 async function asyncRenderRoomBookingFilters(
   onPosRegexFilterChange,
   onNegRegexFilterChange,
+  onNegTextFilterChange,
   onFlexFilterChange
 ) {
   const FILTER_RENDER_FUNCTIONS = {
@@ -10,7 +11,7 @@ async function asyncRenderRoomBookingFilters(
     [CHECKBOX]: renderCheckboxFilter,
   };
 
-  async function injectRegexFiltersUI(filtersWrapper, posRegex, negRegex) {
+  async function injectRegexFiltersUI(filtersWrapper, posRegex, negRegex, negText) {
     const regexFilters = await loadHTMLElement('template/room-filters.html');
     filtersWrapper.appendChild(regexFilters);
 
@@ -21,6 +22,10 @@ async function asyncRenderRoomBookingFilters(
     const negRegexInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
     negRegexInput.value = negRegex;
     negRegexInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
+
+    const negTextInput = findChildById(regexFilters, 'room-booking-filter-negative-text');
+    negTextInput.value = negText;
+    negTextInput.addEventListener("input", e => onNegTextFilterChange(e.target.value));
   }
 
   function injectFlexFiltersUI(filtersWrapper, flexFilters) {
@@ -86,7 +91,7 @@ async function asyncRenderRoomBookingFilters(
 
   const filters = await getRoomFilters();
   injectFlexFiltersUI(filtersWrapper, filters.flexFilters);
-  await injectRegexFiltersUI(filtersWrapper, filters.posRegex, filters.negRegex);
+  await injectRegexFiltersUI(filtersWrapper, filters.posRegex, filters.negRegex, filters.negText);
 
   return filtersWrapper;
 }
