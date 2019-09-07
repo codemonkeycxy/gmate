@@ -20,7 +20,7 @@ function newExpandableInputList(values, onChange) {
     addBtn.addEventListener("click", () => addRow(id + 1));
     rowWrapper.appendChild(addBtn);
 
-    const removeBtn = newButton('-');
+    const removeBtn = newButton('−');
     removeBtn.addEventListener("click", () => removeRow(id));
     rowWrapper.appendChild(removeBtn);
   }
