@@ -11,21 +11,21 @@ async function asyncRenderRoomBookingFilters(
     [CHECKBOX]: renderCheckboxFilter,
   };
 
-  async function injectRegexFiltersUI(filtersWrapper, posRegex, negRegex, negTexts) {
-    const regexFilters = await loadHTMLElement('template/room-filters.html');
-    filtersWrapper.appendChild(regexFilters);
+  function constructTextFiltersUI(filterUI, negTexts) {
+    const negTextsInput = findChildById(filterUI, 'room-booking-filter-negative-texts');
+    negTextsInput.value = negTexts;
+    negTextsInput.addEventListener("input", e => onNegTextsFilterChange(e.target.value));
+  }
 
-    const posRegexInput = findChildById(regexFilters, 'room-booking-filter-positive-regex');
+
+  function constructRegexFiltersUI(filterUI, posRegex, negRegex) {
+    const posRegexInput = findChildById(filterUI, 'room-booking-filter-positive-regex');
     posRegexInput.value = posRegex;
     posRegexInput.addEventListener("input", e => onPosRegexFilterChange(e.target.value));
 
-    const negRegexInput = findChildById(regexFilters, 'room-booking-filter-negative-regex');
+    const negRegexInput = findChildById(filterUI, 'room-booking-filter-negative-regex');
     negRegexInput.value = negRegex;
     negRegexInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
-
-    const negTextsInput = findChildById(regexFilters, 'room-booking-filter-negative-texts');
-    negTextsInput.value = negTexts;
-    negTextsInput.addEventListener("input", e => onNegTextsFilterChange(e.target.value));
   }
 
   function injectFlexFiltersUI(filtersWrapper, flexFilters) {
@@ -91,7 +91,11 @@ async function asyncRenderRoomBookingFilters(
 
   const filters = await getRoomFilters();
   injectFlexFiltersUI(filtersWrapper, filters.flexFilters);
-  await injectRegexFiltersUI(filtersWrapper, filters.posRegex, filters.negRegex, filters.negTexts);
+
+  const filterUI = await loadHTMLElement('template/room-filters.html');
+  filtersWrapper.appendChild(filterUI);
+  constructTextFiltersUI(filterUI, filters.negTexts);
+  constructRegexFiltersUI(filterUI, filters.posRegex, filters.negRegex);
 
   return filtersWrapper;
 }
