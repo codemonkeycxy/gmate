@@ -6,7 +6,7 @@
   uiGroupWrapper.appendChild(await asyncRenderRoomBookingFilters(
     persistPosRegexFilter,
     persistNegRegexFilter,
-    persistNegTextFilter,
+    persistNegTextsFilter,
     persistFlexFilter,
   ));
 })();
