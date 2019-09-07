@@ -12,12 +12,8 @@ async function asyncRenderRoomBookingFilters(
   };
 
   function constructTextFiltersUI(filterUI, negTexts) {
-    const negTextsInput = findChildById(filterUI, 'room-booking-filter-negative-texts');
-    negTextsInput.value = negTexts.join(',');
-    negTextsInput.addEventListener("input", e => {
-      const val = e.target.value;
-      onNegTextsFilterChange(val ? val.split(/[\s,]+/) : []);
-    });
+    const negTextUI = findChildById(filterUI, 'room-booking-filter-negative-texts');
+    negTextUI.appendChild(newExpandableInputList(negTexts, onNegTextsFilterChange));
   }
 
 
@@ -97,7 +93,6 @@ async function asyncRenderRoomBookingFilters(
 
   const filterUI = await loadHTMLElement('template/room-filters.html');
   filtersWrapper.appendChild(filterUI);
-  filtersWrapper.appendChild(newExpandableInputList());
   constructTextFiltersUI(filterUI, filters.negTexts);
   constructRegexFiltersUI(filterUI, filters.posRegex, filters.negRegex);
 
