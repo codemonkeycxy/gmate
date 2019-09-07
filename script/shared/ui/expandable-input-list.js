@@ -8,32 +8,38 @@ function newExpandableInputList(values, onChange) {
     return `expandable-input-list-item-${i}`;
   }
 
+  function onInputChange() {
+    onChange(results.filter(res => res));
+  }
+
   function addRow(i, text) {
     const rowWrapper = document.createElement('div');
     rowWrapper.id = formRowId(i);
     listWrapper.appendChild(rowWrapper);
 
     const input = document.createElement("INPUT");
-    input.setAttribute("type", "text");
-    input.setAttribute("placeholder", "Name");
-    input.setAttribute("textContent", text);
+    input.type = 'text';
+    input.placeholder = 'full or partial room name';
+    input.value = text;
     input.addEventListener("input", e => {
       results[i] = e.target.value;
-      onChange(results.filter(res => res));
+      onInputChange();
     });
     rowWrapper.appendChild(input);
 
     const addBtn = newButton('+');
     addBtn.addEventListener("click", () => {
-      addRow(i + 1);
       results[i + 1] = '';
+      onInputChange();
+      addRow(i + 1);
     });
     rowWrapper.appendChild(addBtn);
 
     const removeBtn = newButton('−');
     removeBtn.addEventListener("click", () => {
-      removeRow(i);
       results[i] = '';
+      onInputChange();
+      removeRow(i);
     });
     rowWrapper.appendChild(removeBtn);
   }
