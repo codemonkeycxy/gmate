@@ -12,7 +12,7 @@ function newExpandableInputList(values, onChange) {
     onChange(results.filter(res => res));
   }
 
-  function addRow(i, text) {
+  function addRow(i) {
     const rowWrapper = document.createElement('div');
     rowWrapper.id = formRowId(i);
     listWrapper.appendChild(rowWrapper);
@@ -20,7 +20,8 @@ function newExpandableInputList(values, onChange) {
     const input = document.createElement("INPUT");
     input.type = 'text';
     input.placeholder = 'full or partial room name';
-    input.value = text;
+    input.value = results[i] || '';
+    input.style.minWidth = '275px';
     input.addEventListener("input", e => {
       results[i] = e.target.value;
       onInputChange();
@@ -52,7 +53,7 @@ function newExpandableInputList(values, onChange) {
     addRow(0);
   } else {
     for (let index = 0; index < results.length; index++) {
-      addRow(index, results[index]);
+      addRow(index);
     }
   }
   return listWrapper;
