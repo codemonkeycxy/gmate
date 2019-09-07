@@ -29,6 +29,12 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
     });
     rowWrapper.appendChild(input);
 
+
+    appendAddBtn(i, rowWrapper);
+    appendRemoveBtn(i, rowWrapper);
+  }
+
+  function appendAddBtn(i, rowWrapper) {
     const addBtn = newButton('+');
     addBtn.addEventListener("click", () => {
       results[i + 1] = '';
@@ -36,6 +42,12 @@ function newExpandableInputList(values, placeholder = '', style = {minWidth: '10
       addRow(i + 1);
     });
     rowWrapper.appendChild(addBtn);
+  }
+
+  function appendRemoveBtn(i, rowWrapper) {
+    if (i === 0) {
+      return;  // don't allow user to delete the one last row
+    }
 
     const removeBtn = newButton('−');
     removeBtn.addEventListener("click", () => {
