@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.7.0
+- [feature] Enable plain text based negative room name filters
+
 ## 5.6.2
 - [maintenance] Some code refactor
 
