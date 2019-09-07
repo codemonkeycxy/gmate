@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.6.2
+- [maintenance] Some code refactor
+
 ## 5.6.1
 - [enhancement] Filter out rooms with invalid floor/capacity info
 - [enhancement] Make checkbox text clickable
