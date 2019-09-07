@@ -1,10 +1,14 @@
-// ref: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
+// idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 function newExpandableInputList(values, onChange) {
   const listWrapper = document.createElement('div');
 
+  function formRowId(id) {
+    return `expandable-input-list-item-${id}`;
+  }
+
   function addRow(id) {
     const rowWrapper = document.createElement('div');
-    rowWrapper.id = `expandable-input-list-item-${id}`;
+    rowWrapper.id = formRowId(id);
     listWrapper.appendChild(rowWrapper);
 
     const input = document.createElement("INPUT");
@@ -22,8 +26,7 @@ function newExpandableInputList(values, onChange) {
   }
 
   function removeRow(id) {
-    const toRemove = findChildById(listWrapper, `expandable-input-list-item-${id}`);
-    toRemove.remove();
+    findChildById(listWrapper, formRowId(id)).remove();
   }
 
   addRow(0);
