@@ -1,11 +1,12 @@
 // idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
-function newExpandableInputList(values, onChange) {
+function newExpandableInputList(values, placeholder = '', style = {minWidth: '100px'}, onChange) {
+  const uniqueKey = getRandomInt(Number.MAX_SAFE_INTEGER);
   const listWrapper = document.createElement('div');
   // make a copy of the initial values
   const results = [...values];
 
   function formRowId(i) {
-    return `expandable-input-list-item-${i}`;
+    return `${uniqueKey}-expandable-input-list-item-${i}`;
   }
 
   function onInputChange() {
@@ -19,9 +20,9 @@ function newExpandableInputList(values, onChange) {
 
     const input = document.createElement("INPUT");
     input.type = 'text';
-    input.placeholder = 'full or partial room name';
+    input.placeholder = placeholder;
     input.value = results[i] || '';
-    input.style.minWidth = '275px';
+    input.style.minWidth = style.minWidth;
     input.addEventListener("input", e => {
       results[i] = e.target.value;
       onInputChange();
