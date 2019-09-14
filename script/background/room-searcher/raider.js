@@ -57,11 +57,9 @@ async function bootstrap() {
 // todo: add A/B testing framework
 // todo: add beta testing token
 // todo: prevent too many pending meeting to be added. use notify to tell user
-// todo: add privacy policy and terms of service to google api login
 // todo: log last error to mixpanel
 // https://stackoverflow.com/questions/28431505/unchecked-runtime-lasterror-when-using-chrome-api
 // this means 1) try catch all executions. 2) log chrome runtime last error in all chrome related invocations
-// todo: make a feature voting board
 // todo: handle no auth error in case user auth gets somehow revoked. send user a notification to ask for auth. see getAuthToken function
 // todo: tutorial "next" to "next: title"
 // todo: flag for "don't always ask for filters"
@@ -108,14 +106,10 @@ async function bootstrap() {
 // todo: maybe option to exclude open rooms
 // todo: show prompt for "zero-room-found", likely a misconfig
 // todo: handle "Driver Onboard Cart [Mobile Cart, Zoom]"
-// todo: provide pure text filters
-// todo: consider supporting the above feature with addable/removable input list https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 // todo: consider creating gmate stickers
 // todo: prettify html with fiverr hires
 // todo: test gmate on chromium (try windows) and see why search room button doesn't respond
-// todo: send out feature request questionnaire
 // todo: maybe ask someone to create a reddit community. or start with a reddit thread? hmm... this might spread the app idea too early and invite competitions
-// todo: consider requesting free feature upvote https://gmate.featureupvote.com/
 // todo: add total room booked count to logo
 // todo: suggest to people, do you need a room? (use case: got invited to a meeting without realizing a room is missing for your office)
 

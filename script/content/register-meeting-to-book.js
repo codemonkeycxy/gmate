@@ -55,8 +55,9 @@
       value => globals.bookRecurring = value,
       RIGHT
     );
+    const userFeedback = await loadHTMLElement('template/user-feedback.html');
 
-    return wrapUIComponents([filterUI, renderDivider(), bookRecurringCheckbox]);
+    return wrapUIComponents([filterUI, renderDivider(), bookRecurringCheckbox, userFeedback]);
   }
 
   function insertSearchRoomBtn() {
