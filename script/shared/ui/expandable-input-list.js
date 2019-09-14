@@ -39,7 +39,7 @@ function newExpandableInputList(values = [], placeholder = '', style = {minWidth
   }
 
   function appendRemoveBtn(i, rowWrapper) {
-    const removeBtn = newButton('−');
+    const removeBtn = newButton('-');
     removeBtn.addEventListener("click", () => {
       results[i] = '';
       onInputChange();
