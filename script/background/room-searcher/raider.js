@@ -112,6 +112,7 @@ async function bootstrap() {
 // todo: maybe ask someone to create a reddit community. or start with a reddit thread? hmm... this might spread the app idea too early and invite competitions
 // todo: add total room booked count to logo
 // todo: suggest to people, do you need a room? (use case: got invited to a meeting without realizing a room is missing for your office)
+// todo: verify zoom adding feature
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
