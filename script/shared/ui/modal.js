@@ -22,7 +22,7 @@
  </div>
 
  */
-function renderModal(body, headerText, onConfirm, onCancel) {
+function renderModal(body, headerText, preConfirm, postConfirm, onCancel) {
   const modal = document.createElement('div');
   modal.className = 'modal';
 
@@ -32,7 +32,7 @@ function renderModal(body, headerText, onConfirm, onCancel) {
 
   _injectModalHeader(modalContent, headerText);
   _injectModalBody(modalContent, body);
-  _injectModalFooter(modal, modalContent, onConfirm, onCancel);
+  _injectModalFooter(modal, modalContent, preConfirm, postConfirm, onCancel);
   _handleCloseModalUX(modal);
 
   return modal;
@@ -61,7 +61,11 @@ function _injectModalBody(modalContent, body) {
   modalContent.appendChild(modalBody);
 }
 
-function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
+function _injectModalFooter(modal, modalContent, preConfirm, postConfirm, onCancel) {
+  preConfirm = preConfirm || (() => true);
+  postConfirm = postConfirm || noop();
+  onCancel = onCancel || noop();
+
   const footerWrapper = document.createElement('div');
   footerWrapper.className = 'modal-footer';
   modalContent.appendChild(footerWrapper);
@@ -69,8 +73,8 @@ function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
   const cancelBtn = document.createElement('span');
   cancelBtn.className = 'modal-cancel';
   cancelBtn.textContent = 'Cancel';
-  cancelBtn.onclick = () => {
-    onCancel && onCancel();
+  cancelBtn.onclick = async () => {
+    await onCancel();
     hide(modal);
   };
   footerWrapper.appendChild(cancelBtn);
@@ -78,9 +82,13 @@ function _injectModalFooter(modal, modalContent, onConfirm, onCancel) {
   const confirmBtn = document.createElement('span');
   confirmBtn.className = 'modal-confirm';
   confirmBtn.textContent = 'OK';
-  confirmBtn.onclick = () => {
-    onConfirm && onConfirm();
+  confirmBtn.onclick = async () => {
+    if (!await preConfirm()) {
+      // allow callback hook to abort operation
+      return;
+    }
     hide(modal);
+    await postConfirm();
   };
   footerWrapper.appendChild(confirmBtn);
 }

@@ -29,6 +29,7 @@ onMessage((msg, sender, cb) => {
 
 // (async () => {
 //   const allRooms = await CalendarAPI.getAllRoomsWithCache();
+//   console.log(allRooms);
 //   const filters = new Filters({
 //     posRegex: '1455.*0(4|5)th',
 //     negTexts: [],
@@ -40,6 +41,8 @@ onMessage((msg, sender, cb) => {
 //       "room-booking-filter-uber-need_vc": false
 //     }
 //   });
+//   console.log(await getRoomCandidateCnt(filters));
+//   console.log(filters.toDict());
 //   const roomCandidates = allRooms.filter(room => filters.matchRoom(room));
 //   console.log(roomCandidates)
 // })();

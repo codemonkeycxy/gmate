@@ -14,6 +14,16 @@
     await incrementSync(SEARCH_ROOM_BTN_CLICKED);
   }
 
+  async function sanitizeFilters() {
+    const roomCandidateCnt = await getRoomCandidateCnt(globals.eventFilters);
+    if (roomCandidateCnt === 0) {
+      alert('Your filters match no rooms \n\nUsually this is caused by incorrect regex filters (under "Advanced Filters"). \nTry to remove them and use the basic filters instead \n\nIf the problem persists, email gmate.hotline@gmail.com for help');
+      return false;
+    }
+
+    return true;
+  }
+
   function renderSearchRoomBtn() {
     const searchRoomBtn = insertSearchRoomBtn();
 
@@ -31,6 +41,7 @@
       const modal = renderModal(
         await renderModelBody(),
         'Select the filters you want to apply',
+        sanitizeFilters,
         () => {
           globals.eventIdToFulfill = getEventId() || NO_ID_YET;
           searchRoomBtn.style.backgroundColor = '#7CB342';

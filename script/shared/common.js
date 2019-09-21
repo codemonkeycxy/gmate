@@ -803,7 +803,7 @@ async function getRoomCandidateCnt(filters) {
     return await new Promise(resolve => chrome.runtime.sendMessage(
       null, {
         type: GET_ROOM_CANDIDATE_CNT,
-        data: {eventFilters: filters}
+        data: {eventFilters: filters.toDict()}
       },
       null,
       cnt => resolve(cnt)

@@ -16,7 +16,7 @@ async function asyncRenderRoomBookingFilters(
     negTextUI.appendChild(newExpandableInputList(
       negTexts,
       'enter full or partial room name to exclude',
-      {minWidth: '275px'},
+      '275px',
       onNegTextsFilterChange
     ));
   }

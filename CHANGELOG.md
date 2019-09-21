@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.8.0
+- [feature] Block room searching task creation if filters match no room
+
 ## 5.7.1
 - [enhancement] Incorporate Feature Upvote dashboard for user feedback
 
