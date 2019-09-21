@@ -15,7 +15,7 @@ async function hasAuth() {
 }
 
 async function promptAuth() {
-  if (chrome.identity) {  // for background script
+  if (isBackground()) {
     return await new Promise(resolve => chrome.identity.getAuthToken({interactive: true}, token => {
       if (chrome.runtime.lastError && chrome.runtime.lastError.message.includes('The user did not approve access')) {
         return resolve(null);

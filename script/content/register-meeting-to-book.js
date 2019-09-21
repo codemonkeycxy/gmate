@@ -44,7 +44,7 @@
 
   async function renderModelBody() {
     const filterUI = await asyncRenderRoomBookingFilters(
-      val => globals.eventFilters.posRegex = val,
+      async val => globals.eventFilters.posRegex = val,
       val => globals.eventFilters.negRegex = val,
       val => globals.eventFilters.negTexts = val,
       (key, val) => globals.eventFilters.setFlexFilter(key, val),

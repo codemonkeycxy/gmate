@@ -28,8 +28,9 @@ const ADD_OVERLAY = "add-overlay";
 const NOTIFY = "notify";
 const TRACK = "track";
 
-// auth
+// Browser <-> Background Msg
 const PROMPT_AUTH = "prompt-auth";
+const GET_ROOM_CANDIDATE_CNT = "get-room-candidate-count";
 
 // settings panel actions
 const GET_QUEUE = "get-queue";
@@ -40,11 +41,6 @@ const ROOM_RADAR = "room-radar";
 const ACCEPTED = "accepted";
 const DECLINED = "declined";
 const UNKNOWN = "unknown";
-
-const SUCCESS = "success";
-const INFO = "info";
-const WARNING = "warning";
-const ERROR = "danger";
 
 const ANY = "any";
 const ALL = "all";
@@ -787,4 +783,30 @@ function shuffleInPlace(a) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+function isBackground() {
+  return Boolean(chrome.identity)
+}
+
+async function getRoomCandidateCnt(filters) {
+  if (isBackground()) {
+    if (!await hasAuth()) {
+      return -1;
+    }
+
+    const allRooms = await CalendarAPI.getAllRoomsWithCache();
+    const roomCandidates = allRooms.filter(room => filters.matchRoom(room));
+
+    return roomCandidates.length;
+  } else {  // for content script
+    return await new Promise(resolve => chrome.runtime.sendMessage(
+      null, {
+        type: GET_ROOM_CANDIDATE_CNT,
+        data: {eventFilters: filters}
+      },
+      null,
+      cnt => resolve(cnt)
+    ));
+  }
 }
