@@ -90,7 +90,6 @@ async function bootstrap() {
 // ^ tested when the owners books recurring meetings for self, no notifications
 // todo: detect rooms that keep on rejecting a user and auto exclude them (https://github.com/codemonkeycxy/gmate/issues/2)
 // todo: (maybe) create team dot page
-// todo: create a more user-friendly "name exclude" input box
 // todo: migrate room list into an online key value store for faster configuration
 // todo: for some people, the control panel UI doesn't update until they click somewhere else (change only happens onExit)
 // todo: build a community with redit
@@ -112,7 +111,6 @@ async function bootstrap() {
 // todo: maybe ask someone to create a reddit community. or start with a reddit thread? hmm... this might spread the app idea too early and invite competitions
 // todo: add total room booked count to logo
 // todo: suggest to people, do you need a room? (use case: got invited to a meeting without realizing a room is missing for your office)
-// todo: verify zoom adding feature
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
