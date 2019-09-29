@@ -5,7 +5,6 @@
 
   function addNeedRoomListener() {
     renderSearchRoomBtn();
-    listenToEventNameChange();
     listenToEventSave();
   }
 
@@ -102,10 +101,12 @@
     return needRoomButton;
   }
 
-  function listenToEventNameChange() {
-    const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
-    globals.eventName = titleInput.value;  // record initial title value
-    titleInput.addEventListener('input', e => globals.eventName = e.target.value);
+  function getTitleInput() {
+    try {
+      return document.querySelectorAll('[aria-label="Title"]')[0];
+    } catch (e) {
+      throw GMateError("can't find title input", {err: e.message});
+    }
   }
 
   function listenToEventSave() {
@@ -114,6 +115,7 @@
   }
 
   async function onSave() {
+    const eventName = getTitleInput().value;
     if (!globals.eventIdToFulfill) {
       // no op if there's no event to fulfill
       return;
@@ -121,27 +123,24 @@
 
     if (globals.eventIdToFulfill !== NO_ID_YET) {
       // the page already carries a valid event id, we are done
-      return registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
+      return registerRoomToBeFulfilled(globals.eventIdToFulfill, eventName);
     }
 
     await tryUntilPass(isMainCalendarPage);
-    sendFinishMessage();
+    sendFinishMessage(eventName);
   }
 
-  function sendFinishMessage() {
+  function sendFinishMessage(eventName) {
     // todo: use meeting time as a second differentiator
-    const eventIds = getEventIdByName(globals.eventName);
+    const eventIds = getEventIdByName(eventName);
     if (eventIds.length !== 1) {
       return chrome.runtime.sendMessage({
         type: ROOM_TO_BE_FULFILLED_FAILURE,
-        data: {
-          eventIds: eventIds,
-          eventName: globals.eventName
-        }
+        data: {eventIds, eventName}
       });
     }
 
-    return registerRoomToBeFulfilled(eventIds[0], globals.eventName);
+    return registerRoomToBeFulfilled(eventIds[0], eventName);
   }
 
   function getEventDetails() {
@@ -164,7 +163,6 @@
     globals = {
       eventIdToFulfill: null,
       eventFilters: new Filters({}),
-      eventName: '',
       bookRecurring: false,
     };
   }
