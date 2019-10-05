@@ -476,12 +476,16 @@ function getNapFillers(napMinutes) {
 
 async function getFreeRoomsForEvent(event, filters) {
   const allRooms = await CalendarAPI.getAllRoomsWithCache();
+  if (isEmpty(allRooms)) {
+    GMateError('empty room list');
+  }
+
   const roomCandidates = allRooms.filter(room => filters.matchRoom(room));
   console.log(`found ${roomCandidates.length} room candidates`);
   if (isEmpty(roomCandidates)) {
     // 0 room candidates indicate either a room list fetching issue or a filter setup issue. log more info for investigation
     GMateError('zero room candidates', {
-      roomListLength: allRooms.length,
+      eventId: event.id,
       ...filters.toDict(),
     })
   }
