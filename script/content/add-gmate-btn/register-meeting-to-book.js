@@ -13,16 +13,6 @@
     await incrementSync(SEARCH_ROOM_BTN_CLICKED);
   }
 
-  async function sanitizeFilters() {
-    const roomCandidateCnt = await getRoomCandidateCnt(globals.eventFilters);
-    if (roomCandidateCnt === 0) {
-      alert('Your filters match no rooms \n\nUsually this is caused by incorrect regex filters (under "Advanced Filters"). \nTry to remove them and use the basic filters instead \n\nIf the problem persists, email gmate.hotline@gmail.com for help');
-      return false;
-    }
-
-    return true;
-  }
-
   function renderSearchRoomBtn() {
     const searchRoomBtn = insertSearchRoomBtn();
 
@@ -36,38 +26,16 @@
         return;
       }
 
-      globals.eventFilters = await getRoomFilters();
-      const modal = renderModal(
-        await renderModelBody(),
-        'Select the filters you want to apply',
-        sanitizeFilters,
-        () => {
-          globals.eventIdToFulfill = getEventId() || NO_ID_YET;
-          searchRoomBtn.style.backgroundColor = '#7CB342';
-          searchRoomBtn.style.color = '#FFFFFF';
-        }
-      );
+      const modal = await getStatefulRoomBookingModal(() => {
+        globals.eventIdToFulfill = getEventId() || NO_ID_YET;
+        searchRoomBtn.style.backgroundColor = '#7CB342';
+        searchRoomBtn.style.color = '#FFFFFF';
+      });
       insertBefore(modal, document.body.firstChild);
+      globals.modal = modal;
+
       show(modal);
     });
-  }
-
-  async function renderModelBody() {
-    const filterUI = await asyncRenderRoomBookingFilters(
-      async val => globals.eventFilters.posRegex = val,
-      val => globals.eventFilters.negRegex = val,
-      val => globals.eventFilters.negTexts = val,
-      (key, val) => globals.eventFilters.setFlexFilter(key, val),
-    );
-    const bookRecurringCheckbox = renderCheckbox(
-      'apply to recurring meetings (GMate will try to maximize consistent rooms)',
-      false,
-      value => globals.bookRecurring = value,
-      RIGHT
-    );
-    const userFeedback = await loadHTMLElement('template/user-feedback.html');
-
-    return wrapUIComponents([filterUI, renderDivider(), bookRecurringCheckbox, userFeedback]);
   }
 
   function insertSearchRoomBtn() {
@@ -153,8 +121,8 @@
       data: {
         eventId: eventId,
         eventName: eventName,
-        eventFilters: globals.eventFilters.toDict(),
-        bookRecurring: globals.bookRecurring,
+        eventFilters: globals.modal.getInputs().eventFilters.toDict(),
+        bookRecurring: globals.modal.getInputs().bookRecurring,
       }
     });
   }
@@ -162,8 +130,7 @@
   function resetGlobal() {
     globals = {
       eventIdToFulfill: null,
-      eventFilters: new Filters({}),
-      bookRecurring: false,
+      modal: null,
     };
   }
 
