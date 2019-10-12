@@ -68,7 +68,7 @@
     gmateBtn.style.paddingLeft = '12px';
     gmateBtn.style.paddingRight = '12px';
 
-    const registeredTasks = htmlToElement(`<div>blah</div>`);
+    const registeredTasks = newTaskDisplay();
     gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
 
     return {gmateBtn, registeredTasks};

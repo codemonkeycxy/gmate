@@ -85,6 +85,7 @@
         "script/content/zero-invitee-reminder.js",
         "script/content/generate-zoom-id.js",
         "script/content/auto-room-booking.js",
+        "script/content/add-gmate-btn/task-display.js",
         "script/content/add-gmate-btn/stateful-room-booking-modal.js",
         "script/content/add-gmate-btn/on-edit-page.js",
         "script/content/show-banner.js",
