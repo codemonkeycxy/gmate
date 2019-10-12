@@ -33,13 +33,10 @@ async function getStatefulRoomBookingModal(onConfirm) {
   }
 
 
-  const modal = renderModal(
+  return renderModal(
     await renderModelBody(),
     'Select the filters you want to apply',
     () => sanitizeFilters(inputs.eventFilters),
-    onConfirm
+    () => onConfirm(inputs.eventFilters, inputs.bookRecurring)
   );
-  modal.getInputs = () => ({...inputs});
-
-  return modal;
 }

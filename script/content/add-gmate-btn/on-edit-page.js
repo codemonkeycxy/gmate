@@ -1,11 +1,7 @@
 // self-invoking function to avoid name collision
 (() => {
-  let globals = {};
-
   function addNeedRoomListener() {
     renderSearchRoomBtn();
-    listenToEventNameChange();
-    listenToEventSave();
   }
 
   async function logBtnClick() {
@@ -14,33 +10,31 @@
   }
 
   function renderSearchRoomBtn() {
-    const searchRoomBtn = insertSearchRoomBtn();
+    const {gmateBtn, gmateRow} = insertSearchRoomBtn();
     if (isEmpty(getEventId())) {
-      searchRoomBtn.style.backgroundColor = '#cccccc';
-      searchRoomBtn.style.color = '#666666';
-      searchRoomBtn.addEventListener("click", () => alert(
+      gmateBtn.style.backgroundColor = '#cccccc';
+      gmateBtn.style.color = '#666666';
+      gmateBtn.addEventListener("click", () => alert(
         "Looks like this event hasn't been saved yet. Save the event and try again :)"
       ));
       return;
     }
 
-    searchRoomBtn.addEventListener("click", async () => {
+    gmateBtn.addEventListener("click", async () => {
       await logBtnClick();
-      searchRoomBtn.showSpinner();
+      gmateBtn.showSpinner();
       const token = await promptAuth();  // block until user gives permission
-      searchRoomBtn.hideSpinner();
+      gmateBtn.hideSpinner();
       if (!token) {
         // if the user refuses to give auth, can't let them continue
         return;
       }
 
-      const modal = await getStatefulRoomBookingModal(() => {
-        globals.eventIdToFulfill = getEventId();
-        searchRoomBtn.style.backgroundColor = '#7CB342';
-        searchRoomBtn.style.color = '#FFFFFF';
+      const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
+        registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
+        insertBefore(newIcon("fa fa-group"), gmateRow);
       });
       insertBefore(modal, document.body.firstChild);
-      globals.modal = modal;
 
       show(modal);
     });
@@ -74,58 +68,35 @@
     needRoomButton.style.paddingRight = '12px';
     gmateRow.replaceChild(needRoomButton, gmateRow.children[1]);
 
-    return needRoomButton;
+    return {
+      gmateBtn: needRoomButton,
+      gmateRow: gmateRow
+    };
   }
 
-  function listenToEventNameChange() {
-    const titleInput = document.querySelectorAll('[aria-label="Title"]')[0];
-    globals.eventName = titleInput.value;  // record initial title value
-    titleInput.addEventListener('input', e => globals.eventName = e.target.value);
-  }
-
-  function listenToEventSave() {
-    const saveBtn = getSaveButton();
-    saveBtn.addEventListener("click", onSave);
-  }
-
-  async function onSave() {
-    if (!globals.eventIdToFulfill) {
-      // no op if there's no event to fulfill
-      return;
+  function getEventName() {
+    try {
+      return document.querySelectorAll('[aria-label="Title"]')[0].value;
+    } catch (e) {
+      throw GMateError("can't find title input", {err: e.message});
     }
-
-    return registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
   }
 
   function getEventDetails() {
     return document.querySelectorAll('[id="tabEventDetails"]')[0];
   }
 
-  function registerRoomToBeFulfilled(eventId, eventName) {
+  function registerRoomToBeFulfilled(eventId, eventName, eventFilters, bookRecurring) {
     chrome.runtime.sendMessage({
       type: ROOM_TO_BE_FULFILLED,
-      data: {
-        eventId: eventId,
-        eventName: eventName,
-        eventFilters: globals.modal.getInputs().eventFilters.toDict(),
-        bookRecurring: globals.modal.getInputs().bookRecurring,
-      }
+      data: {eventId, eventName, eventFilters: eventFilters.toDict(), bookRecurring}
     });
-  }
-
-  function resetGlobal() {
-    globals = {
-      eventIdToFulfill: null,
-      eventName: '',
-      modal: null,
-    };
   }
 
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
-      resetGlobal();
-      await tryUntilPass(() => getEventDetails() && getSaveButton());
+      await tryUntilPass(() => getEventDetails());
       addNeedRoomListener();
     }
   });
