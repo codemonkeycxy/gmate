@@ -10,7 +10,7 @@
   }
 
   function renderSearchRoomBtn() {
-    const {gmateBtn, gmateRow} = insertSearchRoomBtn();
+    const {gmateBtn, registeredTasks} = insertSearchRoomBtn();
     if (isEmpty(getEventId())) {
       gmateBtn.style.backgroundColor = '#cccccc';
       gmateBtn.style.color = '#666666';
@@ -32,7 +32,8 @@
 
       const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
         registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
-        insertBefore(newIcon("fa fa-group"), gmateRow);
+        // consider deduping
+        insertBefore(htmlToElement(`<div>${getEventName()}</div>`), gmateBtn);
       });
       insertBefore(modal, document.body.firstChild);
 
@@ -57,21 +58,20 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    const needRoomButton = newButton(SEARCH_ROOM_BTN_MSG);
-    needRoomButton.style.backgroundColor = '#4285f4';
-    needRoomButton.style.color = '#fff';
-    needRoomButton.style.height = '32px';
-    needRoomButton.style.fontSize = '12px';
-    needRoomButton.style.marginTop = '7px';
-    needRoomButton.style.marginBottom = '4px';
-    needRoomButton.style.paddingLeft = '12px';
-    needRoomButton.style.paddingRight = '12px';
-    gmateRow.replaceChild(needRoomButton, gmateRow.children[1]);
+    const gmateBtn = newButton(SEARCH_ROOM_BTN_MSG);
+    gmateBtn.style.backgroundColor = '#4285f4';
+    gmateBtn.style.color = '#fff';
+    gmateBtn.style.height = '32px';
+    gmateBtn.style.fontSize = '12px';
+    gmateBtn.style.marginTop = '7px';
+    gmateBtn.style.marginBottom = '4px';
+    gmateBtn.style.paddingLeft = '12px';
+    gmateBtn.style.paddingRight = '12px';
 
-    return {
-      gmateBtn: needRoomButton,
-      gmateRow: gmateRow
-    };
+    const registeredTasks = htmlToElement(`<div>blah</div>`);
+    gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
+
+    return {gmateBtn, registeredTasks};
   }
 
   function getEventName() {
