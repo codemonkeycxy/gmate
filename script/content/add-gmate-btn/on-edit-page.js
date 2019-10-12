@@ -32,8 +32,7 @@
 
       const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
         registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
-        // consider deduping
-        insertBefore(htmlToElement(`<div>${getEventName()}</div>`), gmateBtn);
+        registeredTasks.pushTask(getEventName());
       });
       insertBefore(modal, document.body.firstChild);
 
