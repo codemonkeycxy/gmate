@@ -16,6 +16,14 @@
 
   function renderSearchRoomBtn() {
     const searchRoomBtn = insertSearchRoomBtn();
+    if (isEmpty(getEventId())) {
+      searchRoomBtn.style.backgroundColor = '#cccccc';
+      searchRoomBtn.style.color = '#666666';
+      searchRoomBtn.addEventListener("click", () => alert(
+        "Looks like this event hasn't been saved yet. Save the event and try again :)"
+      ));
+      return;
+    }
 
     searchRoomBtn.addEventListener("click", async () => {
       await logBtnClick();
