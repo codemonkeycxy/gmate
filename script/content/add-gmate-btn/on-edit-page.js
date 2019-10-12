@@ -1,6 +1,5 @@
 // self-invoking function to avoid name collision
 (() => {
-  const NO_ID_YET = 'no-id-yet';
   let globals = {};
 
   function addNeedRoomListener() {
@@ -36,7 +35,7 @@
       }
 
       const modal = await getStatefulRoomBookingModal(() => {
-        globals.eventIdToFulfill = getEventId() || NO_ID_YET;
+        globals.eventIdToFulfill = getEventId();
         searchRoomBtn.style.backgroundColor = '#7CB342';
         searchRoomBtn.style.color = '#FFFFFF';
       });
@@ -95,29 +94,7 @@
       return;
     }
 
-    if (globals.eventIdToFulfill !== NO_ID_YET) {
-      // the page already carries a valid event id, we are done
-      return registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
-    }
-
-    await tryUntilPass(isMainCalendarPage);
-    sendFinishMessage();
-  }
-
-  function sendFinishMessage() {
-    // todo: use meeting time as a second differentiator
-    const eventIds = getEventIdByName(globals.eventName);
-    if (eventIds.length !== 1) {
-      return chrome.runtime.sendMessage({
-        type: ROOM_TO_BE_FULFILLED_FAILURE,
-        data: {
-          eventIds: eventIds,
-          eventName: globals.eventName
-        }
-      });
-    }
-
-    return registerRoomToBeFulfilled(eventIds[0], globals.eventName);
+    return registerRoomToBeFulfilled(globals.eventIdToFulfill, globals.eventName);
   }
 
   function getEventDetails() {
