@@ -188,21 +188,6 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, filters) {
   return sortRoomEmailByCount(roomEmailCount).slice(0, 3);
 }
 
-onMessageOfType(ROOM_TO_BE_FULFILLED_FAILURE, (msg, sender, sendResponse) => {
-  const eventName = msg.data.eventName;
-  const eventIds = msg.data.eventIds;
-
-  console.log(
-    `Expecting to register 1 event to the queue but found - event name: ${
-      eventName
-      } event ids: ${JSON.stringify(eventIds)}`
-  );
-  notify(
-    'Oops. We encountered a problem',
-    `Please open the meeting up and click "${SEARCH_ROOM_BTN_MSG}" again`
-  );
-});
-
 onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) => {
   sendResponse({
     type: GET_QUEUE,

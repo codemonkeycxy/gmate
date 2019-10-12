@@ -17,7 +17,6 @@ const FAVORITE_ROOMS = "favorite-rooms";
 const AUTO_ROOM_BOOKING = "auto-room-booking";
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
-const ROOM_TO_BE_FULFILLED_FAILURE = "room-to-be-fulfilled-failure";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
 const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
 
