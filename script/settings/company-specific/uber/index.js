@@ -195,7 +195,6 @@ function toUberFilterSummary(flexFilters) {
   const roomSize = flexFilters[formRoomFilterStorageKey('room_size')];
   const needVC = flexFilters[formRoomFilterStorageKey('need_vc')];
 
-  // let summary = `in ${location} on floor ${floor} with room size ${roomSize}`;
   const summary = [];
   if (location) {
     summary.push(`in ${location}`);
