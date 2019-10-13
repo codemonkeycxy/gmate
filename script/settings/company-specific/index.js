@@ -46,3 +46,11 @@ function extractRoomFeatures(gResource) {
     })
   }
 }
+
+function toFilterSummary(flexFilters) {
+  if (Object.keys(flexFilters).some(filterKey => filterKey.includes('uber'))) {
+    return toUberFilterSummary(flexFilters);
+  }
+
+  return '';
+}

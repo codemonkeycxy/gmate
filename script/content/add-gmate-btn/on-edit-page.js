@@ -32,7 +32,7 @@
 
       const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
         registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
-        registeredTasks.pushTask(getEventName());
+        registeredTasks.pushTask(eventFilters);
       });
       insertBefore(modal, document.body.firstChild);
 

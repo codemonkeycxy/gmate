@@ -45,7 +45,7 @@ async function asyncRenderRoomBookingFilters(
 
   function renderFlexFilter(filterSetting, storedInput) {
     const title = filterSetting.displayName;
-    const storageKey = getRoomFilterStorageKey(filterSetting.key);
+    const storageKey = formRoomFilterStorageKey(filterSetting.key);
     const storedValue = storedInput[storageKey];
 
     return FILTER_RENDER_FUNCTIONS[filterSetting.type](title, storedValue, storageKey, filterSetting);

@@ -1,12 +1,12 @@
 function newTaskDisplay() {
-  const header = htmlToElement('<div>GMate is currently searching room for the following events:</div>');
+  const header = htmlToElement('<div>GMate is currently searching for:</div>');
   const body = document.createElement('div');
   hide(header);
 
   const taskDisplay = wrapUIComponents([header, body]);
-  taskDisplay.pushTask = eventName => {
+  taskDisplay.pushTask = eventFilters => {
     show(header);
-    body.appendChild(htmlToElement(`<div>${eventName}</div>`));
+    body.appendChild(htmlToElement(`<div>A room ${eventFilters.toSummary()}</div>`));
   };
 
   return taskDisplay;

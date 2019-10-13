@@ -62,7 +62,7 @@ class Filters {
   }
 
   _matchRoomByFlexFilterOne(room, filterSetting) {
-    const storageKey = getRoomFilterStorageKey(filterSetting.key);
+    const storageKey = formRoomFilterStorageKey(filterSetting.key);
     const storageVal = this.flexFilters[storageKey];
     if (storageVal === ANY) {
       return true;
@@ -80,6 +80,10 @@ class Filters {
       flexFilters: this.flexFilters
     };
   }
+
+  toSummary() {
+    return toFilterSummary(this.flexFilters);
+  }
 }
 
 Filters.fromDict = ({posFilter, negFilter, negTexts, flexFilters}) => new Filters({
@@ -89,7 +93,7 @@ Filters.fromDict = ({posFilter, negFilter, negTexts, flexFilters}) => new Filter
   flexFilters
 });
 
-function getRoomFilterStorageKey(filterKey) {
+function formRoomFilterStorageKey(filterKey) {
   return `room-booking-filter-${'uber'}-${filterKey}`;
 }
 
@@ -101,7 +105,7 @@ async function getFlexRoomFilters() {
   const companyName = 'uber';  // hard code for now
   const filterSettings = COMPANY_SPECIFIC_FILTERS[companyName];
   const storageKeys = {};
-  filterSettings.forEach(setting => storageKeys[getRoomFilterStorageKey(setting.key)] = setting.default);
+  filterSettings.forEach(setting => storageKeys[formRoomFilterStorageKey(setting.key)] = setting.default);
 
   return await getFromSync(storageKeys);
 }

@@ -188,3 +188,30 @@ function _uberRoomIsCart(gResource) {
   const re = new RegExp('\\b(Cart|cart)\\b');
   return gResource.generatedResourceName.match(re);
 }
+
+function toUberFilterSummary(flexFilters) {
+  const location = flexFilters[formRoomFilterStorageKey('location')];
+  const floor = flexFilters[formRoomFilterStorageKey('floor')];
+  const roomSize = flexFilters[formRoomFilterStorageKey('room_size')];
+  const needVC = flexFilters[formRoomFilterStorageKey('need_vc')];
+
+  // let summary = `in ${location} on floor ${floor} with room size ${roomSize}`;
+  const summary = [];
+  if (location) {
+    summary.push(`in ${location}`);
+  }
+
+  if (floor) {
+    summary.push(`on floor ${floor}`);
+  }
+
+  if (roomSize) {
+    summary.push(`with room size ${roomSize}`);
+  }
+
+  if (needVC) {
+    summary.push('with VC');
+  }
+
+  return summary.join(' ');
+}
