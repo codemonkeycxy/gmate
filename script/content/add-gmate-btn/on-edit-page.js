@@ -40,11 +40,23 @@
     });
   }
 
-  function insertSearchRoomBtn() {
+  function getLocationRow() {
     const eventDetails = getEventDetails();
 
+    for (let i = 0; i < eventDetails.children.length; i++) {
+      const row = eventDetails.children[i];
+
+      if (!isEmpty(row.querySelectorAll('[aria-label="Location"]'))) {
+        return row;
+      }
+    }
+
+    return eventDetails.children[0];
+  }
+
+  function insertSearchRoomBtn() {
     // insert gmate row after the location row
-    const locationRow = eventDetails.children[0];
+    const locationRow = getLocationRow();
     // to keep the style consistent, copy the location row as a template for the gmate row
     const gmateRow = locationRow.cloneNode(true);
     insertAfter(gmateRow, locationRow);

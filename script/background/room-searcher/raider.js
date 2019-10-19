@@ -111,6 +111,8 @@ async function bootstrap() {
 // todo: maybe ask someone to create a reddit community. or start with a reddit thread? hmm... this might spread the app idea too early and invite competitions
 // todo: add total room booked count to logo
 // todo: suggest to people, do you need a room? (use case: got invited to a meeting without realizing a room is missing for your office)
+// todo: marketing idea boba/donut + flyer + sticker
+// todo: put back "all guest edit" and open up the announcement page
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
@@ -472,7 +474,7 @@ async function getFreeRoomsForEvent(event, filters) {
     GMateError('zero room candidates', {
       eventId: event.id,
       ...filters.toDict(),
-    })
+    });
   }
 
   return await CalendarAPI.pickFreeRooms(event.startStr, event.endStr, roomCandidates.map(room => room.email));

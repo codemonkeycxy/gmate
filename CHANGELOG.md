@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 5.9.0
-- [maintenance] Ensure events are saved first before GMate button is enabled
+## 6.0.0
+- [feature] Display task summary when new room search tasks are registered
+- [fix] Make GMate button compatible with the Clockwise UI injection
 
 ## 5.8.2
 - [enhancement] Reduce room searching task registration complexity with some code cleanup
