@@ -31,15 +31,15 @@
   }
 
   function injectTaskQueueUI(payload) {
-    const eventTasks = payload.data.eventTasks;
+    const {currentTask, pendingTasks} = payload.data.eventTasks;
     const taskQueueUIGroup = document.getElementById(TASK_QUEUE_UI_GROUP);
 
-    if (eventTasks.length === 0) {
+    if (!currentTask && pendingTasks.length === 0) {
       return hide(taskQueueUIGroup);
     }
 
     show(taskQueueUIGroup);
-    populateTasks(eventTasks);
+    populateTasks(currentTask, pendingTasks);
   }
 
   async function logBtnClick() {
@@ -47,28 +47,35 @@
     await incrementSync(ROOM_RADAR_BTN_CLICKED);
   }
 
-  function populateTasks(eventTasks) {
+  function renderTaskRow(task, action) {
+    const lockBtn = htmlToElement(`<i class="fa fa-lock"></i>`);
+
+    const delBtn = htmlToElement(`<i class="fa fa-trash"></i>`);
+    delBtn.onclick = () => removeTask(task.id);
+
+    const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
+    handshakeBtn.onclick = async () => {
+      await logBtnClick();
+      openRoomRadar(task);
+    };
+
+    const item = document.createElement('li');
+    item.appendChild(htmlToElement(`<a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a>`));
+    item.appendChild(htmlToElement('&nbsp;'));
+    item.appendChild(handshakeBtn);
+    item.appendChild(htmlToElement('&nbsp;&nbsp;'));
+    item.appendChild(action === 'lock' ? lockBtn : delBtn);
+
+    return item;
+  }
+
+  function populateTasks(currentTask, pendingTasks) {
     const taskUI = document.getElementById(TO_BE_FULFILLED_QUEUE);
 
     taskUI.innerHTML = '';  // wipe out the existing UI
-    taskUI.appendChild(wrapUIComponents(eventTasks.map(task => {
-      const delBtn = htmlToElement(`<i class="fa fa-trash"></i>`);
-      delBtn.onclick = () => removeTask(task.id);
-
-      const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
-      handshakeBtn.onclick = async () => {
-        await logBtnClick();
-        openRoomRadar(task);
-      };
-
-      const item = document.createElement('li');
-      item.appendChild(htmlToElement(`<a href="${EDIT_PAGE_URL_PREFIX}/${task.data.eventId}" target="_blank">${task.data.eventName}</a>`));
-      item.appendChild(htmlToElement('&nbsp;'));
-      item.appendChild(handshakeBtn);
-      item.appendChild(htmlToElement('&nbsp;&nbsp;'));
-      item.appendChild(delBtn);
-
-      return item;
-    })));
+    if (currentTask) {
+      taskUI.appendChild(renderTaskRow(currentTask, 'lock'));
+    }
+    taskUI.appendChild(wrapUIComponents(pendingTasks.map(task => renderTaskRow(task, 'removable'))));
   }
 })();

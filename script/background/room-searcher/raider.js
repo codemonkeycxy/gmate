@@ -435,11 +435,10 @@ function isEventInQueue(eventTask) {
 function getAllEventTasks() {
   const toBeFulFilledEventTasks = toBeFulfilled.filter(task => task.type === TASK_TYPE.EVENT);
 
-  if (currentTask && currentTask.type === TASK_TYPE.EVENT) {
-    return [currentTask, ...toBeFulFilledEventTasks];
-  } else {
-    return toBeFulFilledEventTasks;
-  }
+  return {
+    currentTask: currentTask && currentTask.type === TASK_TYPE.EVENT ? currentTask : null,
+    pendingTasks: toBeFulFilledEventTasks
+  };
 }
 
 function getNapFillers(napMinutes) {
