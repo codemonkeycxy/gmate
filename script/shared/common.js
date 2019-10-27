@@ -33,6 +33,7 @@ const GET_ROOM_CANDIDATE_CNT = "get-room-candidate-count";
 
 // settings panel actions
 const GET_QUEUE = "get-queue";
+const GET_TASKS_BY_EVENT_ID = "get-tasks-by-event-id";
 const REMOVE_TASK = "remove-task";
 const ROOM_RADAR = "room-radar";
 
@@ -304,6 +305,10 @@ function findTheMostKey(obj, predicate) {
 // wrappers around verbose chrome functions
 function emit(tabId, msg) {
   chrome.tabs.sendMessage(tabId, msg);
+}
+
+function sendMessage(payload, cb) {
+  chrome.runtime.sendMessage(null, payload, null, cb ? cb : noop());
 }
 
 function onMessage(callback, recycleTtl) {

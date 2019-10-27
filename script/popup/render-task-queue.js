@@ -7,20 +7,20 @@
   setInterval(renderTaskQueueUI, 500);  // periodically refresh the UI
 
   function renderTaskQueueUI() {
-    chrome.runtime.sendMessage(null, {type: GET_QUEUE}, null, injectTaskQueueUI);
+    sendMessage({type: GET_QUEUE}, injectTaskQueueUI);
   }
 
   function removeTask(taskId) {
-    chrome.runtime.sendMessage(null, {
-      type: REMOVE_TASK,
-      data: {
-        taskId: taskId
-      }
-    }, null, injectTaskQueueUI);
+    sendMessage({
+        type: REMOVE_TASK,
+        data: {
+          taskId: taskId
+        }
+    }, injectTaskQueueUI);
   }
 
   function openRoomRadar(task) {
-    chrome.runtime.sendMessage(null, {
+    sendMessage({
       type: ROOM_RADAR,
       data: {
         eventId: task.data.eventId,

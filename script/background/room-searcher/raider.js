@@ -199,6 +199,15 @@ onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) => {
   });
 });
 
+onMessageOfType(GET_TASKS_BY_EVENT_ID, (msg, sender, sendResponse) => {
+  sendResponse({
+    type: GET_TASKS_BY_EVENT_ID,
+    data: {
+      eventTasks: getTasksByEventId(msg.data.eventId),
+    }
+  });
+});
+
 onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
   removeTask(msg.data.taskId);
   sendResponse({
@@ -439,6 +448,14 @@ function getAllEventTasks() {
     currentTask: currentTask && currentTask.type === TASK_TYPE.EVENT ? currentTask : null,
     pendingTasks: toBeFulFilledEventTasks
   };
+}
+
+function getTasksByEventId(eventId) {
+  const {currentTask, pendingTasks} = getAllEventTasks();
+
+  return [currentTask, ...pendingTasks].filter(
+    eventTask => eventTask && eventTask.data.eventId === eventId
+  );
 }
 
 function getNapFillers(napMinutes) {
