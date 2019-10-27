@@ -6,6 +6,10 @@ function newTaskDisplay() {
 
   const taskDisplay = wrapUIComponents([header, body]);
   taskDisplay.pushTask = eventFilters => {
+    if (isEmpty(eventFilters)) {
+      return;
+    }
+
     show(header);
     show(body);
     body.appendChild(htmlToElement(`<li>A room ${eventFilters.toSummary()}</li>`));

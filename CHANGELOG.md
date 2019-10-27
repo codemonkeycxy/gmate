@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 6.2.0
+- [feature] Display existing event tasks on the event edit page
+
 ## 6.1.0
 - [fix] Show appropriate UI for tasks that are temporarily not removable
 

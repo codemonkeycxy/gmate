@@ -190,23 +190,23 @@ async function getPreferredRoomsForRecurringEvents(recurringIds, filters) {
   return sortRoomEmailByCount(roomEmailCount).slice(0, 3);
 }
 
-onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) => {
+onMessageOfType(GET_QUEUE, (msg, sender, sendResponse) =>
   sendResponse({
     type: GET_QUEUE,
     data: {
       eventTasks: getAllEventTasks(),
     }
-  });
-});
+  })
+);
 
-onMessageOfType(GET_TASKS_BY_EVENT_ID, (msg, sender, sendResponse) => {
+onMessageOfType(GET_TASKS_BY_EVENT_ID, (msg, sender, sendResponse) =>
   sendResponse({
     type: GET_TASKS_BY_EVENT_ID,
     data: {
       eventTasks: getTasksByEventId(msg.data.eventId),
     }
-  });
-});
+  })
+);
 
 onMessageOfType(REMOVE_TASK, (msg, sender, sendResponse) => {
   removeTask(msg.data.taskId);

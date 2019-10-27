@@ -31,7 +31,6 @@ const TRACK = "track";
 const PROMPT_AUTH = "prompt-auth";
 const GET_ROOM_CANDIDATE_CNT = "get-room-candidate-count";
 
-// settings panel actions
 const GET_QUEUE = "get-queue";
 const GET_TASKS_BY_EVENT_ID = "get-tasks-by-event-id";
 const REMOVE_TASK = "remove-task";

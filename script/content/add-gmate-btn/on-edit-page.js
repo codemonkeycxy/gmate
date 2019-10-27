@@ -11,7 +11,9 @@
 
   function renderSearchRoomBtn() {
     const {gmateBtn, registeredTasks} = insertSearchRoomBtn();
-    if (isEmpty(getEventId())) {
+    const eventId = getEventId();
+
+    if (isEmpty(eventId)) {
       gmateBtn.style.backgroundColor = '#cccccc';
       gmateBtn.style.color = '#666666';
       gmateBtn.addEventListener("click", () => alert(
@@ -19,6 +21,18 @@
       ));
       return;
     }
+
+    sendMessage({type: GET_TASKS_BY_EVENT_ID, data: {eventId}}, ({data: {eventTasks}}) => {
+      if (isEmpty(eventTasks)) {
+        return;
+      }
+
+      gmateBtn.style.backgroundColor = '#7CB342';
+      gmateBtn.style.color = '#FFFFFF';
+      eventTasks.forEach(eventTask => registeredTasks.pushTask(
+        Filters.fromDict(eventTask.data.eventFilters)
+      ));
+    });
 
     gmateBtn.addEventListener("click", async () => {
       await logBtnClick();
@@ -98,7 +112,7 @@
   }
 
   function registerRoomToBeFulfilled(eventId, eventName, eventFilters, bookRecurring) {
-    chrome.runtime.sendMessage({
+    sendMessage({
       type: ROOM_TO_BE_FULFILLED,
       data: {eventId, eventName, eventFilters: eventFilters.toDict(), bookRecurring}
     });
