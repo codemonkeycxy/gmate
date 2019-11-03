@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 6.3.0
+- [Enhancement] Blacklist rooms failed to be added to avoid repeated email notifications
+
 ## 6.2.0
 - [feature] Display existing event tasks on the event edit page
 
