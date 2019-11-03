@@ -3,7 +3,7 @@ const TASK_TYPE = {
   EVENT: "event"
 };
 
-function EventTask({eventId, eventName, eventFilters, preferredRooms}) {
+function EventTask({eventId, eventName, eventFilters, preferredRooms, excludedRooms}) {
   return {
     id: nextId(),
     type: TASK_TYPE.EVENT,
@@ -12,6 +12,7 @@ function EventTask({eventId, eventName, eventFilters, preferredRooms}) {
       eventName: eventName,
       eventFilters: eventFilters.toDict(),
       preferredRooms: preferredRooms || [],
+      excludedRooms: excludedRooms || []
     }
   };
 }

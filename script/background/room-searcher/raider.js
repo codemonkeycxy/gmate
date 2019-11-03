@@ -297,10 +297,12 @@ async function nextTask() {
 
   console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
   // todo: pick a room with capacity closer to the event human invitees
-  const success = await bookRoom(
-    eventIdB64,
-    await pickRoomEmailByPreference(freeRooms, currentTask.data.preferredRooms || [])
+  const roomEmailToBook = await pickRoomEmailByPreference(
+    freeRooms,
+    currentTask.data.preferredRooms || [],
+    currentTask.data.excludedRooms || []
   );
+  const success = await bookRoom(eventIdB64, roomEmailToBook);
 
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
@@ -313,6 +315,10 @@ async function nextTask() {
     console.log(`failed to save room for ${JSON.stringify(currentTask)}`);
     // room save failures are not expected in the book-via-api approach. log to confirm
     track('room-save-failure');
+
+    // this line can be removed once all old data is trained
+    currentTask.data.excludedRooms = currentTask.data.excludedRooms || [];
+    currentTask.data.excludedRooms.push(roomEmailToBook);
     enqueue(currentTask);
     // remove listener after handling the expected event to avoid double trigger
     nextTaskFireAndForget();

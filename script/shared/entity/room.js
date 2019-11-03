@@ -44,16 +44,18 @@ async function pickRoomBasedOnHistory(roomEmails) {
   return favoriteRoom;
 }
 
-async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = []) {
+async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = [], roomEmailsToExclude = []) {
+  const roomCandidateEmails = freeRoomEmails.filter(roomEmail => !roomEmailsToExclude.includes(roomEmail));
+
   for (let i = 0; i < roomEmailsByPreference.length; i++) {
     const preferredRoom = roomEmailsByPreference[i];
-    if (freeRoomEmails.includes(preferredRoom)) {
+    if (roomCandidateEmails.includes(preferredRoom)) {
       return preferredRoom;
     }
   }
 
   // fall back onto user's historical room selection
-  return await pickRoomBasedOnHistory(freeRoomEmails);
+  return await pickRoomBasedOnHistory(roomCandidateEmails);
 }
 
 async function getAllRoomsFromCache() {
