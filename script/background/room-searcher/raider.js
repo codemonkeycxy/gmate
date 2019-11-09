@@ -288,22 +288,19 @@ async function nextTask() {
     return nextTaskFireAndForget();
   }
 
-  const freeRooms = await getFreeRoomsForEvent(event, filters);
-  if (isEmpty(freeRooms)) {
-    console.log('no free room is found. try again later...');
+  // todo: pick a room with capacity closer to the event human invitees
+  const roomEmailToBook = await pickRoomEmailByPreference(
+    await getFreeRoomsForEvent(event, filters),
+    currentTask.data.preferredRooms || [],
+    currentTask.data.excludedRooms || []
+  );
+  if (isEmpty(roomEmailToBook)) {
+    console.log('no bookable room is found. try again later...');
     enqueue(currentTask);
     return nextTaskFireAndForget();
   }
 
-  console.log(`found ${freeRooms.length} free rooms. trigger booking...`);
-  // todo: pick a room with capacity closer to the event human invitees
-  const roomEmailToBook = await pickRoomEmailByPreference(
-    freeRooms,
-    currentTask.data.preferredRooms || [],
-    currentTask.data.excludedRooms || []
-  );
   const success = await bookRoom(eventIdB64, roomEmailToBook);
-
   if (success) {
     console.log(`room saved for ${JSON.stringify(currentTask)}`);
     // NOTE: notifyThrottled rely on the uniqueness of the message to work properly. Think carefully before
@@ -316,7 +313,7 @@ async function nextTask() {
     // room save failures are not expected in the book-via-api approach. log to confirm
     track('room-save-failure');
 
-    // this line can be removed once all old data is trained
+    // this line can be removed once all old data is drained
     currentTask.data.excludedRooms = currentTask.data.excludedRooms || [];
     currentTask.data.excludedRooms.push(roomEmailToBook);
     enqueue(currentTask);
@@ -340,7 +337,7 @@ async function bookRoom(eventIdB64, roomEmail) {
       const event = await CalendarAPI.getEventB64(eventIdB64);
       return event && event.hasRoomAccepted(roomEmail);
     },
-    {sleepMs: TEN_SEC_MS, countdown: 30, suppressError: true}  // wait up to 5 min
+    {sleepMs: TEN_SEC_MS, countdown: 6, suppressError: true}  // wait up to 1 min
   );
 }
 

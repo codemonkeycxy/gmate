@@ -45,6 +45,10 @@ async function pickRoomBasedOnHistory(roomEmails) {
 }
 
 async function pickRoomEmailByPreference(freeRoomEmails, roomEmailsByPreference = [], roomEmailsToExclude = []) {
+  if (isEmpty(freeRoomEmails)) {
+    return null;
+  }
+
   const roomCandidateEmails = freeRoomEmails.filter(roomEmail => !roomEmailsToExclude.includes(roomEmail));
 
   for (let i = 0; i < roomEmailsByPreference.length; i++) {
