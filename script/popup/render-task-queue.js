@@ -48,12 +48,12 @@
   }
 
   function renderTaskRow(task, action) {
-    const lockBtn = htmlToElement(`<i class="fa fa-lock"></i>`);
+    const lockBtn = htmlToElement(`<i class="fa fa-lock" title="can't delete a running task. please try again in a min"></i>`);
 
-    const delBtn = htmlToElement(`<i class="fa fa-trash"></i>`);
+    const delBtn = htmlToElement(`<i class="fa fa-trash" title="delete this task"></i>`);
     delBtn.onclick = () => removeTask(task.id);
 
-    const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o"></i>`);
+    const handshakeBtn = htmlToElement(`<i class="fa fa-handshake-o" title="discover other underutilized rooms"></i>`);
     handshakeBtn.onclick = async () => {
       await logBtnClick();
       openRoomRadar(task);
