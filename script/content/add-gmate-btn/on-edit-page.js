@@ -17,18 +17,6 @@
       return;
     }
 
-    sendMessage({type: GET_TASKS_BY_EVENT_ID, data: {eventId}}, ({data: {eventTasks}}) => {
-      if (isEmpty(eventTasks)) {
-        return;
-      }
-
-      gmateBtn.style.backgroundColor = '#7CB342';
-      gmateBtn.style.color = '#FFFFFF';
-      eventTasks.forEach(eventTask => registeredTasks.pushTask(
-        Filters.fromDict(eventTask.data.eventFilters)
-      ));
-    });
-
     gmateBtn.addEventListener("click", async () => {
       await logBtnClick();
       gmateBtn.showSpinner();
@@ -78,8 +66,7 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    const gmateBtn = newGMateBtn(eventId);
-    const registeredTasks = newTaskDisplay();
+    const {gmateBtn, registeredTasks} = newGMateBtn(eventId);
     gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
 
     return {gmateBtn, registeredTasks};
