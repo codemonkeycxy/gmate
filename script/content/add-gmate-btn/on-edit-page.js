@@ -10,15 +10,10 @@
   }
 
   function renderSearchRoomBtn() {
-    const {gmateBtn, registeredTasks} = insertSearchRoomBtn();
     const eventId = getEventId();
+    const {gmateBtn, registeredTasks} = insertSearchRoomBtn(eventId);
 
     if (isEmpty(eventId)) {
-      gmateBtn.style.backgroundColor = '#cccccc';
-      gmateBtn.style.color = '#666666';
-      gmateBtn.addEventListener("click", () => alert(
-        "Looks like this event hasn't been saved yet. Save the event and try again :)"
-      ));
       return;
     }
 
@@ -68,7 +63,7 @@
     return eventDetails.children[0];
   }
 
-  function insertSearchRoomBtn() {
+  function insertSearchRoomBtn(eventId) {
     // insert gmate row after the location row
     const locationRow = getLocationRow();
     // to keep the style consistent, copy the location row as a template for the gmate row
@@ -83,16 +78,7 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    const gmateBtn = newButton(SEARCH_ROOM_BTN_MSG);
-    gmateBtn.style.backgroundColor = '#4285f4';
-    gmateBtn.style.color = '#fff';
-    gmateBtn.style.height = '32px';
-    gmateBtn.style.fontSize = '12px';
-    gmateBtn.style.marginTop = '7px';
-    gmateBtn.style.marginBottom = '4px';
-    gmateBtn.style.paddingLeft = '12px';
-    gmateBtn.style.paddingRight = '12px';
-
+    const gmateBtn = newGMateBtn(eventId);
     const registeredTasks = newTaskDisplay();
     gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
 
