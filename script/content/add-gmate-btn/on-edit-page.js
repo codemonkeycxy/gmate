@@ -1,38 +1,5 @@
 // self-invoking function to avoid name collision
 (() => {
-  async function logBtnClick() {
-    track(SEARCH_ROOM_BTN_CLICKED);
-    await incrementSync(SEARCH_ROOM_BTN_CLICKED);
-  }
-
-  function renderSearchRoomBtn() {
-    const eventId = getEventId();
-    const {gmateBtn, registeredTasks} = insertSearchRoomBtn(eventId);
-
-    if (isEmpty(eventId)) {
-      return;
-    }
-
-    gmateBtn.addEventListener("click", async () => {
-      await logBtnClick();
-      gmateBtn.showSpinner();
-      const token = await promptAuth();  // block until user gives permission
-      gmateBtn.hideSpinner();
-      if (!token) {
-        // if the user refuses to give auth, can't let them continue
-        return;
-      }
-
-      const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
-        registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
-        registeredTasks.pushTask(eventFilters);
-      });
-      insertBefore(modal, document.body.firstChild);
-
-      show(modal);
-    });
-  }
-
   function getLocationRow() {
     const eventDetails = getEventDetails();
 
@@ -47,7 +14,7 @@
     return eventDetails.children[0];
   }
 
-  function insertSearchRoomBtn(eventId) {
+  function renderSearchRoomBtn(eventId) {
     // insert gmate row after the location row
     const locationRow = getLocationRow();
     // to keep the style consistent, copy the location row as a template for the gmate row
@@ -64,8 +31,6 @@
     // reset the row content
     const {gmateBtn, registeredTasks} = newGMateBtn(eventId);
     gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
-
-    return {gmateBtn, registeredTasks};
   }
 
   function getEventName() {
@@ -80,18 +45,11 @@
     return document.querySelectorAll('[id="tabEventDetails"]')[0];
   }
 
-  function registerRoomToBeFulfilled(eventId, eventName, eventFilters, bookRecurring) {
-    sendMessage({
-      type: ROOM_TO_BE_FULFILLED,
-      data: {eventId, eventName, eventFilters: eventFilters.toDict(), bookRecurring}
-    });
-  }
-
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       await tryUntilPass(() => getEventDetails());
-      renderSearchRoomBtn();
+      renderSearchRoomBtn(getEventId());
     }
   });
 })();

@@ -1,4 +1,16 @@
 function newGMateBtn(eventId) {
+  async function logBtnClick() {
+    track(SEARCH_ROOM_BTN_CLICKED);
+    await incrementSync(SEARCH_ROOM_BTN_CLICKED);
+  }
+
+  function registerRoomToBeFulfilled(eventId, eventName, eventFilters, bookRecurring) {
+    sendMessage({
+      type: ROOM_TO_BE_FULFILLED,
+      data: {eventId, eventName, eventFilters: eventFilters.toDict(), bookRecurring}
+    });
+  }
+
   const gmateBtn = newButton(SEARCH_ROOM_BTN_MSG);
   const registeredTasks = newTaskDisplay();
 
@@ -31,6 +43,25 @@ function newGMateBtn(eventId) {
     eventTasks.forEach(eventTask => registeredTasks.pushTask(
       Filters.fromDict(eventTask.data.eventFilters)
     ));
+  });
+
+  gmateBtn.addEventListener("click", async () => {
+    await logBtnClick();
+    gmateBtn.showSpinner();
+    const token = await promptAuth();  // block until user gives permission
+    gmateBtn.hideSpinner();
+    if (!token) {
+      // if the user refuses to give auth, can't let them continue
+      return;
+    }
+
+    const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
+      registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
+      registeredTasks.pushTask(eventFilters);
+    });
+    insertBefore(modal, document.body.firstChild);
+
+    show(modal);
   });
 
   return {gmateBtn, registeredTasks};
