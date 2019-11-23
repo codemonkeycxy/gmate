@@ -29,8 +29,7 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    const {gmateBtn, registeredTasks} = newGMateBtn(eventId);
-    gmateRow.replaceChild(wrapUIComponents([gmateBtn, registeredTasks]), gmateRow.children[1]);
+    gmateRow.replaceChild(newGMateBtn(eventId), gmateRow.children[1]);
   }
 
   function getEventName() {

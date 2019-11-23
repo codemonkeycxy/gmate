@@ -13,6 +13,7 @@ function newGMateBtn(eventId) {
 
   const gmateBtn = newButton(SEARCH_ROOM_BTN_MSG);
   const registeredTasks = newTaskDisplay();
+  const wrapper = wrapUIComponents([gmateBtn, registeredTasks]);
 
   gmateBtn.style.backgroundColor = '#4285f4';
   gmateBtn.style.color = '#fff';
@@ -30,7 +31,7 @@ function newGMateBtn(eventId) {
       "Looks like this event hasn't been saved yet. Save the event and try again :)"
     ));
 
-    return {gmateBtn, registeredTasks};
+    return wrapper;
   }
 
   sendMessage({type: GET_TASKS_BY_EVENT_ID, data: {eventId}}, ({data: {eventTasks}}) => {
@@ -64,5 +65,5 @@ function newGMateBtn(eventId) {
     show(modal);
   });
 
-  return {gmateBtn, registeredTasks};
+  return wrapper;
 }
