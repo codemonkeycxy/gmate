@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 6.3.3
+- [enhancement] Centralize GMate button generation logic for better re-usability
+
 ## 6.3.2
 - [enhancement] Add tooltips for control panel delete/lock/handshake icons
 
