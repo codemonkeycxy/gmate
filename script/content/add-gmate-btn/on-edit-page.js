@@ -1,9 +1,5 @@
 // self-invoking function to avoid name collision
 (() => {
-  function addNeedRoomListener() {
-    renderSearchRoomBtn();
-  }
-
   async function logBtnClick() {
     track(SEARCH_ROOM_BTN_CLICKED);
     await incrementSync(SEARCH_ROOM_BTN_CLICKED);
@@ -95,7 +91,7 @@
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       await tryUntilPass(() => getEventDetails());
-      addNeedRoomListener();
+      renderSearchRoomBtn();
     }
   });
 })();
