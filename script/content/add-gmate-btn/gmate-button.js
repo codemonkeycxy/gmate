@@ -1,4 +1,4 @@
-function newGMateBtn(eventId) {
+function newGMateBtn(eventId, eventNameFetcher) {
   async function logBtnClick() {
     track(SEARCH_ROOM_BTN_CLICKED);
     await incrementSync(SEARCH_ROOM_BTN_CLICKED);
@@ -57,7 +57,7 @@ function newGMateBtn(eventId) {
     }
 
     const modal = await getStatefulRoomBookingModal((eventFilters, bookRecurring) => {
-      registerRoomToBeFulfilled(getEventId(), getEventName(), eventFilters, bookRecurring);
+      registerRoomToBeFulfilled(eventId, eventNameFetcher(), eventFilters, bookRecurring);
       registeredTasks.pushTask(eventFilters);
     });
     insertBefore(modal, document.body.firstChild);

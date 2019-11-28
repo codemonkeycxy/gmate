@@ -14,7 +14,7 @@
     return eventDetails.children[0];
   }
 
-  function renderSearchRoomBtn(eventId) {
+  function renderSearchRoomBtn() {
     // insert gmate row after the location row
     const locationRow = getLocationRow();
     // to keep the style consistent, copy the location row as a template for the gmate row
@@ -29,7 +29,11 @@
     oldIcon.parentElement.replaceChild(icon, oldIcon);
 
     // reset the row content
-    gmateRow.replaceChild(newGMateBtn(eventId), gmateRow.children[1]);
+    gmateRow.replaceChild(newGMateBtn(getEventId(), getEventName), gmateRow.children[1]);
+  }
+
+  function getEventDetails() {
+    return document.querySelectorAll('[id="tabEventDetails"]')[0];
   }
 
   function getEventName() {
@@ -40,15 +44,11 @@
     }
   }
 
-  function getEventDetails() {
-    return document.querySelectorAll('[id="tabEventDetails"]')[0];
-  }
-
   onMessage(async (msg, sender, sendResponse) => {
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       await tryUntilPass(() => getEventDetails());
-      renderSearchRoomBtn(getEventId());
+      renderSearchRoomBtn();
     }
   });
 })();

@@ -217,11 +217,6 @@ function isMainCalendarPage() {
   return !!getElementByText('div', 'My calendars');
 }
 
-function getEventName() {
-  const title = document.querySelectorAll('[aria-label="Title"]')[0];
-  return title.getAttribute('value');
-}
-
 function getEventIdByName(eventName) {
   const meetingIds = [];
   const divTags = document.getElementsByTagName('div');
