@@ -39,15 +39,11 @@
   }
 
   function handleMeetingCreationClick() {
-    // if (e.detail !== 1) {
-    //   return;  // ignore double click
-    // }
-
-    // if (!await tryUntilPass(getDialog, {sleepMs: 20, countdown: 50, suppressError: true, immediate: false})) {
-    //   return;
-    // }
-    //
     const dialog = getDialog();
+    if (!dialog) {
+      return;
+    }
+
     if (getChildById(dialog, GMATE_BTN_ID)) {
       return;
     }
@@ -56,18 +52,11 @@
   }
 
   if (/calendar.google.com/g.test(window.location.host)) {
-    const callback = function (mutationsList, observer) {
-      // Use traditional 'for loops' for IE 11
-      for (let mutation of mutationsList) {
-        const target = mutation.target;
-        if (target.hasAttribute('role') && target.getAttribute('role') === 'dialog') {
-          if (mutation.addedNodes.length > 0) {
-            handleMeetingCreationClick();
-          }
-        }
-      }
-    };
-    const observer = new MutationObserver(callback);
-    observer.observe(document, {attributes: true, childList: true, subtree: true});
+    const observer = new MutationObserver(handleMeetingCreationClick);
+    observer.observe(document, {
+      attributes: true,
+      childList: true,
+      subtree: true
+    });
   }
 })();
