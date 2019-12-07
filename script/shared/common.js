@@ -18,7 +18,8 @@ const AUTO_ROOM_BOOKING = "auto-room-booking";
 const ROOM_TO_BE_FULFILLED = "room-to-be-fulfilled";
 const RECURRING_ROOM_TO_BE_FULFILLED = "recurring-room-to-be-fulfilled";
 const REGISTER_FAVORITE_ROOMS = "register-favorite-rooms";
-const REGISTER_MEETING_TO_BOOK = "register-meeting-to-book";
+const ADD_GMATE_BTN_EDIT_PAGE = "add_gmate_btn_edit_page";
+const ADD_GMATE_BTN_MAIN_PAGE = "add_gmate_btn_main_page";
 
 // UI modification actions
 const SHOW_BANNER = "show-banner";
@@ -168,7 +169,7 @@ function getElementByAttr(tagName, attrName, expectedVal) {
 }
 
 // ref: https://stackoverflow.com/questions/5783969/how-to-get-child-element-by-id-in-javascript
-function findChildById(element, childID) {
+function getElementById(parentNode, childID) {
   function getAllDescendant(element, lstChildrenNodes) {
     lstChildrenNodes = lstChildrenNodes ? lstChildrenNodes : [];
     var lstChildren = element.childNodes;
@@ -185,7 +186,7 @@ function findChildById(element, childID) {
   }
 
   var retElement = null;
-  var lstChildren = getAllDescendant(element);
+  var lstChildren = getAllDescendant(parentNode);
   for (var i = 0; i < lstChildren.length; i++) {
     if (lstChildren[i].id == childID) {
       retElement = lstChildren[i];

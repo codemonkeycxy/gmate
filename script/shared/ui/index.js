@@ -95,7 +95,7 @@ function renderCheckbox(name, initialVal, onChange, textOn = LEFT) {
   const textRight = htmlToElement(`<div><input type="checkbox" name="checkbox" id=${id}><label for=${id}>${name}</label></div>`);
 
   const checkboxWrapper = textOn === LEFT ? textLeft : textRight;
-  const checkbox = findChildById(checkboxWrapper, id);
+  const checkbox = getElementById(checkboxWrapper, id);
   checkbox.checked = initialVal;
   checkbox.addEventListener('click', e => onChange(e.target.checked));
 

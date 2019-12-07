@@ -25,7 +25,7 @@ onTabUpdated(async (tabId, changeInfo, tab) => {
 
     // actions that always happen
     emit(tabId, {type: REGISTER_FAVORITE_ROOMS});
-    emit(tabId, {type: REGISTER_MEETING_TO_BOOK});
+    emit(tabId, {type: ADD_GMATE_BTN_EDIT_PAGE});
 
     // actions controlled by feature toggles
     const settings = await getFromSync(DEFAULT_FEATURE_TOGGLES);

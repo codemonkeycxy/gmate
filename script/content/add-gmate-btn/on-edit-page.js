@@ -35,7 +35,7 @@
   }
 
   onMessage(async (msg, sender, sendResponse) => {
-    if (msg.type === REGISTER_MEETING_TO_BOOK) {
+    if (msg.type === ADD_GMATE_BTN_EDIT_PAGE) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       await tryUntilPass(() => getEventDetails());
       await renderSearchRoomBtn();

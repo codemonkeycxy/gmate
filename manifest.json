@@ -47,6 +47,7 @@
       "script/background/announcement.js",
       "script/background/feature-promoter.js",
       "script/background/edit-page-actions.js",
+      "script/background/main-page-actions.js",
       "script/background/room-searcher/raider.js",
       "script/background/room-searcher/radar.js"
     ]
@@ -89,6 +90,7 @@
         "script/content/add-gmate-btn/task-display.js",
         "script/content/add-gmate-btn/stateful-room-booking-modal.js",
         "script/content/add-gmate-btn/on-edit-page.js",
+        "script/content/add-gmate-btn/on-main-page.js",
         "script/content/show-banner.js",
         "script/content/add-overlay.js"
       ]
