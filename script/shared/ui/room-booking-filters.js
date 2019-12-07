@@ -12,7 +12,7 @@ async function asyncRenderRoomBookingFilters(
   };
 
   function constructTextFiltersUI(filterUI, negTexts) {
-    const negTextUI = getElementById(filterUI, 'room-booking-filter-negative-texts');
+    const negTextUI = getChildById(filterUI, 'room-booking-filter-negative-texts');
     negTextUI.appendChild(newExpandableInputList(
       negTexts,
       'enter full or partial room name to exclude',
@@ -23,11 +23,11 @@ async function asyncRenderRoomBookingFilters(
 
 
   function constructRegexFiltersUI(filterUI, posRegex, negRegex) {
-    const posRegexInput = getElementById(filterUI, 'room-booking-filter-positive-regex');
+    const posRegexInput = getChildById(filterUI, 'room-booking-filter-positive-regex');
     posRegexInput.value = posRegex;
     posRegexInput.addEventListener("input", e => onPosRegexFilterChange(e.target.value));
 
-    const negRegexInput = getElementById(filterUI, 'room-booking-filter-negative-regex');
+    const negRegexInput = getChildById(filterUI, 'room-booking-filter-negative-regex');
     negRegexInput.value = negRegex;
     negRegexInput.addEventListener("input", e => onNegRegexFilterChange(e.target.value));
   }

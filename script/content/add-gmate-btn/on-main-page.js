@@ -5,13 +5,13 @@
   }
 
   function isMeetingEditingDialog(dialog) {
-    const meetingSummary = getElementById(dialog, 'xDtlDlgCt');
+    const meetingSummary = getChildById(dialog, 'xDtlDlgCt');
     return !isEmpty(meetingSummary);
   }
 
   function getEditEventInfoRows(dialog) {
     try {
-      const meetingSummary = getElementById(dialog, 'xDtlDlgCt');
+      const meetingSummary = getChildById(dialog, 'xDtlDlgCt');
       return meetingSummary.children;
     } catch (e) {
       throw GMateError("can't find edit event options", {err: e.message});
@@ -48,26 +48,26 @@
     // }
     //
     const dialog = getDialog();
-    // if (document.getElementById(GMATE_BTN_ID)) {
-    //   return;
-    // }
+    if (getChildById(dialog, GMATE_BTN_ID)) {
+      return;
+    }
 
     insertSearchRoomBtn(dialog);
   }
 
-  onMessage(async (msg, sender, sendResponse) => {
-    if (msg.type === ADD_GMATE_BTN_MAIN_PAGE) {
-      const callback = function(mutationsList, observer) {
-        // Use traditional 'for loops' for IE 11
-        for(let mutation of mutationsList) {
-          const target = mutation.target;
-          if (target.hasAttribute('role') && target.getAttribute('role') === 'dialog') {
-            console.log(target);
+  if (/calendar.google.com/g.test(window.location.host)) {
+    const callback = function (mutationsList, observer) {
+      // Use traditional 'for loops' for IE 11
+      for (let mutation of mutationsList) {
+        const target = mutation.target;
+        if (target.hasAttribute('role') && target.getAttribute('role') === 'dialog') {
+          if (mutation.addedNodes.length > 0) {
+            handleMeetingCreationClick();
           }
         }
-      };
-      const observer = new MutationObserver(callback);
-      observer.observe(document, {attributes: true, childList: true, subtree: true});
-    }
-  });
+      }
+    };
+    const observer = new MutationObserver(callback);
+    observer.observe(document, {attributes: true, childList: true, subtree: true});
+  }
 })();
