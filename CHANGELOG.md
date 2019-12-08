@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 6.3.5
+- [maintenance] Generate Gmate Button UI using HTML template
+
 ## 6.3.4
-- [enhancement] Remove some duplicate code
+- [maintenance] Remove some duplicate code
 
 ## 6.3.3
 - [enhancement] Centralize GMate button generation logic for better re-usability
