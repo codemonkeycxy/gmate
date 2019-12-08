@@ -15,6 +15,7 @@ function newGMateBtn(eventId, eventNameFetcher) {
   const registeredTasks = newTaskDisplay();
   const wrapper = wrapUIComponents([gmateBtn, registeredTasks]);
 
+  gmateBtn.id = GMATE_BTN_ID;
   gmateBtn.style.backgroundColor = '#4285f4';
   gmateBtn.style.color = '#fff';
   gmateBtn.style.height = '32px';
@@ -60,10 +61,20 @@ function newGMateBtn(eventId, eventNameFetcher) {
       registerRoomToBeFulfilled(eventId, eventNameFetcher(), eventFilters, bookRecurring);
       registeredTasks.pushTask(eventFilters);
     });
-    insertBefore(modal, document.body.firstChild);
+    insertBefore(modal, gmateBtn);
 
     show(modal);
   });
 
   return wrapper;
+}
+
+async function newGMateRow(eventId, eventNameFetcher) {
+  const gmateRow = await loadHTMLElement('template/gmate-row.html');
+  const btnWrapper = findChildById(gmateRow, 'gmate-btn-wrapper');
+  const gmateBtn = newGMateBtn(eventId, eventNameFetcher);
+
+  btnWrapper.appendChild(gmateBtn);
+
+  return gmateRow;
 }

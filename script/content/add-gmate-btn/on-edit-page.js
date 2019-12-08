@@ -14,22 +14,12 @@
     return eventDetails.children[0];
   }
 
-  function renderSearchRoomBtn() {
-    // insert gmate row after the location row
+  async function renderSearchRoomBtn() {
     const locationRow = getLocationRow();
-    // to keep the style consistent, copy the location row as a template for the gmate row
-    const gmateRow = locationRow.cloneNode(true);
+    const gmateRow = await newGMateRow(getEventId(), getEventName);
+
+    // insert gmate row after the location row
     insertAfter(gmateRow, locationRow);
-
-    // reset the row icon
-    const oldIcon = gmateRow.children[0].getElementsByTagName('span')[0];
-    const icon = newIcon("fa fa-group");
-    icon.style.webkitTextFillColor = 'slategray';
-    icon.style.paddingLeft = '2px';
-    oldIcon.parentElement.replaceChild(icon, oldIcon);
-
-    // reset the row content
-    gmateRow.replaceChild(newGMateBtn(getEventId(), getEventName), gmateRow.children[1]);
   }
 
   function getEventDetails() {
@@ -48,7 +38,7 @@
     if (msg.type === REGISTER_MEETING_TO_BOOK) {
       // todo: bug: button disappears on page refresh (due to leavingEventPage logic)
       await tryUntilPass(() => getEventDetails());
-      renderSearchRoomBtn();
+      await renderSearchRoomBtn();
     }
   });
 })();

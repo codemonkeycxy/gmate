@@ -49,6 +49,7 @@ const NO = 'no';
 const LEFT = "left";
 const RIGHT = "right";
 
+const GMATE_BTN_ID = 'gmate-btn';
 const SEARCH_ROOM_BTN_MSG = "Find a room with GMate";
 const SEARCH_ROOM_BTN_CLICKED = "find-room-button-clicked";
 const ROOM_RADAR_BTN_CLICKED = "room-radar-button-clicked";
