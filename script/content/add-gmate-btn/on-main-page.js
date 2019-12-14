@@ -97,8 +97,12 @@
   }
 
   async function handleNodeAddition(mutationRecords) {
-    if (isDialogAdded(mutationRecords) || isDialogReplaced(mutationRecords) || isGMateBtnRemoved(mutationRecords)) {
-      await insertGMateRow();
+    try {
+      if (isDialogAdded(mutationRecords) || isDialogReplaced(mutationRecords) || isGMateBtnRemoved(mutationRecords)) {
+        await insertGMateRow();
+      }
+    } catch (e) {
+      GMateError('gmate-row-err-main-page', {err: e.message});
     }
   }
 
