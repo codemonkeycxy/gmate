@@ -71,7 +71,7 @@ function newGMateBtn(eventId, eventNameFetcher) {
 
 async function newGMateRow(eventId, eventNameFetcher) {
   const gmateRow = await loadHTMLElement('template/gmate-row.html');
-  const btnWrapper = findChildById(gmateRow, 'gmate-btn-wrapper');
+  const btnWrapper = getChildById(gmateRow, 'gmate-btn-wrapper');
   const gmateBtn = newGMateBtn(eventId, eventNameFetcher);
 
   btnWrapper.appendChild(gmateBtn);
