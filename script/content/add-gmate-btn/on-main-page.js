@@ -2,10 +2,6 @@
 (() => {
   function isDialogAdded(mutationRecords) {
     return mutationRecords.some(record => {
-      if (record.addedNodes.length === 0) {
-        return false;
-      }
-
       for (let i = 0; i < record.addedNodes.length; i++) {
         const addedNode = record.addedNodes[i];
         if (addedNode.className === 'aZpV8b iWO5td') {
@@ -19,12 +15,9 @@
 
   function isDialogReplaced(mutationRecords) {
     return mutationRecords.some(record => {
-      if (record.addedNodes.length === 0 || record.removedNodes.length === 0) {
-        return false;
-      }
-
       let addedDialog = false;
       let removedDialog = false;
+
       for (let i = 0; i < record.addedNodes.length; i++) {
         const addedNode = record.addedNodes[i];
         if (addedNode.id === 'xDetDlg') {
@@ -44,10 +37,6 @@
 
   function isGMateBtnRemoved(mutationRecords) {
     return mutationRecords.some(record => {
-      if (record.removedNodes.length === 0) {
-        return false;
-      }
-
       for (let i = 0; i < record.removedNodes.length; i++) {
         const removedNode = record.removedNodes[i];
         const innerHtml = removedNode.innerHTML;
