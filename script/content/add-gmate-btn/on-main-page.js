@@ -17,6 +17,31 @@
     });
   }
 
+  function isDialogReplaced(mutationRecords) {
+    return mutationRecords.some(record => {
+      if (record.addedNodes.length === 0 || record.removedNodes.length === 0) {
+        return false;
+      }
+
+      let addedDialog = false;
+      let removedDialog = false;
+      for (let i = 0; i < record.addedNodes.length; i++) {
+        const addedNode = record.addedNodes[i];
+        if (addedNode.id === 'xDetDlg') {
+          addedDialog = true;
+        }
+      }
+      for (let i = 0; i < record.removedNodes.length; i++) {
+        const removedNode = record.removedNodes[i];
+        if (removedNode.id === 'xDetDlg') {
+          removedDialog = true;
+        }
+      }
+
+      return addedDialog && removedDialog;
+    });
+  }
+
   function getDialog() {
     return getElementByAttr('div', 'role', 'dialog');
   }
@@ -35,9 +60,17 @@
     }
   }
 
-  async function insertSearchRoomBtn(dialog) {
-    const gmateRow = await newGMateRow('123', noop());
+  async function insertGMateRow() {
+    const dialog = getDialog();
+    if (!dialog) {
+      return;
+    }
 
+    if (getChildById(dialog, GMATE_BTN_ID)) {
+      return;
+    }
+
+    const gmateRow = await newGMateRow('123', noop());
     // if (isMeetingCreationDialog(dialog)) {
     //   const eventOptionRows = getCreateEventOptions(dialog);
     //   // insert gmate row after the last row
@@ -55,28 +88,15 @@
     }
   }
 
-  async function handleMeetingCreationClick(mutationRecords) {
-    if (!isDialogAdded(mutationRecords)) {
-      return;
+  async function handleNodeAddition(mutationRecords) {
+    if (isDialogAdded(mutationRecords) || isDialogReplaced(mutationRecords)) {
+      await insertGMateRow();
     }
-
-    const dialog = getDialog();
-    if (!dialog) {
-      return;
-    }
-
-    console.log(mutationRecords);
-
-    if (getChildById(dialog, GMATE_BTN_ID)) {
-      return;
-    }
-
-    await insertSearchRoomBtn(dialog);
   }
 
   if (/calendar.google.com/g.test(window.location.host)) {
-    const observer = new MutationObserver(handleMeetingCreationClick);
-    observer.observe(document, {
+    const nodeAdditionObserver = new MutationObserver(handleNodeAddition);
+    nodeAdditionObserver.observe(document, {
       attributes: false,
       childList: true,
       subtree: true
