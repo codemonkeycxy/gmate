@@ -31,14 +31,33 @@
           addedDialog = true;
         }
       }
-      for (let i = 0; i < record.removedNodes.length; i++) {
-        const removedNode = record.removedNodes[i];
+      for (let j = 0; j < record.removedNodes.length; j++) {
+        const removedNode = record.removedNodes[j];
         if (removedNode.id === 'xDetDlg') {
           removedDialog = true;
         }
       }
 
       return addedDialog && removedDialog;
+    });
+  }
+
+  function isGMateBtnRemoved(mutationRecords) {
+    return mutationRecords.some(record => {
+      if (record.removedNodes.length === 0) {
+        return false;
+      }
+
+      for (let i = 0; i < record.removedNodes.length; i++) {
+        const removedNode = record.removedNodes[i];
+        const innerHtml = removedNode.innerHTML;
+
+        if (innerHtml && innerHtml.includes(GMATE_BTN_ID)) {
+          return true;
+        }
+      }
+
+      return false;
     });
   }
 
@@ -89,7 +108,7 @@
   }
 
   async function handleNodeAddition(mutationRecords) {
-    if (isDialogAdded(mutationRecords) || isDialogReplaced(mutationRecords)) {
+    if (isDialogAdded(mutationRecords) || isDialogReplaced(mutationRecords) || isGMateBtnRemoved(mutationRecords)) {
       await insertGMateRow();
     }
   }
