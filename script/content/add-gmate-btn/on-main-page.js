@@ -1,5 +1,9 @@
 // self-invoking function to avoid name collision
 (() => {
+  const DIALOG_ID = 'xDetDlg';
+  const EVENT_NAME_ID = 'rAECCd';
+  const DIALOG_CONTENT_ID = 'xDtlDlgCt';
+
   function isDialogAdded(mutationRecords) {
     return mutationRecords.some(record => {
       for (let i = 0; i < record.addedNodes.length; i++) {
@@ -20,13 +24,13 @@
 
       for (let i = 0; i < record.addedNodes.length; i++) {
         const addedNode = record.addedNodes[i];
-        if (addedNode.id === 'xDetDlg') {
+        if (addedNode.id === DIALOG_ID) {
           addedDialog = true;
         }
       }
       for (let j = 0; j < record.removedNodes.length; j++) {
         const removedNode = record.removedNodes[j];
-        if (removedNode.id === 'xDetDlg') {
+        if (removedNode.id === DIALOG_ID) {
           removedDialog = true;
         }
       }
@@ -50,18 +54,14 @@
     });
   }
 
-  function getDialog() {
-    return getElementByAttr('div', 'role', 'dialog');
-  }
-
   function isMeetingEditingDialog(dialog) {
-    const meetingSummary = getChildById(dialog, 'xDtlDlgCt');
+    const meetingSummary = getChildById(dialog, DIALOG_CONTENT_ID);
     return !isEmpty(meetingSummary);
   }
 
   function getEditEventInfoRows(dialog) {
     try {
-      const meetingSummary = getChildById(dialog, 'xDtlDlgCt');
+      const meetingSummary = getChildById(dialog, DIALOG_CONTENT_ID);
       return meetingSummary.children;
     } catch (e) {
       throw GMateError("can't find edit event options", {err: e.message});
@@ -69,7 +69,7 @@
   }
 
   async function insertGMateRow() {
-    const dialog = getDialog();
+    const dialog = document.getElementById(DIALOG_ID);
     if (!dialog) {
       return;
     }
@@ -78,7 +78,6 @@
       return;
     }
 
-    const gmateRow = await newGMateRow('123', noop());
     // if (isMeetingCreationDialog(dialog)) {
     //   const eventOptionRows = getCreateEventOptions(dialog);
     //   // insert gmate row after the last row
@@ -88,11 +87,15 @@
     // }
 
     if (isMeetingEditingDialog(dialog)) {
+      const eventNameUI = getChildById(dialog, EVENT_NAME_ID);
+      const eventName = eventNameUI && eventNameUI.innerText || 'meeting';
+      const eventId = dialog.getAttribute('data-eventid');
+      const gmateRow = await newGMateRow(eventId, () => eventName);
+
       const eventInfoRows = getEditEventInfoRows(dialog);
       // insert gmate row after the first row
       const firstRow = eventInfoRows[0];
       insertAfter(gmateRow, firstRow);
-      return gmateRow;
     }
   }
 
