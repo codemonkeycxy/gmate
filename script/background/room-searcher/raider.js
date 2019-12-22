@@ -115,6 +115,7 @@ async function bootstrap() {
 // todo: put back "all guest edit" and open up the announcement page
 // todo: gmate row randomly disappears for special event on main page after initial page load. only happens when the dialog has a title image (e.g. lunch sync)
 // hacky solution to ^, regenerate gmate row when mutation records length > 10
+// todo: differentiate not accepted room from rejected room. don't retry on not accepted room???
 
 // ==================== task queue management ======================
 onMessageOfType(ROOM_TO_BE_FULFILLED, async (msg, sender, sendResponse) => {
