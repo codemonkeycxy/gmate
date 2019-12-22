@@ -101,6 +101,17 @@ function buildCalendarAPI() {
     return await addRoom(id, ownerEmail, roomEmail);
   }
 
+  async function removeRoom(eventId, ownerEmail, roomEmail) {
+    const gEvent = await getGEvent(eventId, ownerEmail);
+    gEvent.attendees = (gEvent.attendees || []).filter(attendee => attendee.email && attendee.email !== roomEmail);
+    return await updateGEvent(eventId, ownerEmail, gEvent);
+  }
+
+  async function removeRoomB64(b64Id, roomEmail) {
+    const {id, ownerEmail} = decodeEventId(b64Id);
+    return await removeRoom(id, ownerEmail, roomEmail);
+  }
+
   async function pickFreeRooms(startTsStr, endTsStr, roomEmails) {
     const availabilities = await checkRoomAvailability(startTsStr, endTsStr, roomEmails);
     return roomEmails.filter(email => {
@@ -381,6 +392,7 @@ function buildCalendarAPI() {
     getOwningEventsOfRooms,
 
     addRoomB64,
+    removeRoomB64,
   }
 }
 

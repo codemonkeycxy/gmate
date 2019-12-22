@@ -27,22 +27,7 @@ onMessage((msg, sender, cb) => {
   }
 });
 
-// (async () => {
-//   const allRooms = await CalendarAPI.getAllRoomsWithCache();
-//   console.log(allRooms);
-//   const filters = new Filters({
-//     posRegex: '1455.*0(4|5)th',
-//     negTexts: [],
-//     negRegex: '(Cart|Quiet Room)',
-//     flexFilters: {
-//       "room-booking-filter-uber-location": "SFO | 1455 Market",
-//       "room-booking-filter-uber-floor": "",
-//       "room-booking-filter-uber-room_size": "",
-//       "room-booking-filter-uber-need_vc": false
-//     }
-//   });
-//   console.log(await getRoomCandidateCnt(filters));
-//   console.log(filters.toDict());
-//   const roomCandidates = allRooms.filter(room => filters.matchRoom(room));
-//   console.log(roomCandidates)
-// })();
+(async () => {
+  // await CalendarAPI.removeRoomB64('NDl0Z2tqYjJtYnNiMGpnN2VtZm81bXQ5djAgeGlueWlAdWJlci5jb20', 'uber.com_53454131313931326e6441766531327468313444656e6e79426c61696e652d363837313137@resource.calendar.google.com');
+  // await CalendarAPI.removeRoomB64('NDl0Z2tqYjJtYnNiMGpnN2VtZm81bXQ5djAgeGlueWlAdWJlci5jb20', 'uber.com_2d3831323932363335333634@resource.calendar.google.com');
+})();

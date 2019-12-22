@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 7.0.1
+- [fix] Remove rooms that do not accept GMate's booking request
+
 ## 7.0.0
 - [feature] Enable GMate button on the main calendar page quick meeting view
 

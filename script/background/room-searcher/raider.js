@@ -319,6 +319,7 @@ async function nextTask() {
     // this line can be removed once all old data is drained
     currentTask.data.excludedRooms = currentTask.data.excludedRooms || [];
     currentTask.data.excludedRooms.push(roomEmailToBook);
+    await CalendarAPI.removeRoomB64(roomEmailToBook);
     enqueue(currentTask);
     // remove listener after handling the expected event to avoid double trigger
     nextTaskFireAndForget();
