@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 7.0.0
+- [feature] Enable GMate button on the main calendar page quick meeting view
+
 ## 6.3.5
-- [maintenance] Generate Gmate Button UI using HTML template
+- [maintenance] Generate GMate button UI using HTML template
 
 ## 6.3.4
 - [maintenance] Remove some duplicate code
