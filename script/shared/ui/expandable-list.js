@@ -19,11 +19,11 @@ function newExpandableInputList(values = [], placeholder = '', minWidth = '100px
 function newExpandableList(values = [], rowGenerator, onChange) {
   const listWrapper = document.createElement('div');
   // make a copy of the initial values
-  const results = isEmpty(values) ? [''] : [...values];
+  const results = isEmpty(values) ? [null] : [...values];
 
   const addBtn = newButton('+');
   addBtn.addEventListener("click", () => {
-    results.push('');
+    results.push(null);
     onInputChange();
     addRow(results.length - 1);
   });
@@ -51,7 +51,7 @@ function newExpandableList(values = [], rowGenerator, onChange) {
   function renderRemoveBtn(i, rowWrapper) {
     const removeBtn = newButton('-');
     removeBtn.addEventListener("click", () => {
-      results[i] = '';
+      results[i] = null;
       onInputChange();
       rowWrapper.remove();
     });
