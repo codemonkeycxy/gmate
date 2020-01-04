@@ -9,8 +9,14 @@ function newList(itemHTMLs) {
   return list;
 }
 
-// idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 function newExpandableInputList(values = [], placeholder = '', minWidth = '100px', onChange) {
+  const rowGenerator = (initVal, onRowValChange) => newTextInput(initVal, placeholder, minWidth, onRowValChange);
+
+  return newExpandableList(values, rowGenerator, onChange);
+}
+
+// idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
+function newExpandableList(values = [], rowGenerator, onChange) {
   const listWrapper = document.createElement('div');
   // make a copy of the initial values
   const results = isEmpty(values) ? [''] : [...values];
@@ -31,10 +37,8 @@ function newExpandableInputList(values = [], placeholder = '', minWidth = '100px
     const rowWrapper = document.createElement('div');
     listWrapper.insertBefore(rowWrapper, addBtn);
 
-    const input = newTextInput(
+    const input = rowGenerator(
       results[i],
-      placeholder,
-      minWidth,
       val => {
         results[i] = val;
         onInputChange();
