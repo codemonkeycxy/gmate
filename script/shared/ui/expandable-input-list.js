@@ -9,6 +9,17 @@ function newTextInput(initVal, placeholder, minWidth, onChange) {
   return input;
 }
 
+function newList(itemHTMLs) {
+  const list = document.createElement('ul');
+
+  itemHTMLs.forEach(htmlStr => {
+    const item = htmlToElement(htmlStr);
+    list.appendChild(item);
+  });
+
+  return list;
+}
+
 // idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 function newExpandableInputList(values = [], placeholder = '', minWidth = '100px', onChange) {
   const listWrapper = document.createElement('div');
