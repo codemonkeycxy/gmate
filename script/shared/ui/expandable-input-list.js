@@ -20,11 +20,11 @@ function newExpandableInputList(values = [], placeholder = '', minWidth = '100px
     const rowWrapper = document.createElement('div');
     listWrapper.insertBefore(rowWrapper, addBtn);
 
-    appendInput(i, rowWrapper);
-    appendRemoveBtn(i, rowWrapper);
+    rowWrapper.appendChild(renderInput(i));
+    renderRemoveBtn(i, rowWrapper);
   }
 
-  function appendInput(i, rowWrapper) {
+  function renderInput(i) {
     const input = document.createElement("INPUT");
     input.type = 'text';
     input.placeholder = placeholder;
@@ -34,10 +34,11 @@ function newExpandableInputList(values = [], placeholder = '', minWidth = '100px
       results[i] = e.target.value;
       onInputChange();
     });
-    rowWrapper.appendChild(input);
+
+    return input;
   }
 
-  function appendRemoveBtn(i, rowWrapper) {
+  function renderRemoveBtn(i, rowWrapper) {
     const removeBtn = newButton('-');
     removeBtn.addEventListener("click", () => {
       results[i] = '';
