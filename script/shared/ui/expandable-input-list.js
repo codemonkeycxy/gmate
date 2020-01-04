@@ -1,3 +1,14 @@
+function newTextInput(initVal, placeholder, minWidth, onChange) {
+  const input = document.createElement("INPUT");
+  input.type = 'text';
+  input.placeholder = placeholder;
+  input.value = initVal || '';
+  input.style.minWidth = minWidth;
+  input.addEventListener("input", e => onChange(e.target.value));
+
+  return input;
+}
+
 // idea borrowed from: https://stackoverflow.com/questions/42476463/add-remove-input-box-using-javascript
 function newExpandableInputList(values = [], placeholder = '', minWidth = '100px', onChange) {
   const listWrapper = document.createElement('div');
@@ -13,29 +24,24 @@ function newExpandableInputList(values = [], placeholder = '', minWidth = '100px
   listWrapper.appendChild(addBtn);
 
   function onInputChange() {
-    onChange(results.filter(res => res));
+    onChange(results.filter(res => Boolean(res)));
   }
 
   function addRow(i) {
     const rowWrapper = document.createElement('div');
     listWrapper.insertBefore(rowWrapper, addBtn);
 
-    rowWrapper.appendChild(renderInput(i));
+    const input = newTextInput(
+      results[i],
+      placeholder,
+      minWidth,
+      val => {
+        results[i] = val;
+        onInputChange();
+      }
+    );
+    rowWrapper.appendChild(input);
     renderRemoveBtn(i, rowWrapper);
-  }
-
-  function renderInput(i) {
-    const input = document.createElement("INPUT");
-    input.type = 'text';
-    input.placeholder = placeholder;
-    input.value = results[i] || '';
-    input.style.minWidth = minWidth;
-    input.addEventListener("input", e => {
-      results[i] = e.target.value;
-      onInputChange();
-    });
-
-    return input;
   }
 
   function renderRemoveBtn(i, rowWrapper) {
