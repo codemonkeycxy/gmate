@@ -53,7 +53,7 @@ async function asyncRenderRoomBookingFilters(
 
   // user can pick one option from a list of dropdown values
   function renderDropdownFilter(title, initialVal, storageKey, filterSetting) {
-    return renderDropdown(
+    return newDropdown(
       title,
       filterSetting.options,
       initialVal,
@@ -64,7 +64,7 @@ async function asyncRenderRoomBookingFilters(
 
   // user can type and search
   function renderAutoCompleteFilter(title, initialVal, storageKey, filterSetting) {
-    return renderAutoComplete(
+    return newAutoComplete(
       title,
       filterSetting.options,
       initialVal,
@@ -75,7 +75,7 @@ async function asyncRenderRoomBookingFilters(
 
   // user can enter a numerical range in the form of a string, such as "1, 3, 5-12"
   function renderNumRangeFilter(title, initialVal, storageKey) {
-    return renderStringNumberRange(
+    return newStringNumberRange(
       title,
       initialVal,
       selected => onFlexFilterChange(storageKey, selected)
@@ -84,7 +84,7 @@ async function asyncRenderRoomBookingFilters(
 
   // user can toggle the value of a checkbox
   function renderCheckboxFilter(title, initialVal, storageKey) {
-    return renderCheckbox(
+    return newCheckbox(
       title,
       initialVal,
       checked => onFlexFilterChange(storageKey, checked)

@@ -1,14 +1,3 @@
-function newTextInput(initVal, placeholder, minWidth, onChange) {
-  const input = document.createElement("INPUT");
-  input.type = 'text';
-  input.placeholder = placeholder;
-  input.value = initVal || '';
-  input.style.minWidth = minWidth;
-  input.addEventListener("input", e => onChange(e.target.value));
-
-  return input;
-}
-
 function newList(itemHTMLs) {
   const list = document.createElement('ul');
 

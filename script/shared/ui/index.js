@@ -29,7 +29,7 @@ function wrapUIWithText(name, child, textOn = LEFT) {
   return result;
 }
 
-function renderDropdown(name, options, initialVal, onSelect, validateInput) {
+function newDropdown(name, options, initialVal, onSelect, validateInput) {
   const selectList = document.createElement('select');
   // populate the option list
   options.forEach(option => {
@@ -54,7 +54,7 @@ function renderDropdown(name, options, initialVal, onSelect, validateInput) {
   return result;
 }
 
-function renderAutoComplete(name, options, initialVal, onSelect, validateInput) {
+function newAutoComplete(name, options, initialVal, onSelect, validateInput) {
   const textInput = document.createElement('input');
   textInput.placeholder = 'type to search';
   textInput.value = initialVal;
@@ -77,7 +77,7 @@ function renderAutoComplete(name, options, initialVal, onSelect, validateInput) 
   return result;
 }
 
-function renderStringNumberRange(name, initialVal, onChange) {
+function newStringNumberRange(name, initialVal, onChange) {
   const input = document.createElement('input');
   input.value = initialVal;
   input.placeholder = '1, 3, 5-12';
@@ -89,7 +89,7 @@ function renderStringNumberRange(name, initialVal, onChange) {
   return wrapUIWithText(name, input);
 }
 
-function renderCheckbox(name, initialVal, onChange, textOn = LEFT) {
+function newCheckbox(name, initialVal, onChange, textOn = LEFT) {
   const id = `checkbox${getRandomInt(Number.MAX_SAFE_INTEGER)}`;
   const textLeft = htmlToElement(`<div><label for=${id}>${name}</label><input type="checkbox" name="checkbox" id=${id}></div>`);
   const textRight = htmlToElement(`<div><input type="checkbox" name="checkbox" id=${id}><label for=${id}>${name}</label></div>`);
@@ -102,6 +102,17 @@ function renderCheckbox(name, initialVal, onChange, textOn = LEFT) {
   return checkboxWrapper;
 }
 
-function renderDivider() {
+function newDivider() {
   return document.createElement('hr');
+}
+
+function newTextInput(initVal, placeholder, minWidth, onChange) {
+  const input = document.createElement("INPUT");
+  input.type = 'text';
+  input.placeholder = placeholder;
+  input.value = initVal || '';
+  input.style.minWidth = minWidth;
+  input.addEventListener("input", e => onChange(e.target.value));
+
+  return input;
 }

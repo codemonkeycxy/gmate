@@ -21,7 +21,7 @@ async function getStatefulRoomBookingModal(onConfirm) {
       val => inputs.eventFilters.negTexts = val,
       (key, val) => inputs.eventFilters.setFlexFilter(key, val),
     );
-    const bookRecurringCheckbox = renderCheckbox(
+    const bookRecurringCheckbox = newCheckbox(
       'apply to recurring meetings (GMate will try to maximize consistent rooms)',
       false,
       value => inputs.bookRecurring = value,
@@ -29,7 +29,7 @@ async function getStatefulRoomBookingModal(onConfirm) {
     );
     const userFeedback = await loadHTMLElement('template/user-feedback.html');
 
-    return wrapUIComponents([filterUI, renderDivider(), bookRecurringCheckbox, userFeedback]);
+    return wrapUIComponents([filterUI, newDivider(), bookRecurringCheckbox, userFeedback]);
   }
 
 
