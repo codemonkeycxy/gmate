@@ -45,6 +45,7 @@ const ANY = "any";
 const ALL = "all";
 const YES = 'yes';
 const NO = 'no';
+const PLEASE_SELECT = 'please select';
 
 const LEFT = "left";
 const RIGHT = "right";

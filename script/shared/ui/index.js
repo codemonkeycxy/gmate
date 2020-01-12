@@ -29,9 +29,10 @@ function wrapUIWithText(name, child, textOn = LEFT) {
   return result;
 }
 
-function newDropdown(name, options, initialVal, onSelect, validateInput) {
+function newDropdown(name, options, initialVal, onSelect, validateInput, textOn = LEFT) {
   const selectList = document.createElement('select');
   // populate the option list
+  options = initialVal === PLEASE_SELECT ? [PLEASE_SELECT, ...options] : options;
   options.forEach(option => {
     const optionUI = document.createElement('option');
     // todo: account for text:value case
@@ -40,7 +41,8 @@ function newDropdown(name, options, initialVal, onSelect, validateInput) {
     selectList.appendChild(optionUI);
   });
 
-  const result = wrapUIWithText(name, selectList);
+  validateInput = validateInput ? validateInput : () => ({valid: true});
+  const result = wrapUIWithText(name, selectList, textOn);
   result.setError(validateInput(initialVal));
 
   // set up initial value and change listener
